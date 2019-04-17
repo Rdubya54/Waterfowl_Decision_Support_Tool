@@ -1,0 +1,24 @@
+.wmgmt{
+    width: 80%;
+}
+
+.notes{
+  width:100%;
+}
+
+.prev{
+  width:40%;
+}
+
+.small_button {
+    min-width: 50%;
+}
+
+mat-card {
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+}
+
+.previous{
+  font-size: 10px;
+}

@@ -1,0 +1,48 @@
+<div class="example-container">
+  <mat-toolbar color="primary" class="example-toolbar">
+      <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+      <h1 class="example-app-name">Wetland Waterfowl Data Management</h1>
+    </mat-toolbar>
+
+<mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+    <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'"
+                 [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
+    <mat-nav-list>
+         <nav>
+            <div class="container" fxLayout="column">
+                <div fxFlex="14%">
+                    <a mat-raised-button routerLink="/watermanagement" color="primary" (click)="snav.toggle()">Daily Water Management</a>
+                </div>
+                <div fxFlex="14%">
+                    <a mat-raised-button color="primary" id="wm_Button" routerLink="/waterfood" (click)="snav.toggle()">Biweekly Water/Food Status</a>
+                </div>
+                <div fxFlex="20%">
+                    <a mat-raised-button color="primary" id="dr_button" routerLink="/fallfood" (click)="snav.toggle()">Food Available Start of Season</a>
+                </div>
+                <div fxFlex="14%">
+                    <a mat-raised-button color="primary" id="dr_button" routerLink="/datareview" (click)="snav.toggle()">View Locally Stored Data</a>
+                </div>
+                <div fxFlex="14%">
+                    <a mat-raised-button color="primary" id="dr_button" routerLink="/pumpmanagement" (click)="snav.toggle()">Pump Management</a>
+                </div>
+                <div fxFlex="14%">
+                  <a mat-raised-button color="primary" id="dr_button" routerLink="/pumptable" (click)="snav.toggle()">Pump </a>
+                </div>
+                <div fxFlex="14%">
+                    <a mat-raised-button color="primary" id="dr_button" routerLink="/weather" (click)="snav.toggle()">Daily Weather Observations</a>
+                </div>
+
+              </div>
+          </nav> 
+    </mat-nav-list>
+</mat-sidenav>
+
+<mat-sidenav-content>
+    <router-outlet></router-outlet>
+</mat-sidenav-content>
+</mat-sidenav-container>
+</div>
+
+
+
+

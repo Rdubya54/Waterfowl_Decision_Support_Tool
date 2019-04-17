@@ -1,0 +1,279 @@
+<h1>Fall Food Availability: Acres, Yield, Harvested, Unharvested</h1>
+<mat-grid-list [cols]="breakpoint" rowHeight="1000px" (window:resize)="onResize($event)">
+
+<mat-grid-tile>
+<mat-card>
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="33%"> 
+                    <mat-form-field class="wmgmt">
+                    <input type="text" [(ngModel)]="newFoodAvail.month" [ngModelOptions]="{standalone:true}" matInput placeholder="Month">
+                    </mat-form-field>
+                    /
+                </div> 
+                <div fxFlex="33%">
+                    <mat-form-field class="wmgmt">  
+                            <input type="text" [(ngModel)]="newFoodAvail.day" [ngModelOptions]="{standalone:true}" matInput placeholder="Day">
+                    </mat-form-field>
+                </div> 
+                <div fxFlex="33%">
+                    <mat-form-field class="wmgmt">  
+                            <input type="text" [(ngModel)]="newFoodAvail.year" [ngModelOptions]="{standalone:true}" matInput placeholder="Year">
+                    </mat-form-field>
+                </div> 
+            </div>
+        
+        
+            <div fxLayout="row" fxLayoutGap="0.5%">
+            <mat-form-field>
+            <input type="text" [(ngModel)]="newFoodAvail.structure" [ngModelOptions]="{standalone:true}" matInput placeholder="Structure">
+            </mat-form-field>
+            </div>    
+
+
+    <div fxLayout="row" fxLayoutGap="0.5%">
+        <h2 fxFlex="50%">Corn Acres</h2>
+
+        <h2 fxFlex="50%">Corn Yield</h2>
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="0.5%">
+            <div fxFlex="50%"> 
+                Unharvested
+            </div> 
+            <div fxFlex="50%"> 
+                    Bushels Per Acre
+            </div> 
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="0.5%">
+        <div fxFlex="50%"> 
+            <mat-form-field class="wmgmt">
+                <input type="text" [(ngModel)]="newFoodAvail.corn_unharv"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+            </mat-form-field>
+        </div> 
+        <div  fxFlex="50%"> 
+                <mat-form-field class="wmgmt">
+                    <input type="text" [(ngModel)]="newFoodAvail.corn_yield"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                </mat-form-field>
+        </div> 
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="0.5%">
+            <div fxFlex="50%"> 
+                Harvested
+            </div> 
+            <div fxFlex="50%"> 
+                    Bushels Per Acre (Still in Field)
+            </div> 
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="0.5%">
+        <div fxFlex="50%"> 
+            <mat-form-field class="wmgmt" font-size=5px;>
+                <input type="text" [(ngModel)]="newFoodAvail.corn_harv"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+            </mat-form-field>
+        </div> 
+        <div fxFlex="50%"> 
+            <mat-form-field class="wmgmt">
+                <input type="text" [(ngModel)]="newFoodAvail.corn_yield_field"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+            </mat-form-field>
+        </div> 
+    </div>
+
+
+    <div fxLayout="row" fxLayoutGap="0.5%">
+            <h3 fxFlex="50%">Bean Acres</h3>
+    
+            <h3 fxFlex="50%">Bean Yield</h3>
+    </div>
+
+
+    <div fxLayout="row" fxLayoutGap="0.5%">
+            <div fxFlex="50%"> 
+                Unharvested
+            </div> 
+            <div fxFlex="50%"> 
+                    Bushels Per Acre
+            </div> 
+    </div>
+
+
+    <div fxLayout="row" fxLayoutGap="0.5%">
+            <div fxFlex="50%"> 
+                <mat-form-field class="wmgmt">
+                    <input type="text" [(ngModel)]="newFoodAvail.beans_unharv"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                </mat-form-field>
+            </div> 
+            <div fxFlex="50%">
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="newFoodAvail.beans_yield"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                    </mat-form-field>
+                </div> 
+        </div>
+
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                    Harvested
+                </div> 
+                <div fxFlex="50%"> 
+                        Bushels Per Acre (Still in Field)
+                </div> 
+        </div>
+    
+        <div fxLayout="row" fxLayoutGap="0.5%">
+            <div fxFlex="50%"> 
+                <mat-form-field class="wmgmt">
+                    <input type="text" [(ngModel)]="newFoodAvail.beans_harv"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                </mat-form-field>
+            </div> 
+            <div fxFlex="50%"> 
+                <mat-form-field class="wmgmt">
+                    <input type="text" [(ngModel)]="newFoodAvail.beans_yield_field"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                </mat-form-field>
+            </div> 
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <h3 fxFlex="50%">Milo Acres</h3>
+        
+                <h3 fxFlex="50%">Milo Yield</h3>
+        </div>
+
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                    Unharvested
+                </div> 
+                <div fxFlex="50%"> 
+                        Bushels Per Acre
+                </div> 
+        </div>
+    
+    
+    
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="newFoodAvail.milo_unharv"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                    </mat-form-field>
+                </div> 
+                <div fxFlex="50%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="newFoodAvail.milo_yield"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+            </div>
+
+
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="50%"> 
+                        Harvested
+                    </div> 
+                    <div fxFlex="50%"> 
+                            Bushels Per Acre (Still in Field)
+                    </div> 
+            </div>
+        
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="newFoodAvail.milo_harv"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                    </mat-form-field>
+                </div> 
+                <div fxFlex="50%"> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="newFoodAvail.milo_yield_field"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                    </mat-form-field>
+                </div> 
+            </div>
+        
+</mat-card>
+</mat-grid-tile>
+
+<mat-grid-tile>
+        <mat-card>
+
+                <div fxLayout="row" fxLayoutGap="0.5%">
+                        <h3 fxFlex="50%">Wheat Acres</h3>
+                </div>
+
+                <div fxLayout="row" fxLayoutGap="0.5%">
+                        <div fxFlex="50%"> 
+                            Unharvested
+                        </div> 
+                </div>
+            
+                <div fxLayout="row" fxLayoutGap="0.5%">
+                        <div fxFlex="50%"> 
+                            <mat-form-field class="wmgmt">
+                                <input type="text" [(ngModel)]="newFoodAvail.wheat_green"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                            </mat-form-field>
+                        </div> 
+                </div>
+
+                <div fxLayout="row" fxLayoutGap="0.5%">
+                        <div fxFlex="50%"> 
+                            Harvested
+                        </div> 
+                </div>
+                
+                <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="50%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="newFoodAvail.wheat_harv"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+                </div>
+                
+            <h3>Moist Soil Acres</h3>
+        
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                <div> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="newFoodAvail.soil_standing"  [ngModelOptions]="{standalone:true}" matInput placeholder="Standing">
+                    </mat-form-field>
+                </div> 
+            </div>
+            
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                <div> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="newFoodAvail.soil_mowed"  [ngModelOptions]="{standalone:true}" matInput placeholder="Mowed">
+                    </mat-form-field>
+                </div> 
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="newFoodAvail.soil_disced"  [ngModelOptions]="{standalone:true}" matInput placeholder="Disced">
+                        </mat-form-field>
+                    </div>  
+                </div>
+            
+            <h3>Moist Soil Yield</h3>
+
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div>
+                    yield on scale of 1-10, 1=lowest and 10=highest
+                    </div>
+                </div>            
+            
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                <div> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="newFoodAvail.yield_score"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                    </mat-form-field>
+                </div>  
+            </div>
+            <button mat-raised-button color="primary" (click)="addWaterManagement()">Add to Local Database</button>
+            <button mat-raised-button color="primary" (click)="clearNewWaterManagement()">Clear Fields</button>
+</mat-card>
+</mat-grid-tile>
+
+
+
+     
+</mat-grid-list>

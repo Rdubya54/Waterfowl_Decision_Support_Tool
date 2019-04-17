@@ -1,0 +1,397 @@
+<h1>Locally Cached Data</h1>
+
+<!-- <button mat-raised-button color="primary" (click)="getWatermanagement()">View Local Entries</button>
+ -->
+ <mat-form-field>
+<mat-select placeholder="Select Table" [(ngModel)]="table" (ngModelChange)="fetchData($event)">
+    <mat-option  *ngFor="let table of tables" [value]="table">
+      {{table}}
+    </mat-option>
+</mat-select>
+</mat-form-field> 
+
+<!-- html for watermangement table -->
+<div *ngIf="this.table==='Water Management'">
+<table  mat-table [dataSource]="watermanagements" class="mat-elevation-z8">
+  
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef> Date </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.date}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="pool">
+      <th mat-header-cell *matHeaderCellDef> Pool </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.pool}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="structure">
+      <th mat-header-cell *matHeaderCellDef> Structure </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.structure}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="elevation">
+      <th mat-header-cell *matHeaderCellDef> Elevation </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.elevation}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="gate_manipulation">
+      <th mat-header-cell *matHeaderCellDef> Gate Manipulation </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.gate_manipulation}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="gate_level">
+      <th mat-header-cell *matHeaderCellDef> Gate Level </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.gate_level}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="stop_change">
+      <th mat-header-cell *matHeaderCellDef> Stop Change </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.stop_change}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="stop_level">
+      <th mat-header-cell *matHeaderCellDef> Stop Level </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.stop_level}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="duck_numbers">
+      <th mat-header-cell *matHeaderCellDef> Duck Numbers </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.duck_numbers}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="goose_numbers">
+      <th mat-header-cell *matHeaderCellDef> Goose Numbers </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.goose_numbers}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="year">
+      <th mat-header-cell *matHeaderCellDef> Year </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.year}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="time">
+      <th mat-header-cell *matHeaderCellDef> Time </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.time}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fiscal_year">
+      <th mat-header-cell *matHeaderCellDef> Fiscal Year </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.fiscal_year}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="notes">
+      <th mat-header-cell *matHeaderCellDef> Notes </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.notes}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="reasons">
+      <th mat-header-cell *matHeaderCellDef> Reasons </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.reasons}} </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="watermanagement_Columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: watermanagement_Columns;"></tr> 
+</table>
+<button mat-raised-button color="primary" (click)="addCachedData()">Push Local Data to Cloud</button>
+</div>
+
+<!-- html for watermangement table -->
+<div *ngIf="this.table==='Biweekly Water Status and Food Availability'">
+  <table  mat-table [dataSource]="watermanagements" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="buttons">
+          <th mat-header-cell *matHeaderCellDef> </th>
+          <td mat-cell *matCellDef="let entry">   <button mat-raised-button color="primary" (click)="deleteEntry(entry.id,'Biweekly Water Status and Food Availability')">Delete</button>
+        </ng-container>
+
+      <ng-container matColumnDef="month">
+        <th mat-header-cell *matHeaderCellDef> Month </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.month}} </td>
+      </ng-container>
+    
+      <ng-container matColumnDef="day">
+        <th mat-header-cell *matHeaderCellDef> Day </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.day}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="pool">
+        <th mat-header-cell *matHeaderCellDef> Pool </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.pool}} </td>
+      </ng-container>
+    
+      <ng-container matColumnDef="percent_of_full_pool">
+        <th mat-header-cell *matHeaderCellDef> Percent of Full Pools </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.percent_of_full_pools}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="less_than_six">
+        <th mat-header-cell *matHeaderCellDef> Less than Six Inches </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.less_than_six}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="seven_to_twelve">
+        <th mat-header-cell *matHeaderCellDef> 7-12 inches </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.seven_to_twelve}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="thirteen_or_more">
+        <th mat-header-cell *matHeaderCellDef> 13+ </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.thirteen_or_more}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="habitat_standing">
+        <th mat-header-cell *matHeaderCellDef> Moist Soil Standing </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.habitat_standing}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="habitat_mowed">
+        <th mat-header-cell *matHeaderCellDef> Moist Soil Mowed </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.habitat_mowed}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="habitat_disced">
+        <th mat-header-cell *matHeaderCellDef> Moist Soil Disced </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.habitat_disced}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="habitat_unharv_corn">
+        <th mat-header-cell *matHeaderCellDef> Unharvested Corn </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.habitat_unharv_corn}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="habitat_harv_corn">
+        <th mat-header-cell *matHeaderCellDef> Harvested Corn </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.habitat_harv_corn}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="habitat_unharv_milo">
+        <th mat-header-cell *matHeaderCellDef> Unharvested Milo </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.habitat_unharv_milo}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="habitat_harv_milo">
+        <th mat-header-cell *matHeaderCellDef> Harvested Milo </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.habitat_harv_milo}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="habitat_unharv_beans">
+        <th mat-header-cell *matHeaderCellDef> Unharvested Beans </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.habitat_unharv_beans}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="habitat_harv_beans">
+        <th mat-header-cell *matHeaderCellDef> Harvested Beans </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.habitat_harv_beans}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="habitat_browse">
+        <th mat-header-cell *matHeaderCellDef> Green Browse </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.habitat_browse}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ice_standing">
+        <th mat-header-cell *matHeaderCellDef> Moist Soil Standing </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.ice_standing}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="ice_mowed">
+        <th mat-header-cell *matHeaderCellDef> Moist Soil Mowed </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.ice_mowed}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="ice_disced">
+        <th mat-header-cell *matHeaderCellDef> Moist Soil Disced </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.ice_disced}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="ice_unharv_corn">
+        <th mat-header-cell *matHeaderCellDef> Unharvested Corn </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.ice_unharv_corn}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="ice_harv_corn">
+        <th mat-header-cell *matHeaderCellDef> Harvested Corn </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.ice_harv_corn}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="ice_unharv_milo">
+        <th mat-header-cell *matHeaderCellDef> Unharvested Milo </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.ice_unharv_milo}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="ice_harv_milo">
+        <th mat-header-cell *matHeaderCellDef> Harvested Milo </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.ice_harv_milo}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="ice_unharv_beans">
+        <th mat-header-cell *matHeaderCellDef> Unharvested Beans </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.ice_unharv_beans}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ice_harv_beans">
+        <th mat-header-cell *matHeaderCellDef> harvested Beans </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.ice_harv_beans}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ice_browse">
+        <th mat-header-cell *matHeaderCellDef> Green Browse </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.ice_browse}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="notes">
+        <th mat-header-cell *matHeaderCellDef> Notes </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.notes}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Management Actions </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.actions}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="response">
+        <th mat-header-cell *matHeaderCellDef> Response to Last </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.response}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="year">
+        <th mat-header-cell *matHeaderCellDef> Year </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.year}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="time">
+        <th mat-header-cell *matHeaderCellDef> Time </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.time}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="fiscal_year">
+        <th mat-header-cell *matHeaderCellDef> Fiscal Year </th>
+        <td mat-cell *matCellDef="let entry"> {{entry.fiscal_year}} </td>
+      </ng-container>
+    
+      <tr mat-header-row *matHeaderRowDef="waterfood_Columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: waterfood_Columns;"></tr> 
+  </table>
+  <button mat-raised-button color="primary" (click)="addCachedData()">Push Local Data to Cloud</button>
+  </div>
+
+
+<!-- html for fall food availability table -->
+<div *ngIf="this.table==='Fall Food Availability'">
+<table  mat-table [dataSource]="watermanagements" class="mat-elevation-z8">
+  
+    <ng-container matColumnDef="month">
+      <th mat-header-cell *matHeaderCellDef> Month </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.month}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="day">
+      <th mat-header-cell *matHeaderCellDef> Day </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.day}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="year">
+      <th mat-header-cell *matHeaderCellDef> Year </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.year}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="structure">
+      <th mat-header-cell *matHeaderCellDef> Structure </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.structure}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="corn_unharv">
+      <th mat-header-cell *matHeaderCellDef> Corn Unharvested </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.corn_unharv}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="corn_harv">
+      <th mat-header-cell *matHeaderCellDef> Corn Harvested </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.corn_harv}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="corn_yield">
+      <th mat-header-cell *matHeaderCellDef> Corn Buschels Per Acre </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.corn_yield}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="corn_yield_field">
+      <th mat-header-cell *matHeaderCellDef> Corn Buschles (Still in Field) </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.corn_yield_field}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="beans_unharv">
+      <th mat-header-cell *matHeaderCellDef> Beans Unharvested </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.beans_unharv}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="beans_harv">
+      <th mat-header-cell *matHeaderCellDef> Beans Harvested </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.stop_level}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="beans_yield">
+      <th mat-header-cell *matHeaderCellDef> Beans Buschels Per Acre </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.beans_yield}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="beans_yield_field">
+      <th mat-header-cell *matHeaderCellDef> Beans Buschels (Still in Field) </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.beans_yield_field}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="milo_unharv">
+      <th mat-header-cell *matHeaderCellDef> Milo Unharvested </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.milo_unharv}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="milo_harv">
+      <th mat-header-cell *matHeaderCellDef> Milo Harvested </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.milo_harv}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="milo_yield">
+      <th mat-header-cell *matHeaderCellDef> Milo Buschels Per Acre </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.milo_yield}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="milo_yield_field">
+      <th mat-header-cell *matHeaderCellDef> Milo Buschels (Still In Field) </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.milo_yield_field}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="wheat_green">
+      <th mat-header-cell *matHeaderCellDef> Wheat Unharvested </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.wheat_green}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="wheat_harv">
+      <th mat-header-cell *matHeaderCellDef> Wheat Harvested </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.wheat_harv}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="soil_standing">
+      <th mat-header-cell *matHeaderCellDef> Soil Standing </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.soil_standing}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="soil_mowed">
+      <th mat-header-cell *matHeaderCellDef> Soil Mowed </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.soil_mowed}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="soil_disced">
+      <th mat-header-cell *matHeaderCellDef> Soil Disced </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.soil_disced}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="yield_score">
+      <th mat-header-cell *matHeaderCellDef> Yield Score </th>
+      <td mat-cell *matCellDef="let entry"> {{entry.yield_score}} </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="foodavail_Columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: foodavail_Columns;"></tr> 
+</table>
+<button mat-raised-button color="primary" (click)="addCachedData()">Push Local Data to Cloud</button>
+</div>

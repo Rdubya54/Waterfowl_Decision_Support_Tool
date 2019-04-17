@@ -1,0 +1,12 @@
+.wmgmt{
+    width: 50%;
+}
+
+.small_button {
+    min-width: 50%;
+}
+
+mat-card {
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+}

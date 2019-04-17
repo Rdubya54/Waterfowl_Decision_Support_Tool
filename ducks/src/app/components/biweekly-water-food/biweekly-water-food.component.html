@@ -1,0 +1,449 @@
+<h1>Biweekly Water Status And Food Availability</h1>
+<mat-grid-list [cols]="breakpoint" rowHeight="875px" (window:resize)="onResize($event)">
+<mat-grid-tile>
+<mat-card class="example-container">
+<div fxLayout="row" fxLayoutGap="0.5%">
+    <div fxFlex="50%"> 
+        <mat-form-field class="wmgmt">
+        <input type="text" [(ngModel)]="newWaterFood.month" [ngModelOptions]="{standalone:true}" matInput placeholder="Month">
+        </mat-form-field>
+        /
+    </div> 
+    <div fxFlex="50%">
+        <mat-form-field class="wmgmt">  
+                <input type="text" [(ngModel)]="newWaterFood.day" [ngModelOptions]="{standalone:true}" matInput placeholder="Day">
+        </mat-form-field>
+    </div> 
+</div> 
+
+<div>
+  <mat-form-field>
+  <input type="text" [(ngModel)]="newWaterFood.pool" [ngModelOptions]="{standalone:true}" matInput placeholder="Pool">
+  </mat-form-field>
+</div>
+
+<div fxLayout="row" fxLayoutGap="0.5%">
+        <div fxFlex="75%">
+
+        </div>
+        <div class="previous" fxFlex="25%">
+                Previous Entry
+        </div> 
+</div>
+
+
+<div fxLayout="row" fxLayoutGap="0.5%">
+    <div fxFlex="75%">
+        <mat-form-field class="wmgmt">
+            <input type="text" [(ngModel)]="newWaterFood.percent_of_full_pool"  [ngModelOptions]="{standalone:true}" matInput placeholder="Percent of Full Pool">
+        </mat-form-field>
+    </div> 
+    <div fxFlex="25%">
+            <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+                <input type="text" [(ngModel)]="this.previous_records.percent_of_full_pool" [disabled]='true' matInput placeholder="">
+            </mat-form-field>
+        </div> 
+</div>
+
+
+<h3>Percent of Pool Flooded at Following Depths</h3>
+
+<div fxLayout="row" fxLayoutGap="0.5%">
+        <div fxFlex="75%">
+
+        </div>
+        <div class="previous" fxFlex="25%">
+                Previous Entry
+        </div> 
+</div>
+
+<div fxLayout="row" fxLayoutGap="0.7%">
+    <div fxFlex="75%"> 
+        <mat-form-field class="wmgmt">
+            <input type="text" [(ngModel)]="newWaterFood.less_than_six"  [ngModelOptions]="{standalone:true}" matInput placeholder="Less than 6 inches">
+        </mat-form-field>
+    </div> 
+    <div fxFlex="25%">
+        <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+            <input type="text" [(ngModel)]="this.previous_records.less_than_six" [disabled]='true' matInput placeholder="">
+        </mat-form-field>
+    </div> 
+</div>
+
+<div fxLayout="row" fxLayoutGap="0.5%">
+    <div fxFlex="75%"> 
+        <mat-form-field class="wmgmt">
+            <input type="text" [(ngModel)]="newWaterFood.seven_to_twelve"  [ngModelOptions]="{standalone:true}" matInput placeholder="7-12 inches">
+        </mat-form-field>
+    </div> 
+    <div fxFlex="25%">
+        <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+            <input type="text" [(ngModel)]="this.previous_records.seven_to_twelve" [disabled]='true' matInput placeholder="">
+        </mat-form-field>
+    </div> 
+</div>
+
+<div fxLayout="row" fxLayoutGap="0.5%">
+    <div fxFlex="75%"> 
+        <mat-form-field class="wmgmt">
+            <input type="text" [(ngModel)]="newWaterFood.thirteen_or_more"  [ngModelOptions]="{standalone:true}" matInput placeholder="13 or more inches">
+        </mat-form-field>
+    </div> 
+    <div fxFlex="25%">
+        <mat-form-field class="wmgmt" *ngIf="this.previous_records" > 
+            <input type="text" [(ngModel)]="this.previous_records.thirteen_or_more" [disabled]='true' matInput placeholder="">
+        </mat-form-field>
+    </div> 
+</div>
+</mat-card>
+</mat-grid-tile>
+
+
+
+<mat-grid-tile>
+<mat-card>
+<h3>Percentage of Habitat Flooded</h3>
+
+    <div fxLayout="row" fxLayoutGap="0.5%">
+        <div fxFlex="75%">
+
+        </div>
+        <div class="previous" fxFlex="25%">
+                Previous Entry
+        </div> 
+    </div>
+
+     <div fxLayout="row" fxLayoutGap="0.5%">
+        <div fxFlex="75%"> 
+            <mat-form-field class="wmgmt">
+                <input type="text" [(ngModel)]="newWaterFood.habitat_standing"  [ngModelOptions]="{standalone:true}" matInput placeholder="Moist Soil Standing">
+            </mat-form-field>
+        </div> 
+        <div fxFlex="25%">
+            <mat-form-field class="wmgmt" *ngIf="this.previous_records" > 
+                <input type="text" [(ngModel)]="this.previous_records.habitat_standing" [disabled]='true'  matInput placeholder="">
+            </mat-form-field>
+        </div> 
+    </div>
+
+    
+    <div fxLayout="row" fxLayoutGap="0.5%">
+        <div fxFlex="75%"> 
+                <mat-form-field class="wmgmt">
+                    <input type="text" [(ngModel)]="newWaterFood.habitat_mowed"  [ngModelOptions]="{standalone:true}" matInput placeholder="Moist Soil Mowed">
+                  </mat-form-field>   
+        </div> 
+        <div fxFlex="25%">
+            <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+                <input type="text" [(ngModel)]="this.previous_records.habitat_mowed" [disabled]='true' matInput placeholder="">
+            </mat-form-field>
+        </div> 
+    </div>
+    
+    <div fxLayout="row" fxLayoutGap="0.5%">
+        <div fxFlex="75%"> 
+                <mat-form-field class="wmgmt">
+                    <input type="text"  [(ngModel)]="newWaterFood.habitat_disced"  [ngModelOptions]="{standalone:true}" matInput placeholder="Moist Soil Disced">
+                  </mat-form-field>   
+        </div> 
+        <div fxFlex="25%">
+            <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+    
+                <input type="text" [(ngModel)]="this.previous_records.habitat_disced" [disabled]='true' matInput placeholder="">
+            </mat-form-field>
+        </div> 
+    </div>
+    
+    <div fxLayout="row" fxLayoutGap="0.5%">
+            <div fxFlex="75%"> 
+                <mat-form-field class="wmgmt">
+                    <input type="text" [(ngModel)]="newWaterFood.habitat_unharv_corn"  [ngModelOptions]="{standalone:true}" matInput placeholder="Unharvested Corn">
+                </mat-form-field>
+            </div> 
+            <div fxFlex="25%">
+                <mat-form-field class="wmgmt" *ngIf="this.previous_records" > 
+                    <input type="text" [(ngModel)]="this.previous_records.habitat_unharv_corn" [disabled]='true'  matInput placeholder="">
+                </mat-form-field>
+            </div> 
+    </div>
+        
+        <div fxLayout="row" fxLayoutGap="0.5%">
+            <div fxFlex="75%"> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="newWaterFood.habitat_harv_corn"  [ngModelOptions]="{standalone:true}" matInput placeholder="Harvested Corn">
+                      </mat-form-field>   
+            </div> 
+            <div fxFlex="25%">
+                <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+                    <input type="text" [(ngModel)]="this.previous_records.habitat_harv_corn" [disabled]='true' matInput placeholder="">
+                </mat-form-field>
+            </div> 
+        </div>
+        
+        <div fxLayout="row" fxLayoutGap="0.5%">
+            <div fxFlex="75%"> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text"  [(ngModel)]="newWaterFood.habitat_unharv_milo"  [ngModelOptions]="{standalone:true}" matInput placeholder="Unharvested Milo">
+                      </mat-form-field>   
+            </div> 
+            <div fxFlex="25%">
+                <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+        
+                    <input type="text" [(ngModel)]="this.previous_records.habitat_unharv_milo" [disabled]='true' matInput placeholder="">
+                </mat-form-field>
+            </div> 
+        </div>
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="75%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text"  [(ngModel)]="newWaterFood.habitat_harv_milo"  [ngModelOptions]="{standalone:true}" matInput placeholder="Harvested Milo">
+                          </mat-form-field>   
+                </div> 
+                <div fxFlex="25%">
+                    <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+            
+                        <input type="text" [(ngModel)]="this.previous_records.habitat_harv_milo" [disabled]='true' matInput placeholder="">
+                    </mat-form-field>
+                </div> 
+            </div>
+            
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="75%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="newWaterFood.habitat_unharv_beans"  [ngModelOptions]="{standalone:true}" matInput placeholder="Unharvested Beans">
+                        </mat-form-field>
+                    </div> 
+                    <div fxFlex="25%">
+                        <mat-form-field class="wmgmt" *ngIf="this.previous_records" > 
+                            <input type="text" [(ngModel)]="this.previous_records.habitat_unharv_beans" [disabled]='true'  matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="75%"> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="newWaterFood.habitat_harv_beans"  [ngModelOptions]="{standalone:true}" matInput placeholder="Harvested Beans">
+                    </mat-form-field>
+                </div> 
+                <div fxFlex="25%">
+                    <mat-form-field class="wmgmt" *ngIf="this.previous_records" > 
+                        <input type="text" [(ngModel)]="this.previous_records.habitat_harv_beans" [disabled]='true'  matInput placeholder="">
+                    </mat-form-field>
+                </div> 
+        </div>
+                
+                <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="75%"> 
+                            <mat-form-field class="wmgmt">
+                                <input type="text" [(ngModel)]="newWaterFood.habitat_browse"  [ngModelOptions]="{standalone:true}" matInput placeholder="Green Browse">
+                              </mat-form-field>   
+                    </div> 
+                    <div fxFlex="25%">
+                        <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+                            <input type="text" [(ngModel)]="this.previous_records.habitat_browse" [disabled]='true' matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+                </div> 
+                <button mat-raised-button color="primary" (click)="openBottomSheet()">Moist Soil Seed Calculator</button>
+    </mat-card>  
+</mat-grid-tile>
+ 
+<mat-grid-tile>
+        <mat-card>
+        <h3>Percentage of Ice on Flooded Habitat</h3>
+
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="75%">
+        
+                </div>
+                <div class="previous" fxFlex="25%">
+                        Previous Entry
+                </div> 
+            </div>
+        
+             <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="75%"> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="newWaterFood.ice_standing"  [ngModelOptions]="{standalone:true}" matInput placeholder="Moist Soil Standing">
+                    </mat-form-field>
+                </div> 
+                <div fxFlex="25%">
+                    <mat-form-field class="wmgmt" *ngIf="this.previous_records" > 
+                        <input type="text" [(ngModel)]="this.previous_records.ice_standing" [disabled]='true'  matInput placeholder="">
+                    </mat-form-field>
+                </div> 
+            </div>
+        
+            
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="75%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="newWaterFood.ice_mowed"  [ngModelOptions]="{standalone:true}" matInput placeholder="Moist Soil Mowed">
+                          </mat-form-field>   
+                </div> 
+                <div fxFlex="25%">
+                    <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+                        <input type="text" [(ngModel)]="this.previous_records.ice_mowed" [disabled]='true' matInput placeholder="">
+                    </mat-form-field>
+                </div> 
+            </div>
+            
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="75%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text"  [(ngModel)]="newWaterFood.ice_disced"  [ngModelOptions]="{standalone:true}" matInput placeholder="Moist Soil Disced">
+                          </mat-form-field>   
+                </div> 
+                <div fxFlex="25%">
+                    <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+            
+                        <input type="text" [(ngModel)]="this.previous_records.ice_disced" [disabled]='true' matInput placeholder="">
+                    </mat-form-field>
+                </div> 
+            </div>
+            
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="75%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="newWaterFood.ice_unharv_corn"  [ngModelOptions]="{standalone:true}" matInput placeholder="Unharvested Corn">
+                        </mat-form-field>
+                    </div> 
+                    <div fxFlex="25%">
+                        <mat-form-field class="wmgmt" *ngIf="this.previous_records" > 
+                            <input type="text" [(ngModel)]="this.previous_records.ice_unharv_corn" [disabled]='true'  matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+            </div>
+                
+                <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="75%"> 
+                            <mat-form-field class="wmgmt">
+                                <input type="text" [(ngModel)]="newWaterFood.ice_harv_corn"  [ngModelOptions]="{standalone:true}" matInput placeholder="Harvested Corn">
+                              </mat-form-field>   
+                    </div> 
+                    <div fxFlex="25%">
+                        <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+                            <input type="text" [(ngModel)]="this.previous_records.ice_harv_corn" [disabled]='true' matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+                </div>
+                
+                <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="75%"> 
+                            <mat-form-field class="wmgmt">
+                                <input type="text"  [(ngModel)]="newWaterFood.ice_unharv_milo"  [ngModelOptions]="{standalone:true}" matInput placeholder="Unharvested Milo">
+                              </mat-form-field>   
+                    </div> 
+                    <div fxFlex="25%">
+                        <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+                
+                            <input type="text" [(ngModel)]="this.previous_records.ice_unharv_milo" [disabled]='true' matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+                </div>
+                <div fxLayout="row" fxLayoutGap="0.5%">
+                        <div fxFlex="75%"> 
+                                <mat-form-field class="wmgmt">
+                                    <input type="text"  [(ngModel)]="newWaterFood.ice_harv_milo"  [ngModelOptions]="{standalone:true}" matInput placeholder="Harvested Milo">
+                                  </mat-form-field>   
+                        </div> 
+                        <div fxFlex="25%">
+                            <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+                    
+                                <input type="text" [(ngModel)]="this.previous_records.ice_harv_milo" [disabled]='true' matInput placeholder="">
+                            </mat-form-field>
+                        </div> 
+                    </div>
+                    
+                    <div fxLayout="row" fxLayoutGap="0.5%">
+                            <div fxFlex="75%"> 
+                                <mat-form-field class="wmgmt">
+                                    <input type="text" [(ngModel)]="newWaterFood.ice_unharv_beans"  [ngModelOptions]="{standalone:true}" matInput placeholder="Unharvested Benas">
+                                </mat-form-field>
+                            </div> 
+                            <div fxFlex="25%">
+                                <mat-form-field class="wmgmt" *ngIf="this.previous_records" > 
+                                    <input type="text" [(ngModel)]="this.previous_records.ice_unharv_beans" [disabled]='true'  matInput placeholder="">
+                                </mat-form-field>
+                            </div> 
+                    </div>
+
+                    <div fxLayout="row" fxLayoutGap="0.5%">
+                        <div fxFlex="75%"> 
+                            <mat-form-field class="wmgmt">
+                                <input type="text" [(ngModel)]="newWaterFood.ice_harv_beans"  [ngModelOptions]="{standalone:true}" matInput placeholder="Harvested Benas">
+                            </mat-form-field>
+                        </div> 
+                        <div fxFlex="25%">
+                            <mat-form-field class="wmgmt" *ngIf="this.previous_records" > 
+                                <input type="text" [(ngModel)]="this.previous_records.ice_unharv_beans" [disabled]='true'  matInput placeholder="">
+                            </mat-form-field>
+                        </div> 
+                </div>
+                        
+                        <div fxLayout="row" fxLayoutGap="0.5%">
+                            <div fxFlex="75%"> 
+                                    <mat-form-field class="wmgmt">
+                                        <input type="text" [(ngModel)]="newWaterFood.ice_browse"  [ngModelOptions]="{standalone:true}" matInput placeholder="Green Browse">
+                                      </mat-form-field>   
+                            </div> 
+                            <div fxFlex="25%">
+                                <mat-form-field class="wmgmt" *ngIf="this.previous_records"> 
+                                    <input type="text" [(ngModel)]="this.previous_records.ice_browse" [disabled]='true' matInput placeholder="">
+                                </mat-form-field>
+                            </div> 
+                        </div> 
+            </mat-card>  
+        </mat-grid-tile>
+        <mat-grid-tile>
+                <mat-card>
+                    <div fxLayout="column" fxLayoutGap="0.5%">
+                            <div> 
+                                <mat-form-field class="notes">
+                                <textarea [(ngModel)]="newWaterFood.notes"  [ngModelOptions]="{standalone:true}" matInput placeholder="Notes" rows="5" cols="40"></textarea>
+                              </mat-form-field>
+                            </div> 
+                        </div>
+            
+                        <div fxLayout="column" fxLayoutGap="0.5%">
+                                <div> 
+                                    <mat-form-field class="notes" *ngIf="this.previous_records">
+                                        <textarea [(ngModel)]="this.previous_records.notes" [disabled]='true' matInput placeholder="Notes from Last Entry" rows=5></textarea>
+                                  </mat-form-field>
+                                </div> 
+                        </div>
+                      
+                        <div fxLayout="column" fxLayoutGap="0.5%">
+                              <div> 
+                                  <mat-form-field class="notes"> 
+                                  <textarea [(ngModel)]="newWaterFood.response"  [ngModelOptions]="{standalone:true}" matInput placeholder="Management Actions for Upcoming Week" rows=5></textarea>
+                                </mat-form-field>
+                              </div> 
+                          </div>
+                          <div fxLayout="column" fxLayoutGap="0.5%">
+                            <div> 
+                                <mat-form-field class="notes" *ngIf="this.previous_records"> 
+                                    <textarea [(ngModel)]="this.previous_records.response" [disabled]='true' matInput placeholder="Management Actions Recorded Last Entry" rows=5></textarea>
+                                </mat-form-field>
+                            </div> 
+                        </div>
+                        <div fxLayout="column" fxLayoutGap="0.5%">
+                            <div> 
+                                <mat-form-field class="notes">
+                                <textarea [(ngModel)]="newWaterFood.response"  [ngModelOptions]="{standalone:true}" matInput placeholder="Response to Last Management Action" rows=5 cols=40></textarea>
+                              </mat-form-field>
+                            </div> 
+                        </div>
+                        <div fxLayout="column" fxLayoutGap="0.5%">
+                          <div> 
+                              <mat-form-field class="notes" *ngIf="this.previous_records"> 
+                                  <input type="text" [(ngModel)]="this.previous_records.response" [disabled]='true' matInput placeholder="Last Entry for Response to Last Management Action" rows=10 cols="40">
+                              </mat-form-field>
+                          </div> 
+                      </div>
+                          <button mat-raised-button color="primary" (click)="addWaterManagement()">Add to Local Database</button>
+                          <button mat-raised-button color="primary" (click)="clearNewWaterManagement()">Clear Fields</button>
+                    </mat-card>
+            </mat-grid-tile>       
+</mat-grid-list>

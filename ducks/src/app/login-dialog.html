@@ -1,0 +1,34 @@
+<!-- <h1 mat-dialog-title>Important!</h1>
+<div mat-dialog-content>
+  <p *ngIf="this.globals.role==='offline'">{{this.offline_message}}</p>
+  <p *ngIf="this.globals.role==='online'">{{this.online_message}}</p>
+</div>-->
+
+<mat-card class="example-card">
+        <mat-card-header>
+          <mat-card-title>Login</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p> (use username:admin and password:admin)</p>
+          <form class="example-form">
+            <table class="example-full-width" cellspacing="0">
+              <tr>
+                <td>
+                  <mat-form-field class="example-full-width">
+                  <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
+                  </mat-form-field>
+                </td>
+              </tr>
+              <tr>
+              <td><mat-form-field class="example-full-width">
+                <input matInput placeholder="Password" [(ngModel)]="password"type="password" name="password" required>
+              </mat-form-field></td>
+            </tr></table>
+          </form>
+          <!-- <mat-spinner [style.display]="showSpinner ? 'block' : 'none'"></mat-spinner> -->
+        </mat-card-content>
+
+</mat-card>
+
+
+<button mat-raised-button (click)="login()" color="primary">Login</button>
