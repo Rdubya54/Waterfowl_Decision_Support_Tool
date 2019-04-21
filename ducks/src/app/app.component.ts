@@ -85,8 +85,8 @@ export class AppComponent {
 
 
 @Component({
-  selector: 'dialog-overview-example-dialog',
-  templateUrl: 'dialog-overview-example-dialog.html',
+  selector: 'connection-status-popup',
+  templateUrl: 'connection-status-popup.html',
 })
 export class DialogOverviewExampleDialog {
 

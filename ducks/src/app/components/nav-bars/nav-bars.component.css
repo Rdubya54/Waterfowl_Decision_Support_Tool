@@ -6,7 +6,18 @@
     bottom: 0;
     left: 0;
     right: 0;
+    
   }
+
+  .mat-toolbar-row, .mat-toolbar-single-row {
+    display: flex;
+    box-sizing: border-box;
+    /* padding: 0 16px; */
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+}
   
   .example-is-mobile .example-toolbar {
     position: fixed;
@@ -14,15 +25,17 @@
     z-index: 2;
   }
   
-  h1.example-app-name {
-    margin-left: 8px;
-  }
-  
-  .example-sidenav-container {
-    /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
+
+ mat-sidenav-container{
+  margin-top: 0px !important;
+}
+
+
+.example-sidenav-container {
+    /*When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
        causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
-    flex: 1;
-  }
+     flex: 1; 
+}
   
   .example-is-mobile .example-sidenav-container {
     /* When the sidenav is fixed, don't constrain the height of the sidenav container. This allows the
@@ -44,6 +57,5 @@
     .example-app-name {font-size: 20px;}
   }
 
-  
 
 

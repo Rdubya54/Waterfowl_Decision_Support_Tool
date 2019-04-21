@@ -32,11 +32,13 @@ import { DataReviewComponent } from './components/data-review/data-review.compon
 import { NavBarsComponent } from './components/nav-bars/nav-bars.component';
 import { WeatherComponent } from './components/weather/weather.component';
 import { LocalWaterManagementService } from 'src/app/service/watermanagement-local.service';
-import { BiweeklyWaterFoodComponent, BottomSheetOverviewExampleSheet} from './components/biweekly-water-food/biweekly-water-food.component';
-import { FoodAvailComponent } from './components/food-avail/food-avail.component';
+
 import { PumpManagementComponent } from './components/pump-management/pump-management.component';
 import { PumpTableComponent } from './components/pump-table/pump-table.component';
 import { MapServiceexService } from './service/map-serviceex.service';
+
+import { BiweeklyWaterFoodComponent} from './components/biweekly-water-food/biweekly-water-food.component';
+import { FoodAvailComponent, BottomSheetOverviewExampleSheet} from './components/food-avail/food-avail.component';
 
 import {DialogOverviewExampleDialog} from 'src/app/app.component';
 import {LoginDialog} from 'src/app/app.component';
@@ -71,7 +73,7 @@ firebase.initializeApp(environment.firebase);
     FlexLayoutModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: true }),
     ChartsModule,
-    MatExpansionModule
+    MatExpansionModule,
   ],
   entryComponents: [BiweeklyWaterFoodComponent, BottomSheetOverviewExampleSheet,DialogOverviewExampleDialog,LoginDialog],
   providers: [Globals,

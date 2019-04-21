@@ -1,0 +1,51 @@
+.master {
+    min-width: 100%;
+    overflow: auto;
+  }
+  
+.buttons_div{
+    align-items: center;
+    justify-content: center;
+}  
+
+mat-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+mat-header-cell {
+display:flex;
+justify-content:center;
+}
+
+.smallWidthClass{
+    flex: 0 0 16%;
+    font-size:11px;
+ }
+
+.textgroup{
+    font-size:100%;
+}
+
+ 
+button {
+    min-width: 1%;
+    font-size: 7px ;
+    justify-content: left;
+} 
+
+mat-button-toggle{
+    flex: 1 1 100%;
+    box-sizing: border-box;
+    align-items: center;
+    flex-direction: row;
+    display: flex;
+}
+
+.mat-row:nth-child(even){
+    background-color:whitesmoke;
+    }
+
+.mat-row:nth-child(odd){
+    background-color:lightgray;
+    }
