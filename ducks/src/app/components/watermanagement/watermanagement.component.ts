@@ -95,49 +95,33 @@ export class WatermanagementComponent implements OnInit {
       });
   } 
 
-  make_elevation_chart(){
-
-    console.log("in here")
-    this.dates=[this.second_previous_records.date,this.previous_records.date,this.newWaterManagement.date]
-    this.elevation_data=[this.second_previous_records.elevation,this.previous_records.elevation,this.newWaterManagement.elevation]
-    this.Graph_Title="Water Elevation";
-    
-    this.chart = new Chart('canvas_elevation', {
-      type: 'line',
-      data: {
-        labels: this.dates,
-        datasets: [
-          {
-            data: this.elevation_data,
-            borderColor: '#3cba9f',
-            fill: false
-          },
-        ]
-      },
-      options: {
-        legend: {
-          display: false
-        },
-        scales: {
-          xAxes: [{
-            display: true
-          }],
-          yAxes: [{
-            display: true
-          }]
-        }
-      }
-    })
-
-    return true;
-  }
-
   makeChart(){
-    this.dates=[this.second_previous_records.date,this.previous_records.date,"Current Entry"]
-    this.elevation_data=[this.second_previous_records.elevation,this.previous_records.elevation,this.newWaterManagement.elevation]
-    this.gate_level_data=[this.second_previous_records.gate_level,this.previous_records.gate_level,this.newWaterManagement.gate_level]
-    this.ducks_num_data=[this.second_previous_records.duck_numbers,this.previous_records.duck_numbers,this.newWaterManagement.duck_numbers]
-    this.geese_num_data=[this.second_previous_records.goose_numbers,this.previous_records.goose_numbers,this.newWaterManagement.goose_numbers]
+    //check what data you have before you build chart 
+    if(this.second_previous_records && this.previous_records){
+      console.log("im in here")
+      this.dates=[this.second_previous_records.date,this.previous_records.date,"Current Entry"];
+      this.elevation_data=[this.second_previous_records.elevation,this.previous_records.elevation,this.newWaterManagement.elevation];
+      this.gate_level_data=[this.second_previous_records.gate_level,this.previous_records.gate_level,this.newWaterManagement.gate_level];
+      this.ducks_num_data=[this.second_previous_records.duck_numbers,this.previous_records.duck_numbers,this.newWaterManagement.duck_numbers];
+      this.geese_num_data=[this.second_previous_records.goose_numbers,this.previous_records.goose_numbers,this.newWaterManagement.goose_numbers];
+
+    }
+
+    else if (this.previous_records){
+      this.dates=[this.previous_records.date,"Current Entry"]
+      this.elevation_data=[this.previous_records.elevation,this.newWaterManagement.elevation];
+      this.gate_level_data=[this.previous_records.gate_level,this.newWaterManagement.gate_level];
+      this.ducks_num_data=[this.previous_records.duck_numbers,this.newWaterManagement.duck_numbers];
+      this.geese_num_data=[this.previous_records.goose_numbers,this.newWaterManagement.goose_numbers];
+    }
+
+    else{
+      this.dates=["Current Entry"];
+      this.elevation_data=[this.newWaterManagement.elevation];
+      this.gate_level_data=[this.newWaterManagement.gate_level];
+      this.ducks_num_data=[this.newWaterManagement.duck_numbers];
+      this.geese_num_data=[this.newWaterManagement.goose_numbers];
+    }
 
     this.Graph_Title="Water Elevation";
     
@@ -236,13 +220,33 @@ export class WatermanagementComponent implements OnInit {
   }
 
   updateChart(chart_name){
-    this.dates=[this.second_previous_records.date,this.previous_records.date,"Current Entry"]
-    this.elevation_data=[this.second_previous_records.elevation,this.previous_records.elevation,this.newWaterManagement.elevation]
-    this.gate_level_data=[this.second_previous_records.gate_level,this.previous_records.gate_level,this.newWaterManagement.gate_level]
-    this.ducks_num_data=[this.second_previous_records.duck_numbers,this.previous_records.duck_numbers,this.newWaterManagement.duck_numbers]
-    this.geese_num_data=[this.second_previous_records.goose_numbers,this.previous_records.goose_numbers,this.newWaterManagement.goose_numbers]
 
+    //check what data you have before you build chart 
+    if(this.second_previous_records && this.previous_records){
+      console.log("im in here")
+      this.dates=[this.second_previous_records.date,this.previous_records.date,"Current Entry"];
+      this.elevation_data=[this.second_previous_records.elevation,this.previous_records.elevation,this.newWaterManagement.elevation];
+      this.gate_level_data=[this.second_previous_records.gate_level,this.previous_records.gate_level,this.newWaterManagement.gate_level];
+      this.ducks_num_data=[this.second_previous_records.duck_numbers,this.previous_records.duck_numbers,this.newWaterManagement.duck_numbers];
+      this.geese_num_data=[this.second_previous_records.goose_numbers,this.previous_records.goose_numbers,this.newWaterManagement.goose_numbers];
 
+    }
+
+    else if (this.previous_records){
+      this.dates=[this.previous_records.date,"Current Entry"]
+      this.elevation_data=[this.previous_records.elevation,this.newWaterManagement.elevation];
+      this.gate_level_data=[this.previous_records.gate_level,this.newWaterManagement.gate_level];
+      this.ducks_num_data=[this.previous_records.duck_numbers,this.newWaterManagement.duck_numbers];
+      this.geese_num_data=[this.previous_records.goose_numbers,this.newWaterManagement.goose_numbers];
+    }
+
+    else{
+      this.dates=["Current Entry"];
+      this.elevation_data=[this.newWaterManagement.elevation];
+      this.gate_level_data=[this.newWaterManagement.gate_level];
+      this.ducks_num_data=[this.newWaterManagement.duck_numbers];
+      this.geese_num_data=[this.newWaterManagement.goose_numbers];
+    }
 
     if (chart_name=="elevation"){
       var data_for_Chart=this.elevation_data;
@@ -323,113 +327,6 @@ export class WatermanagementComponent implements OnInit {
     })    
   }
   }
-
-/*   makeChart(chart_name){
-
-    console.log("make_ahrt")
-
-    if (!this.second_previous_records){
-        this.second_previous_records=[]
-        console.log("we did it")
-    }
-
-    this.dates=[this.second_previous_records.date,this.previous_records.date,this.newWaterManagement.date]
-    this.elevation_data=[this.second_previous_records.elevation,this.previous_records.elevation,this.newWaterManagement.elevation]
-    this.gate_level_data=[this.second_previous_records.gate_level,this.previous_records.gate_level,this.newWaterManagement.gate_level]
-    this.ducks_num_data=[this.second_previous_records.duck_numbers,this.previous_records.duck_numbers,this.newWaterManagement.duck_numbers]
-    this.geese_num_data=[this.second_previous_records.goose_numbers,this.previous_records.goose_numbers,this.newWaterManagement.goose_numbers]
-
-    var data_for_Chart=[];
-
-    if (chart_name=="elevation"){
-      console.log("in elevation")
-      data_for_Chart=this.elevation_data;
-      this.Graph_Title="Water Elevation";
-    }
-
-    else if (chart_name=="gate_level"){
-      data_for_Chart=this.gate_level_data;
-      this.Graph_Title="Gate Level";
-    }
-
-    else if (chart_name=="bird_nums"){
-      data_for_Chart=this.geese_num_data;
-      this.Graph_Title="Number of Ducks and Geese";
-    }
-    
-    if (chart_name=="elevation"||chart_name=="gate_level"){
-    console.log("data for chart it "+data_for_Chart)
-    this.chart = new Chart('canvas', {
-      type: 'line',
-      data: {
-        labels: this.dates,
-        datasets: [
-          {
-            data: data_for_Chart,
-            borderColor: '#3cba9f',
-            fill: false
-          },
-        ]
-      },
-      options: {
-        legend: {
-          display: false
-        },
-        scales: {
-          xAxes: [{
-            display: true
-          }],
-          yAxes: [{
-            display: true
-          }]
-        }
-      }
-    })
-
-    this.chart_loaded=true;
-    console.log("chart is "+this.chart)
-    console.log("chart loaded is "+this.chart_loaded)
-    return "done"; 
-  }
-
-  else{
-    this.chart = new Chart('canvas', {
-      type: 'line',
-      data: {
-        labels: this.dates,
-        datasets: [
-          {
-            label:"Geese",
-            data: this.geese_num_data,
-            borderColor: 'red',
-            fill: false
-          },
-          {
-            label:"Ducks",
-            data: this.ducks_num_data,
-            borderColor: '#3cba9f',
-            fill: false
-          },
-        ]
-      },
-      options: {
-        legend: {
-          display: true
-        },
-        scales: {
-          xAxes: [{
-            display: true
-          }],
-          yAxes: [{
-            display: true
-          }]
-        }
-      }
-    })
-    return "done";     
-  } 
-
-}*/
 
 	toggleRightSidenav(chart_name) {
     this.toggleActive = !this.toggleActive;

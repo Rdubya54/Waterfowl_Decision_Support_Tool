@@ -15,68 +15,68 @@
     <ng-container matColumnDef="Percent_of_Pool">
       <mat-header-cell *matHeaderCellDef> Percent of Pool </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.Percent_of_Pool}} 
-       <div *ngIf="element.Plant_Species==='Millet'">
-            <button mat-flat-button color="primary" (click)="calculate_percent('Millet',millet_seedhead_values,millet_plantheight_values,millet_seedheight_values,millet_seeddiameter_values)">Calculate</button>
+       <div *ngIf="element.Plant_Species==='Millet'" class="small_button">
+            <!-- <button mat-flat-button color="primary" (click)="calculate_percent('Millet',millet_seedhead_values,millet_plantheight_values,millet_seedheight_values,millet_seeddiameter_values)">Calculate</button> -->
               {{millet_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Foxtail'">
-            <button mat-flat-button color="primary" (click)="calculate_percent('Foxtail',foxtail_seedhead_values,'NULL',foxtail_seedheight_values,foxtail_seeddiameter_values)">Calculate</button>
+            <!-- <button mat-flat-button color="primary" (click)="calculate_percent('Foxtail',foxtail_seedhead_values,'NULL',foxtail_seedheight_values,foxtail_seeddiameter_values)">Calculate</button> -->
               {{foxtail_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Rice Cut Grass'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Rice Cut Grass',ricecutgrass_seedhead_values,'NULL','NULL','NULL')">Calculate</button>
+        <!-- <button mat-flat-button color="primary" (click)="calculate_percent('Rice Cut Grass',ricecutgrass_seedhead_values,'NULL','NULL','NULL')">Calculate</button> -->
           {{rice_cut_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Panic Grass'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Panic Grass',panicgrass_seedhead_values,panicgrass_plantheight_values,'NULL','NULL')">Calculate</button>
+        <!-- <button mat-flat-button color="primary" (click)="calculate_percent('Panic Grass',panicgrass_seedhead_values,panicgrass_plantheight_values,'NULL','NULL')">Calculate</button> -->
           {{panic_grass_output}}%
       </div>
       <div *ngIf="element.Plant_Species==='Crabgrass'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Crabgrass',crabgrass_seedhead_values,'NULL','NULL','NULL')">Calculate</button>
+        <!-- <button mat-flat-button color="primary" (click)="calculate_percent('Crabgrass',crabgrass_seedhead_values,'NULL','NULL','NULL')">Calculate</button> -->
           {{crabgrass_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Sprangletop'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Sprangletop',sprangletop_seedhead_values,sprangletop_plantheight_values,sprangletop_seedheight_values,sprangletop_seeddiameter_values)">Calculate</button>
+        <!-- <button mat-flat-button color="primary" (click)="calculate_percent('Sprangletop',sprangletop_seedhead_values,sprangletop_plantheight_values,sprangletop_seedheight_values,sprangletop_seeddiameter_values)">Calculate</button> -->
           {{sprangletop_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Lapathifolium'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Lapathifolium',lapathifolium_seedhead_values,'NULL','NULL','NULL')">Calculate</button>
+        <!-- <button mat-flat-button color="primary" (click)="calculate_percent('Lapathifolium',lapathifolium_seedhead_values,'NULL','NULL','NULL')">Calculate</button> -->
           {{lapathifolium_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Pennsylvanicum'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Pennsylvanicum',pennsylvanicum_seedhead_values,'NULL','NULL','NULL')">Calculate</button>
+<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Pennsylvanicum',pennsylvanicum_seedhead_values,'NULL','NULL','NULL')">Calculate</button> -->
           {{pennsylvanicum_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Coccineum'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Coccineum',coccineum_seedhead_values,'NULL','NULL','NULL')">Calculate</button>
+<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Coccineum',coccineum_seedhead_values,'NULL','NULL','NULL')">Calculate</button> -->
           {{coccineum_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Water Pepper'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Water Pepper',water_pepper_seedhead_values,water_pepper_plantheight_values,water_pepper_seedheight_values,water_pepper_seeddiameter_values)">Calculate</button>
+<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Water Pepper',water_pepper_seedhead_values,water_pepper_plantheight_values,water_pepper_seedheight_values,water_pepper_seeddiameter_values)">Calculate</button> -->
           {{water_pepper_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Pigweed'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Pigweed',pigweed_seedhead_values,'NULL','NULL','NULL')">Calculate</button>
+<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Pigweed',pigweed_seedhead_values,'NULL','NULL','NULL')">Calculate</button> -->
           {{pigweed_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Bidens'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Bidens',bidens_seedhead_values,'NULL','NULL','NULL')">Calculate</button>
+<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Bidens',bidens_seedhead_values,'NULL','NULL','NULL')">Calculate</button> -->
           {{bidens_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Other Seed'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Other Seed','NULL','NULL','NULL')">Calculate</button>
+<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Other Seed','NULL','NULL','NULL')">Calculate</button> -->
           {{other_seed_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Non Seed'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Non Seed','NULL','NULL','NULL')">Calculate</button>
+<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Non Seed','NULL','NULL','NULL')">Calculate</button> -->
           {{non_seed_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Open Water'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Open Water','NULL','NULL','NULL')">Calculate</button>
+<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Open Water','NULL','NULL','NULL')">Calculate</button> -->
           {{open_water_output}}%
       </div> 
       <div *ngIf="element.Plant_Species==='Recently Disced'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Recently Disced','NULL','NULL','NULL')">Calculate</button>
+<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Recently Disced','NULL','NULL','NULL')">Calculate</button> -->
           {{recently_disced_output}}%
       </div> 
       </mat-cell>
@@ -86,7 +86,7 @@
       <mat-header-cell *matHeaderCellDef> Number of Seed Heads </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.Number_of_Seed_Heads}} 
           <div *ngIf="element.Plant_Species==='Millet'">
-            <mat-button-toggle-group [(value)] = "millet_seedhead_values" #group="matButtonToggleGroup" vertical>
+            <mat-button-toggle-group [(value)] = "millet_seedhead_values" #group="matButtonToggleGroup" (change)="calculate_percent('Millet',$event.value,millet_plantheight_values,millet_seedheight_values,millet_seeddiameter_values)" vertical>
                     <mat-button-toggle value="1-6" aria-label="1">
                     1-6
                     </mat-button-toggle>
@@ -262,7 +262,7 @@
       <mat-header-cell *matHeaderCellDef> Plant Height </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.Plant_Height}} 
             <div *ngIf="element.Plant_Species==='Millet'">
-                    <mat-button-toggle-group [(value)] = "millet_plantheight_values" #group="matButtonToggleGroup" vertical>
+                    <mat-button-toggle-group [(value)] = "millet_plantheight_values" #group="matButtonToggleGroup" (change)="calculate_percent('Millet',millet_seedhead_values,$event.value,millet_seedheight_values,millet_seeddiameter_values)" vertical>
                             <mat-button-toggle value="0.10-0.50" aria-label="1">
                             10-50
                             </mat-button-toggle>
@@ -328,7 +328,7 @@
         <mat-header-cell *matHeaderCellDef> Seed Height </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.Seed_Height}}
                 <div *ngIf="element.Plant_Species==='Millet'">
-                        <mat-button-toggle-group [(value)] = "millet_seedheight_values" #group="matButtonToggleGroup" vertical>
+                        <mat-button-toggle-group [(value)] = "millet_seedheight_values" #group="matButtonToggleGroup" (change)="calculate_percent('Millet',millet_seedhead_values,millet_plantheight_values,$event.value,millet_seeddiameter_values)" vertical>
                                 <mat-button-toggle value="1-6" aria-label="1">
                                 1-6
                                 </mat-button-toggle>
@@ -392,7 +392,7 @@
         <mat-header-cell *matHeaderCellDef> Seed Diameter </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.Seed_Diameter}} 
                 <div *ngIf="element.Plant_Species==='Millet'">
-                        <mat-button-toggle-group [(value)] = "millet_seeddiameter_values" #group="matButtonToggleGroup" vertical>
+                        <mat-button-toggle-group [(value)] = "millet_seeddiameter_values" #group="matButtonToggleGroup" (change)="calculate_percent('Millet',millet_seedhead_values,millet_plantheight_values,millet_seedheight_values,$event.value)" vertical>
                                 <mat-button-toggle value="1-4" aria-label="1">
                                 1-4
                                 </mat-button-toggle>

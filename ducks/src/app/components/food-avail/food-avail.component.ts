@@ -227,7 +227,7 @@ export class BottomSheetOverviewExampleSheet {
 
   calculate_percent(type,seedhead,plantheight,seedheight,seeddiameter){
 
-    if (seedhead!='NULL'){
+/*     if (seedhead!='NULL'){
       seedhead=this.get_median_of_range(seedhead);
     }
     if (plantheight!='NULL'){
@@ -237,8 +237,23 @@ export class BottomSheetOverviewExampleSheet {
       seedheight=this.get_median_of_range(seedheight);
     }
     if (seeddiameter!='NULL'){
+      seedhead=this.get_median_of_range(seedhead);
+    } */
+
+    console.log(type)
+    console.log(seedhead)
+    console.log(plantheight)
+    console.log(seedheight)
+    console.log(seeddiameter)
+
+    if (seedhead && plantheight && seedheight && seeddiameter){
+      seedhead=this.get_median_of_range(seedhead);
+      plantheight=this.get_median_of_range(plantheight);
+      seedheight=this.get_median_of_range(seedheight);
       seeddiameter=this.get_median_of_range(seeddiameter);
-    }
+    
+
+
 
     var π = 3.1416; 
     var r = seeddiameter/2;
@@ -257,6 +272,7 @@ export class BottomSheetOverviewExampleSheet {
       //estimating seed production for millet/barnyard grass
       seed_prod=(plantheight*3.67855) + (0.000696 * VolE);
       //convert from pounds to grams
+      console.log("calculated")
       seed_prod=seed_prod*142.74;
       this.millet_output=seed_prod;
       this.calculate_total("upper");
@@ -389,6 +405,7 @@ export class BottomSheetOverviewExampleSheet {
       this.millet_output=0;
     }
   }
+  }
 
   get_median_of_range(value_range) {
 
@@ -480,5 +497,9 @@ export class BottomSheetOverviewExampleSheet {
     this.sedge_output+
     this.rush_output;
     }
+  }
+
+  test(){
+    console.log("hiya buddy");
   }
 }

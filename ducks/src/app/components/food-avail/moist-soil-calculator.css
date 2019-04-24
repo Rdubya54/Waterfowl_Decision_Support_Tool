@@ -4,6 +4,7 @@
   }
   
 .buttons_div{
+    display: flex;
     align-items: center;
     justify-content: center;
 }  
@@ -21,6 +22,7 @@ justify-content:center;
 .smallWidthClass{
     flex: 0 0 16%;
     font-size:11px;
+    line-height: 12px;
  }
 
 .textgroup{
@@ -28,11 +30,15 @@ justify-content:center;
 }
 
  
-button {
-    min-width: 1%;
+/* button {
+/*      min-width: 1%;
     font-size: 7px ;
     justify-content: left;
-} 
+/*     font-size: 7px ;
+    line-height: 8px !important; 
+    padding: 0px  !important; 
+    border-radius: 1px !important;  */
+  /**/
 
 mat-button-toggle{
     flex: 1 1 100%;
@@ -40,6 +46,8 @@ mat-button-toggle{
     align-items: center;
     flex-direction: row;
     display: flex;
+    line-height: 8px !important; 
+/*     width: 75%; */
 }
 
 .mat-row:nth-child(even){
