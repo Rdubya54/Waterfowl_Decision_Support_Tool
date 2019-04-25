@@ -5,6 +5,7 @@ import {MediaMatcher} from '@angular/cdk/layout';
 import {ChangeDetectorRef, OnDestroy} from '@angular/core';
 import {Globals} from 'src/app/extra/globals';
 import {MatBottomSheet, MatBottomSheetRef} from '@angular/material';
+import {AppComponent} from 'src/app/app.component';
 
 import {
   FoodAvail,
@@ -32,7 +33,7 @@ export class FoodAvailComponent implements OnInit {
   public buttonName: any = true;
   toggleActive:boolean = false;
 
-  constructor(private localService: FoodAvailLocalService,  private globals:Globals,
+  constructor(private comp:AppComponent,private localService: FoodAvailLocalService,  private globals:Globals,
     private firebase: AngularFireDatabase,private bottomSheet: MatBottomSheet) {
       this.localservice = localService;
   }
@@ -48,25 +49,6 @@ export class FoodAvailComponent implements OnInit {
     this.localservice.getWaterManagment().
     then(students => {
         this.watermanagements = students;
-
-        var listt=this.watermanagements;
-
-/*         console.log("list is "+listt)
-        for (let i = 0; i < listt.length; i++){
-          var second_to_last_entry=last_entry
-          console.log("it is "+listt[i])
-          var last_entry=JSON.parse(JSON.stringify({"date":listt[i].date,"elevation":listt[i].elevation,
-          "gate_manipulation":listt[0].gate_manipulation,"gate_level":listt[0].gate_level,"stoplog_change":listt[0].stoplog_change,
-          "stoplog_level":listt[0].stoplog_level,"duck_numbers":listt[i].duck_numbers,
-          "goose_numbers":listt[i].goose_numbers,"notes":listt[i].notes}));
-          console.log("i am "+listt[i].date)
-        }
-  
-        this.previous_records=last_entry;
-        this.second_previous_records=second_to_last_entry;
-        console.log("it is "+this.previous_records);
-        console.log("it is "+this.second_previous_records); */
-
 
       }).catch(error => {
           console.error(error);
@@ -109,7 +91,6 @@ export class FoodAvailComponent implements OnInit {
 
   addWaterManagement() {
 
-
     var status=this.globals.role;
 
     //if app is offline, write to indexdb
@@ -119,8 +100,7 @@ export class FoodAvailComponent implements OnInit {
       if (addedWaterManagements.length > 0) {
         this.watermanagements.push(addedWaterManagements[0]);
         this.clearNewWaterManagement();
-        alert('Successfully added');
-        location.reload();
+        this.comp.openDataWrittenDialog();
       }
       })
       .catch(error => {
@@ -142,6 +122,8 @@ export class FoodAvailComponent implements OnInit {
 
 
 }
+
+/////////////////////////////////////////moist soil code////////////////////////////////////////////////////////////////////
 
 export interface PeriodicElement {
   Plant_Species: string;
@@ -322,7 +304,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.lapathifolium_output=0;
+      this.lapathifolium_output=9999999;
       this.calculate_total("upper");
     }
     
@@ -330,7 +312,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.pennsylvanicum_output=0;
+      this.pennsylvanicum_output=9999999;
       this.calculate_total("upper");
     }
 
@@ -338,15 +320,16 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.coccineum_output=0;
+      this.coccineum_output=99999;
       this.calculate_total("upper");
     }
 
     else if (type==='Water Pepper'){
+      seed_prod=plantheight+seeddiameter+seedhead+seedheight;
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.water_pepper_output=0;
+      this.water_pepper_output=seed_prod;
       this.calculate_total("upper");
     }
 
@@ -354,7 +337,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.pigweed_output=0;
+      this.pigweed_output=99999;
       this.calculate_total("upper");
     }
 
@@ -362,7 +345,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.bidens_output=0;
+      this.bidens_output=99999;
       this.calculate_total("upper");
     }
 

@@ -7,7 +7,7 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { FormsModule }   from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { AppComponent, DataWrittenDialog } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { MaterialModule } from './material.module';
@@ -40,8 +40,9 @@ import { MapServiceexService } from './service/map-serviceex.service';
 import { BiweeklyWaterFoodComponent} from './components/biweekly-water-food/biweekly-water-food.component';
 import { FoodAvailComponent, BottomSheetOverviewExampleSheet} from './components/food-avail/food-avail.component';
 
-import {DialogOverviewExampleDialog} from 'src/app/app.component';
+import {ConnectionStatusDialog} from 'src/app/app.component';
 import {LoginDialog} from 'src/app/app.component';
+import { MatDialogRef } from '@angular/material';
 
 firebase.initializeApp(environment.firebase);
 
@@ -57,8 +58,9 @@ firebase.initializeApp(environment.firebase);
     PumpManagementComponent,
     PumpTableComponent,
     BottomSheetOverviewExampleSheet,
-    DialogOverviewExampleDialog,
-    LoginDialog
+    ConnectionStatusDialog,
+    LoginDialog,
+    DataWrittenDialog,
   ],
   imports: [
     BrowserModule,
@@ -75,10 +77,8 @@ firebase.initializeApp(environment.firebase);
     ChartsModule,
     MatExpansionModule,
   ],
-  entryComponents: [BiweeklyWaterFoodComponent, BottomSheetOverviewExampleSheet,DialogOverviewExampleDialog,LoginDialog],
-  providers: [Globals,
-    LocalWaterManagementService,
- WatermanagementComponent,MapServiceexService],
+  entryComponents: [BiweeklyWaterFoodComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,DataWrittenDialog],
+  providers: [Globals,LocalWaterManagementService,WatermanagementComponent,MapServiceexService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

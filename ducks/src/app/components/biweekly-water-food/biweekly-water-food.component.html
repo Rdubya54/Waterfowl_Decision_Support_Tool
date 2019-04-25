@@ -416,14 +416,14 @@
                         <div fxLayout="column" fxLayoutGap="0.5%">
                               <div> 
                                   <mat-form-field class="notes"> 
-                                  <textarea [(ngModel)]="newWaterFood.response"  [ngModelOptions]="{standalone:true}" matInput placeholder="Management Actions for Upcoming Week" rows=5></textarea>
+                                  <textarea [(ngModel)]="newWaterFood.actions"  [ngModelOptions]="{standalone:true}" matInput placeholder="Management Actions for Upcoming Week" rows=5></textarea>
                                 </mat-form-field>
                               </div> 
                           </div>
                           <div fxLayout="column" fxLayoutGap="0.5%">
                             <div> 
                                 <mat-form-field class="notes" *ngIf="this.previous_records"> 
-                                    <textarea [(ngModel)]="this.previous_records.response" [disabled]='true' matInput placeholder="Management Actions Recorded Last Entry" rows=5></textarea>
+                                    <textarea [(ngModel)]="this.previous_records.actions" [disabled]='true' matInput placeholder="Management Actions Recorded Last Entry" rows=5></textarea>
                                 </mat-form-field>
                             </div> 
                         </div>
@@ -441,7 +441,7 @@
                               </mat-form-field>
                           </div> 
                       </div>
-                          <button mat-raised-button color="primary" (click)="addWaterManagement()">Add to Local Database</button>
+                          <button mat-raised-button color="primary" (click)="addWaterManagement()">Submit</button>
                           <button mat-raised-button color="primary" (click)="clearNewWaterManagement()">Clear Fields</button>
                     </mat-card>
             </mat-grid-tile>       

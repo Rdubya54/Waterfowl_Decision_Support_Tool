@@ -8,6 +8,8 @@ import {ChangeDetectorRef, OnDestroy} from '@angular/core';
 import {ChartService} from 'src/app/service/chart.service';
 import { MatSidenav } from '@angular/material';
 import { Chart } from 'chart.js';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import {AppComponent} from 'src/app/app.component';
 
 
 import {
@@ -15,6 +17,7 @@ import {
   IWatermanagement
 } from 'src/app/model/watermanagement';
 import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/style-transforms';
+
 
 @Component({
   selector: 'app-watermanagement',
@@ -50,7 +53,7 @@ export class WatermanagementComponent implements OnInit {
   geese_num_data=[];
   Graph_Title;
 
-   constructor(private localService: LocalWaterManagementService, private cloudService: WatermanagementCloudService, private globals:Globals,
+   constructor(private comp:AppComponent, private localService: LocalWaterManagementService, private cloudService: WatermanagementCloudService, private globals:Globals,
     private firebase: AngularFireDatabase, private sidenavService:ChartService) {
       this.localservice = localService;
       this.cloudservice= cloudService;
@@ -98,7 +101,6 @@ export class WatermanagementComponent implements OnInit {
   makeChart(){
     //check what data you have before you build chart 
     if(this.second_previous_records && this.previous_records){
-      console.log("im in here")
       this.dates=[this.second_previous_records.date,this.previous_records.date,"Current Entry"];
       this.elevation_data=[this.second_previous_records.elevation,this.previous_records.elevation,this.newWaterManagement.elevation];
       this.gate_level_data=[this.second_previous_records.gate_level,this.previous_records.gate_level,this.newWaterManagement.gate_level];
@@ -221,9 +223,11 @@ export class WatermanagementComponent implements OnInit {
 
   updateChart(chart_name){
 
+    console.log("update chart"+chart_name)
+
     //check what data you have before you build chart 
     if(this.second_previous_records && this.previous_records){
-      console.log("im in here")
+      
       this.dates=[this.second_previous_records.date,this.previous_records.date,"Current Entry"];
       this.elevation_data=[this.second_previous_records.elevation,this.previous_records.elevation,this.newWaterManagement.elevation];
       this.gate_level_data=[this.second_previous_records.gate_level,this.previous_records.gate_level,this.newWaterManagement.gate_level];
@@ -245,8 +249,9 @@ export class WatermanagementComponent implements OnInit {
       this.elevation_data=[this.newWaterManagement.elevation];
       this.gate_level_data=[this.newWaterManagement.gate_level];
       this.ducks_num_data=[this.newWaterManagement.duck_numbers];
-      this.geese_num_data=[this.newWaterManagement.goose_numbers];
+      this.geese_num_data=[this.previous_records.goose_numbers,this.newWaterManagement.goose_numbers];
     }
+
 
     if (chart_name=="elevation"){
       var data_for_Chart=this.elevation_data;
@@ -292,40 +297,81 @@ export class WatermanagementComponent implements OnInit {
   }
 
   else{
-    this.chart = new Chart(chart_type, {
-      type: 'line',
-      data: {
-        labels: this.dates,
-        datasets: [
-          {
-            label:"Geese",
-            data: this.geese_num_data,
-            borderColor: 'red',
-            fill: false
-          },
-          {
-            label:"Ducks",
-            data: this.ducks_num_data,
-            borderColor: '#3cba9f',
-            fill: false
-          },
-        ]
-      },
-      options: {
-        legend: {
-          display: true
+
+    if (this.newWaterManagement.duck_numbers && this.newWaterManagement.goose_numbers){
+      this.chart = new Chart(chart_type, {
+        type: 'line',
+        data: {
+          labels: this.dates,
+          datasets: [
+            {
+              label:"Geese",
+              data: this.geese_num_data,
+              borderColor: 'red',
+              fill: false
+            },
+            {
+              label:"Ducks",
+              data: this.ducks_num_data,
+              borderColor: '#3cba9f',
+              fill: false
+            },
+          ]
         },
-        scales: {
-          xAxes: [{
+        options: {
+          legend: {
             display: true
-          }],
-          yAxes: [{
-            display: true
-          }]
+          },
+          scales: {
+            xAxes: [{
+              display: true
+            }],
+            yAxes: [{
+              display: true
+            }]
+          }
         }
-      }
-    })    
-  }
+      })    
+    }
+
+    else if (this.newWaterManagement.duck_numbers){
+      this.chart = new Chart(chart_type, {
+        type: 'line',
+        data: {
+          labels: this.dates,
+          datasets: [
+            {
+              label:"Geese",
+              data: this.geese_num_data,
+              borderColor: 'red',
+              fill: false
+            },
+            {
+              label:"Ducks",
+              data: this.ducks_num_data,
+              borderColor: '#3cba9f',
+              fill: false
+            },
+          ]
+        },
+        options: {
+          legend: {
+            display: true
+          },
+          scales: {
+            xAxes: [{
+              display: true
+            }],
+            yAxes: [{
+              display: true
+            }]
+          }
+        }
+      })       
+
+    }
+  
+    }
   }
 
 	toggleRightSidenav(chart_name) {
@@ -368,7 +414,6 @@ export class WatermanagementComponent implements OnInit {
   }
 
   addWaterManagement() {
-    alert("online stat is "+this.globals.role);
     console.log(this.newWaterManagement.duck_numbers);
 
     var status=this.globals.role;
@@ -380,8 +425,8 @@ export class WatermanagementComponent implements OnInit {
       if (addedWaterManagements.length > 0) {
         this.watermanagements.push(addedWaterManagements[0]);
         this.clearNewWaterManagement();
-        alert('Successfully added');
-        location.reload();
+        this.comp.openDataWrittenDialog();
+        
       }
       })
       .catch(error => {
@@ -405,5 +450,9 @@ export class WatermanagementComponent implements OnInit {
     this.breakpoint = (event.target.innerWidth <= 768) ? 1 : 3;
     //this.breakpoint = (event.target.innerWidth > 500) ? 1 : 3;
   }
+
+
+
+
 
 }

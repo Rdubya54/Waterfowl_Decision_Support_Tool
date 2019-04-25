@@ -4,6 +4,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import {MediaMatcher} from '@angular/cdk/layout';
 import {ChangeDetectorRef, OnDestroy} from '@angular/core';
 import {Globals} from 'src/app/extra/globals';
+import {AppComponent} from 'src/app/app.component';
 
 import {
   WaterFood,
@@ -31,7 +32,7 @@ export class BiweeklyWaterFoodComponent implements OnInit {
   public buttonName: any = true;
   toggleActive:boolean = false;
 
-  constructor(private localService: LocalWaterFood,  private globals:Globals,
+  constructor(private comp:AppComponent,private localService: LocalWaterFood,  private globals:Globals,
     private firebase: AngularFireDatabase) {
       this.localservice = localService;
   }
@@ -99,8 +100,7 @@ export class BiweeklyWaterFoodComponent implements OnInit {
       if (addedWaterManagements.length > 0) {
         this.watermanagements.push(addedWaterManagements[0]);
         this.clearNewWaterManagement();
-        alert('Successfully added');
-        location.reload();
+        this.comp.openDataWrittenDialog();
       }
       })
       .catch(error => {
