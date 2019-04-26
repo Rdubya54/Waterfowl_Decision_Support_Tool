@@ -482,7 +482,4 @@ export class BottomSheetOverviewExampleSheet {
     }
   }
 
-  test(){
-    console.log("hiya buddy");
-  }
 }

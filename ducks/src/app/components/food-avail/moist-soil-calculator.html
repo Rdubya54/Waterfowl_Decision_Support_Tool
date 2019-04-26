@@ -8,13 +8,13 @@
 <mat-table [dataSource]="upper_dataSource" class="example-container mat-elevation-z8">
 
     <ng-container matColumnDef="Plant_Species">
-      <mat-header-cell *matHeaderCellDef> Plant Species </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.Plant_Species}} </mat-cell>
+      <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'">Plant Species</mat-header-cell>
+      <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> {{element.Plant_Species}} </mat-cell>
     </ng-container>
   
     <ng-container matColumnDef="Percent_of_Pool">
-      <mat-header-cell *matHeaderCellDef> Percent of Pool </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.Percent_of_Pool}} 
+      <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'">% of Pool</mat-header-cell>
+      <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> {{element.Percent_of_Pool}} 
        <div *ngIf="element.Plant_Species==='Millet'" class="small_button">
               {{millet_output}}%
       </div> 
@@ -51,32 +51,41 @@
       <div *ngIf="element.Plant_Species==='Bidens'">
           {{bidens_output}}%
       </div> 
+
       <div *ngIf="element.Plant_Species==='Other Seed'">
-          <mat-form-field> 
-          <input type="text" matInput placeholder="{{other_seed_output}}%" (change)="calculate_percent('Other Seed',$event.value,'NULL','NULL','NULL')">
-          </mat-form-field>
-      </div> 
+            <mat-form-field style="width:19%"> 
+            <input type="text"  matInput [(ngModel)]="other_seed_output" (change)="calculate_percent('Other Seed',$event.value,'NULL','NULL','NULL')">
+            <span matSuffix>% &nbsp;</span>
+            </mat-form-field>
+      </div>
+
       <div *ngIf="element.Plant_Species==='Non Seed'">
-          <mat-form-field> 
-              <input type="text" matInput placeholder="{{non_seed_output}}%" (change)="calculate_percent('Non Seed',$event.value,'NULL','NULL','NULL')">
+          <mat-form-field style="width:19%"> 
+          <input type="text"  matInput [(ngModel)]="non_seed_output" (change)="calculate_percent('Non Seed',$event.value,'NULL','NULL','NULL')">
+          <span matSuffix>% &nbsp;</span>
           </mat-form-field>
-      </div> 
+      </div>
+
       <div *ngIf="element.Plant_Species==='Open Water'">
-          <mat-form-field> 
-              <input type="text" matInput placeholder="{{open_water_output}}%" (change)="calculate_percent('Open Water',$event.value,'NULL','NULL','NULL')">
+          <mat-form-field style="width:19%"> 
+          <input type="text"  matInput [(ngModel)]="open_water_output" (change)="calculate_percent('Open Water',$event.value,'NULL','NULL','NULL')">
+          <span matSuffix>% &nbsp;</span>
           </mat-form-field>
-      </div> 
+      </div>
+
       <div *ngIf="element.Plant_Species==='Recently Disced'">
-          <mat-form-field> 
-              <input type="text" matInput placeholder="{{recently_disced_output}}%" (change)="calculate_percent('Recently Disced',$event.value,'NULL','NULL','NULL')">
+          <mat-form-field style="width:19%"> 
+          <input type="text"  matInput [(ngModel)]="recently_disced_output" (change)="calculate_percent('Recently Disced',$event.value,'NULL','NULL','NULL')">
+          <span matSuffix>% &nbsp;</span>
           </mat-form-field>
-      </div> 
+      </div>
+
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="Number_of_Seed_Heads">
-      <mat-header-cell *matHeaderCellDef> Number of Seed Heads </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.Number_of_Seed_Heads}} 
+      <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'"># of Seed Heads</mat-header-cell>
+      <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> {{element.Number_of_Seed_Heads}} 
           <div *ngIf="element.Plant_Species==='Millet'">
             <mat-button-toggle-group [(value)] = "millet_seedhead_values" #group="matButtonToggleGroup" (change)="calculate_percent('Millet',$event.value,millet_plantheight_values,millet_seedheight_values,millet_seeddiameter_values)" vertical>
                     <mat-button-toggle value="1-6" aria-label="1">
@@ -251,8 +260,8 @@
   
 
     <ng-container matColumnDef="Plant_Height">
-      <mat-header-cell *matHeaderCellDef> Plant Height </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.Plant_Height}} 
+      <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'">Plant Height</mat-header-cell>
+      <mat-cell *matCellDef="let element"[ngClass]="'smallWidthClass'" > {{element.Plant_Height}} 
             <div *ngIf="element.Plant_Species==='Millet'">
                     <mat-button-toggle-group [(value)] = "millet_plantheight_values" #group="matButtonToggleGroup" (change)="calculate_percent('Millet',millet_seedhead_values,$event.value,millet_seedheight_values,millet_seeddiameter_values)" vertical>
                             <mat-button-toggle value="0.10-0.50" aria-label="1">
@@ -317,8 +326,8 @@
 
 
     <ng-container matColumnDef="Seed_Height">
-        <mat-header-cell *matHeaderCellDef> Seed Height </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.Seed_Height}}
+        <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'">Seed Height</mat-header-cell>
+        <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> {{element.Seed_Height}}
                 <div *ngIf="element.Plant_Species==='Millet'">
                         <mat-button-toggle-group [(value)] = "millet_seedheight_values" #group="matButtonToggleGroup" (change)="calculate_percent('Millet',millet_seedhead_values,millet_plantheight_values,$event.value,millet_seeddiameter_values)" vertical>
                                 <mat-button-toggle value="1-6" aria-label="1">
@@ -381,8 +390,8 @@
     </ng-container>
 
     <ng-container matColumnDef="Seed_Diameter">
-        <mat-header-cell *matHeaderCellDef> Seed Diameter </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.Seed_Diameter}} 
+        <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'">Seed Diameter</mat-header-cell>
+        <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> {{element.Seed_Diameter}} 
                 <div *ngIf="element.Plant_Species==='Millet'">
                         <mat-button-toggle-group [(value)] = "millet_seeddiameter_values" #group="matButtonToggleGroup" (change)="calculate_percent('Millet',millet_seedhead_values,millet_plantheight_values,millet_seedheight_values,$event.value)" vertical>
                                 <mat-button-toggle value="1-4" aria-label="1">
