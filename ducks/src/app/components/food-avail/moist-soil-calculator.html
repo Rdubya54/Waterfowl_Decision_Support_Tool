@@ -9,7 +9,12 @@
 
     <ng-container matColumnDef="Plant_Species">
       <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'">Plant Species</mat-header-cell>
-      <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> {{element.Plant_Species}} </mat-cell>
+      <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> <div>{{element.Plant_Species}}</div> 
+<!--       <div *ngIf="element.Plant_Species==='Millet'" class="small_button">
+          {{millet_output}}%
+      </div>  -->
+
+    </mat-cell>
     </ng-container>
   
     <ng-container matColumnDef="Percent_of_Pool">

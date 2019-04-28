@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MapServiceexService } from './map-serviceex.service';
+import { GaugedataService } from './gaugedata.service';
 
-describe('MapServiceexService', () => {
+describe('GaugedataService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: MapServiceexService = TestBed.get(MapServiceexService);
+    const service: GaugedataService = TestBed.get(GaugedataService);
     expect(service).toBeTruthy();
   });
 });

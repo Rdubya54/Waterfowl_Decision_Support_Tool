@@ -38,7 +38,7 @@ mat-button-toggle{
     flex-direction: row;
     display: flex;
     line-height: 8px !important; 
-/*     width: 75%; */
+/*      width: 75%;  */
 }
 
 .mat-row:nth-child(even){

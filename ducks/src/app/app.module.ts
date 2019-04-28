@@ -35,7 +35,6 @@ import { LocalWaterManagementService } from 'src/app/service/watermanagement-loc
 
 import { PumpManagementComponent } from './components/pump-management/pump-management.component';
 import { PumpTableComponent } from './components/pump-table/pump-table.component';
-import { MapServiceexService } from './service/map-serviceex.service';
 
 import { BiweeklyWaterFoodComponent} from './components/biweekly-water-food/biweekly-water-food.component';
 import { FoodAvailComponent, BottomSheetOverviewExampleSheet} from './components/food-avail/food-avail.component';
@@ -43,6 +42,7 @@ import { FoodAvailComponent, BottomSheetOverviewExampleSheet} from './components
 import {ConnectionStatusDialog} from 'src/app/app.component';
 import {LoginDialog} from 'src/app/app.component';
 import { MatDialogRef } from '@angular/material';
+import { GaugeStatsComponent } from './components/gauge-stats/gauge-stats.component';
 
 firebase.initializeApp(environment.firebase);
 
@@ -61,6 +61,7 @@ firebase.initializeApp(environment.firebase);
     ConnectionStatusDialog,
     LoginDialog,
     DataWrittenDialog,
+    GaugeStatsComponent,
   ],
   imports: [
     BrowserModule,
@@ -78,7 +79,7 @@ firebase.initializeApp(environment.firebase);
     MatExpansionModule,
   ],
   entryComponents: [BiweeklyWaterFoodComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,DataWrittenDialog],
-  providers: [Globals,LocalWaterManagementService,WatermanagementComponent,MapServiceexService],
+  providers: [Globals,LocalWaterManagementService,WatermanagementComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

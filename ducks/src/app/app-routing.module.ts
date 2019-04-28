@@ -9,6 +9,7 @@ import {BiweeklyWaterFoodComponent} from './components/biweekly-water-food/biwee
 import { FoodAvailComponent } from './components/food-avail/food-avail.component';
 import {PumpManagementComponent} from './components/pump-management/pump-management.component'
 import { PumpTableComponent } from './components/pump-table/pump-table.component';
+import {GaugeStatsComponent} from "./components/gauge-stats/gauge-stats.component";
 
 
 const routes: Routes = [
@@ -19,6 +20,7 @@ const routes: Routes = [
   {path:'fallfood',component:FoodAvailComponent},
   {path:'pumpmanagement',component:PumpManagementComponent},
   {path:'pumptable',component:PumpTableComponent},
+  {path:'gaugestats',component:GaugeStatsComponent}
 ];
 
 
