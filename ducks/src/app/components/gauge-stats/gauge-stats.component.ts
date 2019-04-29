@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Inject } from '@angular/core';
 
 import {
   Watermanagement,
@@ -14,6 +14,9 @@ import { CA } from 'src/app/model/ca.model';
 import { Observable } from 'rxjs';
 import { Query } from '@firebase/firestore-types'
 import { AngularFirestore } from '@angular/fire/firestore';
+import * as firebase from 'firebase/app';
+import 'firebase/storage';
+
 
 
 @Component({
@@ -44,12 +47,20 @@ export class GaugeStatsComponent implements OnInit {
   public eighteeninch=0;
   public eighteenplus=0;
 
-  constructor(private gaugeservice:GaugedataService,private firestore:AngularFirestore) { 
-      const url = 'https://firebasestorage.googleapis.com/v0/b/ducks-110db.appspot.com/o/BB_1_1C_134_560006714_Reclassed_Surface.jpg?alt=media&token=011bddaa-86a3-4006-970a-f55324615f6a';
-  }
+  public image_url;
+
+  constructor(private gaugeservice:GaugedataService,private firestore:AngularFirestore) {
+   
+/*     this.image_url = storage.refFromURL('gs://ducks-110db.appspot.com/BB_1_1A_134_35_Reclassed_Surface.jpg')
+    console.log(this.image_url.getDownloadUrl) */
+    
+
+
+}
 
   ngOnInit() {
-    this.breakpoint = (window.innerWidth <= 768) ? 1 : 3;
+
+    this.breakpoint = (window.innerWidth <= 768) ? 1 : 2;
 
     this.gaugeservice.getCAs().subscribe(data => {
         this.CA_list=[];
@@ -102,6 +113,8 @@ export class GaugeStatsComponent implements OnInit {
   }
 
   getStats(CA,pool,wcs,gauge){
+    
+
     this.gaugeservice.getStats(CA,pool,wcs,gauge).subscribe(data => {
       console.log(data.data());
       console.log(data.get('Image_Name'));
@@ -114,8 +127,21 @@ export class GaugeStatsComponent implements OnInit {
       this.eighteeninch=data.get('Shallowly_Flooded_12_18in')
       this.eighteenplus=data.get('Full_Flooded_18in')
 
-
+      this.getImage(this.image_name);
       console.log(this.sixinch)
     });
+  }
+
+
+
+  getImage(image_name){
+    //this.image_url="https://firebasestorage.googleapis.com/v0/b/ducks-110db.appspot.com/o/BB_1_1A_134_25_Reclassed_Surface.jpg?alt=media&token=ba8abe52-80f0-4fac-84cd-0c0b608e9860";
+    var storage = firebase.storage().ref();
+    var ref = storage.child(image_name+".jpg")
+    ref.getDownloadURL().then(url =>{
+        console.log(url)
+        this.image_url=url;
+        console.log(this.image_name)
+    });  
   }
 }
