@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {Globals} from 'src/app/extra/globals';
 import { last } from '@angular/router/src/utils/collection';
-import {LocationService} from 'src/app/service/location.service'
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +14,8 @@ export class WeatherApiServiceService {
   private locationservice;
   private joke;
 
-  constructor(private http: HttpClient,private globals:Globals,locationservice:LocationService) { 
-    this.locationservice=locationservice;
+  constructor(private http: HttpClient,private globals:Globals) { 
+
 
   }
 

@@ -3,25 +3,19 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Policy } from 'src/app/model/policy.model';
 import {GaugeStats} from 'src/app/model/gauge-stats.model';
 import { AngularFirestoreCollection } from 'angularfire2/firestore';
-
-/* import { CA } from 'src/app/model/ca.model';
-import { Observable } from 'rxjs'; */
+import * as firebase from 'firebase/app';
+import 'firebase/storage';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GaugedataService {
 
-/*   CAref:AngularFirestoreCollection<CA>;
-  CA$:Observable<CA[]> */
 
-  constructor(private firestore:AngularFirestore) { 
-/*     this.CAref=this.firestore.collection('Gauge_Stats')
-    this.CA$=this.CAref.valueChanges(); */
-  }
-/* getPolicies() {
-  return this.firestore.collection('policies').snapshotChanges();
-} */
+
+constructor(private firestore:AngularFirestore) { 
+
+}
 
 
 getCAs() {
@@ -46,6 +40,19 @@ getGauge(CA,pool,wcs) {
 getStats(CA,pool,wcs,gauge) {
   return this.firestore.collection('Gauge_Stats').doc(CA).collection('Pools')
   .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).get();
+
 }
+
+/* getImage(CA,pool,image_name){
+  var storage = firebase.storage().ref();
+  var imagepath=CA+"_"+pool+'/'+image_name+".jpg"
+  console.log(imagepath)
+  var ref = storage.child(imagepath)
+  ref.getDownloadURL().then(url =>{
+      console.log(url)
+
+      return url;
+  });  
+} */
 
 }

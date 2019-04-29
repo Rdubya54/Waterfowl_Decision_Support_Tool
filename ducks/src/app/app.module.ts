@@ -20,7 +20,6 @@ import { from } from 'rxjs';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 
-//import { ChartsModule } from 'ng4-charts/ng4-charts';
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 
 import {MatExpansionModule} from '@angular/material/expansion';
