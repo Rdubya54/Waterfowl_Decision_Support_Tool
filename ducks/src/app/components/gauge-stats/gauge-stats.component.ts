@@ -6,11 +6,9 @@ import {
 } from 'src/app/model/watermanagement';
 
 import {GaugedataService} from 'src/app/service/gaugedata.service';
-import { Policy } from 'src/app/model/policy.model';
 import { GaugeStats } from 'src/app/model/gauge-stats.model';
 import { CastExpr } from '@angular/compiler';
 import { AngularFirestoreCollection } from 'angularfire2/firestore';
-import { CA } from 'src/app/model/ca.model';
 import { Observable } from 'rxjs';
 import { Query } from '@firebase/firestore-types'
 import { AngularFirestore } from '@angular/fire/firestore';

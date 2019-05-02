@@ -1,9 +1,19 @@
-  <h1>Pool Gauge Level Statistics</h1>
-  <mat-grid-list [cols]="breakpoint" rowHeight="800px" (window:resize)="onResize($event)">
-  <mat-grid-tile>
+<h1>Pool Gauge Level Statistics</h1>
+<mat-grid-list [cols]="breakpoint" rowHeight="800px" (window:resize)="onResize($event)">
+
+<mat-grid-tile>
+  <mat-card>
+      <ng-container>
+          <img src={{image_url}}>
+          <img src={{symbo_url}}>
+        </ng-container>
+  </mat-card>
+</mat-grid-tile>
+
+<mat-grid-tile>
     <mat-card class="example-container">
       <div fxLayout="row"  fxLayoutGap="30%">
-          <div fxFlex="10%"> 
+          <div fxFlex="1%"> 
               <mat-form-field>
                   <mat-select placeholder="Conservation Area" [(ngModel)]="selected_CA" (ngModelChange)="getPools($event)">
                     <mat-option *ngFor="let x of CA_list" [value]="x">
@@ -12,7 +22,7 @@
                   </mat-select>
                 </mat-form-field>
           </div>
-          <div fxFlex="10%"> 
+          <div fxFlex="1%"> 
               <mat-form-field>
                   <mat-select placeholder="Pools" [(ngModel)]="selected_Pool" (ngModelChange)="getWCS(selected_CA,$event)">
                     <mat-option *ngFor="let x of Pool_list" [value]="x">
@@ -23,16 +33,16 @@
           </div> 
       </div>
       <div fxLayout="row"  fxLayoutGap="30%">
-          <div fxFlex="10%"> 
+          <div fxFlex="1%"> 
               <mat-form-field>
-                  <mat-select placeholder="WCS" [(ngModel)]="selected_wcs" (ngModelChange)="getGauge(selected_CA,selected_Pool,$event)">
+                  <mat-select placeholder="Water Control Structure" [(ngModel)]="selected_wcs" (ngModelChange)="getGauge(selected_CA,selected_Pool,$event)">
                     <mat-option *ngFor="let x of wcs_list" [value]="x">
                       {{x}}
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
           </div> 
-          <div fxFlex="10%"> 
+          <div fxFlex="1%"> 
               <mat-form-field>
                   <mat-select placeholder="Gauge" [(ngModel)]="selected_gauge" (ngModelChange)="getStats(selected_CA,selected_Pool,selected_wcs,$event)">
                     <mat-option *ngFor="let x of gauge_list" [value]="x">
@@ -43,46 +53,53 @@
           </div>  
       </div>
       <div fxLayout="row"  fxLayoutGap="30%">
-          <div fxFlex="25%"> 
-              <mat-form-field class="wmgmt" style="font-size: 15px">
-              <input type="text" [(ngModel)]="this.dry" [ngModelOptions]="{standalone:true}" matInput placeholder="Dry, not Flooded">
-              </mat-form-field>
+          <div fxFlex="50%"> 
+                <h3>Acres of Flooded Habitat</h3>
           </div>
-          <div fxFlex="25%"> 
+
+      </div>
+      <div fxLayout="row"  fxLayoutGap="1%">
+          <div fxFlex="50%"> 
               <mat-form-field class="wmgmt" style="font-size: 15px">
-              <input type="text" [(ngModel)]="this.sixinch" [ngModelOptions]="{standalone:true}" matInput placeholder="Shallowly Flooded, 0-6in">
+                  <input type="text" [(ngModel)]="this.dry" [ngModelOptions]="{standalone:true}" matInput placeholder="Total Acres">
+                </mat-form-field>
+          </div>
+          <div fxFlex="50%"> 
+              <mat-form-field class="wmgmt" style="font-size: 15px">
+                  <input type="text" [(ngModel)]="this.dry" [ngModelOptions]="{standalone:true}" matInput placeholder="Dry, not Flooded">
               </mat-form-field>
           </div> 
       </div>
-      <div fxLayout="row"  fxLayoutGap="30%">
-          <div fxFlex="25%"> 
+      <div fxLayout="row"  fxLayoutGap="0.5%">
+          <div fxFlex="50%"> 
               <mat-form-field class="wmgmt" style="font-size: 15px">
-              <input type="text" [(ngModel)]="this.twelveinch" [ngModelOptions]="{standalone:true}" matInput placeholder="Shallowly Flooded, 6-12in">
-              </mat-form-field>
+                  <input type="text" [(ngModel)]="this.sixinch" [ngModelOptions]="{standalone:true}" matInput placeholder="Shallowly Flooded, 0-6in">
+                </mat-form-field>
           </div>
-          <div fxFlex="25%"> 
+          <div fxFlex="55%"> 
               <mat-form-field class="wmgmt" style="font-size: 15px">
-              <input type="text" [(ngModel)]="this.eighteeninch" [ngModelOptions]="{standalone:true}" matInput placeholder="Shallowly Flooded, 12-18in">
-              </mat-form-field>
+                  <input type="text" [(ngModel)]="this.twelveinch" [ngModelOptions]="{standalone:true}" matInput placeholder="Shallowly Flooded, 6-12in">
+                  </mat-form-field>
           </div> 
 
       </div>
-      <div fxLayout="row"  fxLayoutGap="30%">
-          <div fxFlex="25%"> 
+      <div fxLayout="row"  fxLayoutGap="0.5%">
+          <div fxFlex="50%">
+              <mat-form-field class="wmgmt" style="font-size: 15px">
+              <input type="text" [(ngModel)]="this.eighteeninch" [ngModelOptions]="{standalone:true}" matInput placeholder="Shallowly Flooded, 12-18in">
+              </mat-form-field>
+          </div>
+          <div fxFlex="50%">
               <mat-form-field class="wmgmt" style="font-size: 15px">
               <input type="text" [(ngModel)]="this.eighteenplus" [ngModelOptions]="{standalone:true}" matInput placeholder="Fully Flooded, >18in">
               </mat-form-field>
           </div> 
       </div>
-  </mat-card>
-</mat-grid-tile>
-
-<mat-grid-tile>
-  <mat-card>
-      <ng-container>
-          <img src={{image_url}}>
-          <img src={{symbo_url}}>
-        </ng-container>
+      <div fxLayout="row"  fxLayoutGap="30%">
+          <div fxFlex="50%"> 
+                <h3>Acres of Flooded Crop</h3>
+          </div>
+      </div>
   </mat-card>
 </mat-grid-tile>
 

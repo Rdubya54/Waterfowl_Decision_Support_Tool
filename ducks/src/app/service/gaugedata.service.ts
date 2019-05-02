@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Policy } from 'src/app/model/policy.model';
 import {GaugeStats} from 'src/app/model/gauge-stats.model';
 import { AngularFirestoreCollection } from 'angularfire2/firestore';
 import * as firebase from 'firebase/app';

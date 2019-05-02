@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit,EventEmitter,Output,Input} from '@angular/core';
 import { FoodAvailLocalService } from 'src/app/service/food-avail-local.service';
 import { AngularFireDatabase } from 'angularfire2/database';
 import {MediaMatcher} from '@angular/cdk/layout';
@@ -7,20 +7,23 @@ import {Globals} from 'src/app/extra/globals';
 import {MatBottomSheet, MatBottomSheetRef} from '@angular/material';
 import {AppComponent} from 'src/app/app.component';
 
+import {MoistsoilService} from 'src/app/service/moistsoil.service'
+
 import {
   FoodAvail,
   IFoodAvail
 } from 'src/app/model/food-avail';
 import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/style-transforms';
 
-
 @Component({
   selector: 'app-food-avail',
   templateUrl: './food-avail.component.html',
   styleUrls: ['./food-avail.component.css']
 })
+
 export class FoodAvailComponent implements OnInit {
   breakpoint:number;
+
 
   private localservice: FoodAvailLocalService;
   watermanagements: any[];
@@ -34,8 +37,9 @@ export class FoodAvailComponent implements OnInit {
   toggleActive:boolean = false;
 
   constructor(private comp:AppComponent,private localService: FoodAvailLocalService,  private globals:Globals,
-    private firebase: AngularFireDatabase,private bottomSheet: MatBottomSheet) {
+    private firebase: AngularFireDatabase,private bottomSheet: MatBottomSheet,private moistsoilservice:MoistsoilService) {
       this.localservice = localService;
+      this.moistsoilservice=moistsoilservice;
   }
 
   openBottomSheet(): void {
@@ -43,51 +47,19 @@ export class FoodAvailComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getWatermanagement();
     this.breakpoint = (window.innerWidth <= 768) ? 1 : 2;
-
-    this.localservice.getWaterManagment().
-    then(students => {
-        this.watermanagements = students;
-
-      }).catch(error => {
-          console.error(error);
-          alert(error.message);
-      });
+    this.newFoodAvail.millet_output=6;
 
   }
 
   onResize(event) {
     this.breakpoint = (event.target.innerWidth <= 768) ? 1 : 2;
+    
   }
 
-
-  getWatermanagement() {
-    this.localservice.getWaterManagment().
-    then(students => {
-        this.watermanagements = students;
-
-        var listt=this.watermanagements;
-
-        console.log("list is "+listt)
-        for (let i = 0; i < listt.length; i++){
-          var second_to_last_entry=last_entry
-          console.log("it is "+listt[i])
-          var last_entry=[listt[i].date,listt[i].elevation,listt[i].gate_manipulation,listt[i].gate_level,
-          listt[i].stoplog_change,listt[i].stoplog_level,listt[i].duck_numbers,listt[i].goose_numbers,listt[i].notes]
-          console.log("i am "+listt[i].date)
-        }
-  
-        this.previous_records=last_entry;
-        this.second_previous_records=second_to_last_entry;
-        console.log("it is "+this.previous_records);
-        console.log("it is "+this.second_previous_records);
-      
-    }).catch(error => {
-        console.error(error);
-        alert(error.message);
-    });
-}
+  change(){
+    this.newFoodAvail.millet_output=88;
+  }
 
   addWaterManagement() {
 
@@ -168,11 +140,13 @@ const LOWER_DATA: PeriodicElement[] = [
 })
 export class BottomSheetOverviewExampleSheet {
 
+
+
   displayedColumns: string[] = ['Plant_Species', 'Percent_of_Pool', 'Number_of_Seed_Heads', 'Plant_Height', 'Seed_Height','Seed_Diameter'];
   upper_dataSource = UPPER_DATA;
   lower_dataSource = LOWER_DATA;
 
-  millet_output=0;
+/*   millet_output=0;
   foxtail_output=0;
   rice_cut_output=0;
   panic_grass_output=0;
@@ -192,7 +166,7 @@ export class BottomSheetOverviewExampleSheet {
   chufa_output=0;
   redroot_output=0;
   sedge_output=0;
-  rush_output=0;
+  rush_output=0; */
 
   display_upper_table=false;
   display_lower_table=false;
@@ -200,7 +174,10 @@ export class BottomSheetOverviewExampleSheet {
   lower_total=0;
   upper_total=0;
 
-  constructor(private bottomSheetRef: MatBottomSheetRef<BottomSheetOverviewExampleSheet>) {}
+  constructor(private bottomSheetRef: MatBottomSheetRef<BottomSheetOverviewExampleSheet>,private food:FoodAvailComponent,
+    private moistsoilservice:MoistsoilService) {}
+
+
 
   openLink(event: MouseEvent): void {
     this.bottomSheetRef.dismiss();
@@ -233,8 +210,6 @@ export class BottomSheetOverviewExampleSheet {
       plantheight=this.get_median_of_range(plantheight);
       seedheight=this.get_median_of_range(seedheight);
       seeddiameter=this.get_median_of_range(seeddiameter);
-    
-
 
 
     var π = 3.1416; 
@@ -256,7 +231,7 @@ export class BottomSheetOverviewExampleSheet {
       //convert from pounds to grams
       console.log("calculated")
       seed_prod=seed_prod*142.74;
-      this.millet_output=seed_prod;
+      this.moistsoilservice.newMoistSoil.millet_output=seed_prod;
       this.calculate_total("upper");
     }
 
@@ -264,7 +239,7 @@ export class BottomSheetOverviewExampleSheet {
       seed_prod=(0.03289 * VolG);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.foxtail_output=seed_prod;
+      this.moistsoilservice.newMoistSoil.foxtail_output=seed_prod;
       this.calculate_total("upper");
     }
 
@@ -272,7 +247,7 @@ export class BottomSheetOverviewExampleSheet {
       seed_prod=(0.2814 * HEADS);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.rice_cut_output=seed_prod;
+      this.moistsoilservice.newMoistSoil.rice_cut_output=seed_prod;
       this.calculate_total("upper");
     }
 
@@ -280,7 +255,7 @@ export class BottomSheetOverviewExampleSheet {
       seed_prod=(0.36369 * plantheight) + (0.01107 * HEADS);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.panic_grass_output=seed_prod;
+      this.moistsoilservice.newMoistSoil.panic_grass_output=seed_prod;
       this.calculate_total("upper");
     }
 
@@ -288,7 +263,7 @@ export class BottomSheetOverviewExampleSheet {
       seed_prod=(0.02798 * HEADS);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.crabgrass_output=seed_prod;
+      this.moistsoilservice.newMoistSoil.crabgrass_output=seed_prod;
       this.calculate_total("upper");
     }
 
@@ -296,7 +271,7 @@ export class BottomSheetOverviewExampleSheet {
       seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.sprangletop_output=seed_prod;
+      this.moistsoilservice.newMoistSoil.sprangletop_output=seed_prod;
       this.calculate_total("upper");
     }
 
@@ -304,7 +279,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.lapathifolium_output=9999999;
+      this.moistsoilservice.newMoistSoil.lapathifolium_output=seed_prod;
       this.calculate_total("upper");
     }
     
@@ -312,7 +287,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.pennsylvanicum_output=9999999;
+      this.moistsoilservice.newMoistSoil.pennsylvanicum_output=seed_prod;
       this.calculate_total("upper");
     }
 
@@ -320,7 +295,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.coccineum_output=99999;
+      this.moistsoilservice.newMoistSoil.coccineum_output=seed_prod;
       this.calculate_total("upper");
     }
 
@@ -329,7 +304,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.water_pepper_output=seed_prod;
+      this.moistsoilservice.newMoistSoil.water_pepper_output=seed_prod;
       this.calculate_total("upper");
     }
 
@@ -337,7 +312,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.pigweed_output=99999;
+      this.moistsoilservice.newMoistSoil.pigweed_output=seed_prod;
       this.calculate_total("upper");
     }
 
@@ -345,7 +320,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.bidens_output=99999;
+      this.moistsoilservice.newMoistSoil.bidens_output=seed_prod;
       this.calculate_total("upper");
     }
 
@@ -353,7 +328,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.chufa_output=6;
+      this.moistsoilservice.newMoistSoil.chufa_output=seed_prod;
       this.calculate_total("lower");
     }
 
@@ -362,7 +337,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.redroot_output=6;
+      this.moistsoilservice.newMoistSoil.redroot_output=seed_prod;
       this.calculate_total("lower");
     }
 
@@ -371,7 +346,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.sedge_output=6;
+      this.moistsoilservice.newMoistSoil.sedge_output=seed_prod;
       this.calculate_total("lower");
     }
     
@@ -380,12 +355,11 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
-      this.rush_output=0;
+      this.moistsoilservice.newMoistSoil.rush_output=seed_prod;
       this.calculate_total("lower");
     }
 
     else{
-      this.millet_output=0;
     }
   }
   }
@@ -393,6 +367,8 @@ export class BottomSheetOverviewExampleSheet {
   get_median_of_range(value_range) {
 
     var increment=1;
+
+    console.log(value_range)
 
     var is_decimal = value_range.includes(".")
 
@@ -454,31 +430,32 @@ export class BottomSheetOverviewExampleSheet {
     if (table==="upper"){
       console.log("in here2")
       this.upper_total=
-      this.millet_output+
-      this.foxtail_output+
-      this.rice_cut_output+
-      this.panic_grass_output+
-      this.crabgrass_output+
-      this.sprangletop_output+
-      this.lapathifolium_output+
-      this.pennsylvanicum_output+
-      this.coccineum_output+
-      this.water_pepper_output+
-      this.pigweed_output+
-      this.bidens_output+
-      this.other_seed_output+
-      this.non_seed_output+
-      this.open_water_output+
-      this.recently_disced_output;
+      this.moistsoilservice.newMoistSoil.millet_output+
+      this.moistsoilservice.newMoistSoil.foxtail_output+
+      this.moistsoilservice.newMoistSoil.rice_cut_output+
+      this.moistsoilservice.newMoistSoil.panic_grass_output+
+      this.moistsoilservice.newMoistSoil.crabgrass_output+
+      this.moistsoilservice.newMoistSoil.sprangletop_output+
+      this.moistsoilservice.newMoistSoil.lapathifolium_output+
+      this.moistsoilservice.newMoistSoil.pennsylvanicum_output+
+      this.moistsoilservice.newMoistSoil.coccineum_output+
+      this.moistsoilservice.newMoistSoil.water_pepper_output+
+      this.moistsoilservice.newMoistSoil.pigweed_output+
+      this.moistsoilservice.newMoistSoil.bidens_output+
+      this.moistsoilservice.newMoistSoil.other_seed_output+
+      this.moistsoilservice.newMoistSoil.non_seed_output+
+      this.moistsoilservice.newMoistSoil.open_water_output+
+      this.moistsoilservice.newMoistSoil.recently_disced_output;
       console.log("upper total is "+this.upper_total.toString())
     }
 
     else if (table==="lower"){
     console.log("in lower")
-    this.lower_total=this.chufa_output+
-    this.redroot_output+
-    this.sedge_output+
-    this.rush_output;
+    this.lower_total=
+    this.moistsoilservice.newMoistSoil.chufa_output+
+    this.moistsoilservice.newMoistSoil.redroot_output+
+    this.moistsoilservice.newMoistSoil.sedge_output+
+    this.moistsoilservice.newMoistSoil.rush_output;
     }
   }
 

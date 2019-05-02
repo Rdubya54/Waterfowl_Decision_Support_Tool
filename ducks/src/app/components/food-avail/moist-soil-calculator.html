@@ -8,7 +8,7 @@
 <mat-table [dataSource]="upper_dataSource" class="example-container mat-elevation-z8">
 
     <ng-container matColumnDef="Plant_Species">
-      <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'">Plant Species</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'">Species</mat-header-cell>
       <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> <div>{{element.Plant_Species}}</div> 
 <!--       <div *ngIf="element.Plant_Species==='Millet'" class="small_button">
           {{millet_output}}%
@@ -18,43 +18,43 @@
     </ng-container>
   
     <ng-container matColumnDef="Percent_of_Pool">
-      <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'">% of Pool</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'">lbs per Acre</mat-header-cell>
       <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> {{element.Percent_of_Pool}} 
        <div *ngIf="element.Plant_Species==='Millet'" class="small_button">
-              {{millet_output}}%
+              {{moistsoilservice.newMoistSoil.millet_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Foxtail'">
-              {{foxtail_output}}%
+              {{moistsoilservice.newMoistSoil.foxtail_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Rice Cut Grass'">
-          {{rice_cut_output}}%
+          {{moistsoilservice.newMoistSoil.rice_cut_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Panic Grass'">
-          {{panic_grass_output}}%
+          {{moistsoilservice.newMoistSoil.panic_grass_output}}
       </div>
       <div *ngIf="element.Plant_Species==='Crabgrass'">
-          {{crabgrass_output}}%
+          {{moistsoilservice.newMoistSoil.crabgrass_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Sprangletop'">
-          {{sprangletop_output}}%
+          {{moistsoilservice.newMoistSoil.sprangletop_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Lapathifolium'">
-          {{lapathifolium_output}}%
+          {{moistsoilservice.newMoistSoil.lapathifolium_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Pennsylvanicum'">
-          {{pennsylvanicum_output}}%
+          {{moistsoilservice.newMoistSoil.pennsylvanicum_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Coccineum'">
-          {{coccineum_output}}%
+          {{moistsoilservice.newMoistSoil.coccineum_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Water Pepper'">
-          {{water_pepper_output}}%
+          {{moistsoilservice.newMoistSoil.water_pepper_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Pigweed'">
-          {{pigweed_output}}%
+          {{moistsoilservice.newMoistSoil.pigweed_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Bidens'">
-          {{bidens_output}}%
+          {{moistsoilservice.newMoistSoil.bidens_output}}
       </div> 
 
       <div *ngIf="element.Plant_Species==='Other Seed'">
@@ -461,7 +461,7 @@
     <ng-container matColumnDef="uppercanopy">
         <mat-header-cell *matHeaderCellDef> Upper Canopy </mat-header-cell>
         <mat-cell></mat-cell>
-        <td mat-footer-cell *matFooterCellDef> Total {{upper_total}} %              (Must equal 100%)</td>
+        <td mat-footer-cell *matFooterCellDef> Total Acres {{upper_total}} </td>
       </ng-container>
 
 
@@ -491,24 +491,24 @@
     </ng-container>
   
     <ng-container matColumnDef="Percent_of_Pool">
-      <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'"> Percent of Pool  </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'"> lbs per Acre  </mat-header-cell>
       <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> {{element.Percent_of_Pool}} 
        <div *ngIf="element.Plant_Species==='Chufa'" layout="row" layout-align="start center" flex>
-            <button mat-flat-button color="primary" (click)="calculate_percent('Chufa',chufa_seedhead_values,'NULL','NULL',chufa_seeddiameter_values)">Calculate</button>
+<!--             <button mat-flat-button color="primary" (click)="calculate_percent('Chufa',chufa_seedhead_values,'NULL','NULL',chufa_seeddiameter_values)">Calculate</button> -->
             <span flex></span>
-            {{chufa_output}}%
+            {{moistsoilservice.newMoistSoil.chufa_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Redroot'">
-            <button mat-flat-button color="primary" (click)="calculate_percent('Redroot',redroot_seedhead_values,'NULL',redroot_seedheight_values,redroot_seeddiameter_values)">Calculate</button>
-              {{redroot_output}}%
+<!--             <button mat-flat-button color="primary" (click)="calculate_percent('Redroot',redroot_seedhead_values,'NULL',redroot_seedheight_values,redroot_seeddiameter_values)">Calculate</button> -->
+              {{moistsoilservice.newMoistSoil.redroot_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Sedge'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Sedge',sedge_seedhead_values,sedge_plantheight_values,'NULL','NULL')">Calculate</button>
-          {{sedge_output}}%
+<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Sedge',sedge_seedhead_values,sedge_plantheight_values,'NULL','NULL')">Calculate</button> -->
+          {{moistsoilservice.newMoistSoil.sedge_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Rush'">
-        <button mat-flat-button color="primary" (click)="calculate_percent('Rush','NULL','NULL','NULL')">Calculate</button>
-          {{rush_output}}%
+<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Rush','NULL','NULL','NULL')">Calculate</button> -->
+          {{moistsoilservice.newMoistSoil.rush_output}}
       </div>
  
       </mat-cell>
@@ -518,7 +518,7 @@
       <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'"> Number of Seed Heads </mat-header-cell>
       <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> {{element.Number_of_Seed_Heads}} 
           <div *ngIf="element.Plant_Species==='Chufa'">
-            <mat-button-toggle-group [(value)] = "chufa_seedhead_values" #group="matButtonToggleGroup" vertical>
+            <mat-button-toggle-group matInput [(value)] = "chufa_seedhead_values" #group="matButtonToggleGroup" (change)="calculate_percent('Chufa',$event.value,'NULL','NULL',chufa_seeddiameter_values)"vertical>
                     <mat-button-toggle value="1-3" aria-label="1">
                     1-3
                     </mat-button-toggle>
@@ -534,7 +534,7 @@
                   </mat-button-toggle-group>
             </div>
             <div *ngIf="element.Plant_Species==='Redroot'">
-                    <mat-button-toggle-group [(value)] = "redroot_seedhead_values" #group="matButtonToggleGroup" vertical>
+                    <mat-button-toggle-group [(value)] = "redroot_seedhead_values" #group="matButtonToggleGroup" (change)="calculate_percent('Redroot',$event.value,'NULL',redroot_seedheight_values,redroot_seeddiameter_values)" vertical>
                         <mat-button-toggle value="1-2" aria-label="Text align left">
                             1-2
                             </mat-button-toggle>
@@ -548,7 +548,7 @@
                           
               </div>
               <div *ngIf="element.Plant_Species==='Sedge'">
-                <mat-button-toggle-group [(value)] = "sedge_seedhead_values" #group="matButtonToggleGroup" vertical>
+                <mat-button-toggle-group [(value)] = "sedge_seedhead_values" #group="matButtonToggleGroup" (change)="calculate_percent('Sedge',$event.value,sedge_plantheight_values,'NULL','NULL')" vertical>
                         <mat-button-toggle value="5-" aria-label="Text align left">
                         <5
                         </mat-button-toggle>
@@ -565,7 +565,7 @@
       <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'"> Plant Height </mat-header-cell>
       <mat-cell *matCellDef="let element"[ngClass]="'smallWidthClass'"> {{element.Plant_Height}} 
             <div *ngIf="element.Plant_Species==='Sedge'">
-                    <mat-button-toggle-group [(value)] = "sedge_plantheight_values" #group="matButtonToggleGroup" vertical>
+                    <mat-button-toggle-group [(value)] = "sedge_plantheight_values" #group="matButtonToggleGroup" (change)="calculate_percent('Sedge',sedge_seedhead_values,$event.value,'NULL','NULL')" vertical>
                             <mat-button-toggle value="50-" aria-label="1">
                             <50
                             </mat-button-toggle>
@@ -582,7 +582,7 @@
         <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'"> Seed Height </mat-header-cell>
         <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> {{element.Seed_Height}}
                 <div *ngIf="element.Plant_Species==='Redroot'">
-                        <mat-button-toggle-group [(value)] = "redroot_seedheight_values" #group="matButtonToggleGroup" vertical>
+                        <mat-button-toggle-group [(value)] = "redroot_seedheight_values" #group="matButtonToggleGroup" (change)="calculate_percent('Redroot',redroot_seedhead_values,'NULL',$event.value,redroot_seeddiameter_values)" vertical>
                                 <mat-button-toggle value="1-6" aria-label="1">
                                 1-4
                                 </mat-button-toggle>
@@ -601,7 +601,7 @@
         <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'"> Seed Diameter </mat-header-cell>
         <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> {{element.Seed_Diameter}} 
                 <div [ngClass]="'textgroup'" *ngIf="element.Plant_Species==='Chufa'">
-                        <mat-button-toggle-group [(value)] = "chufa_seeddiameter_values" #group="matButtonToggleGroup" vertical>
+                        <mat-button-toggle-group [(value)] = "chufa_seeddiameter_values" #group="matButtonToggleGroup" (change)="calculate_percent('Chufa',chufa_seedhead_values,'NULL','NULL',$event.value)" vertical>
                                 <mat-button-toggle value="0-6" aria-label="1">
                                 0-6
                                 </mat-button-toggle>
@@ -617,7 +617,7 @@
                         </mat-button-toggle-group>
                 </div>
                 <div *ngIf="element.Plant_Species==='Redroot'">
-                        <mat-button-toggle-group [(value)] = "redroot_seeddiameter_values" #group="matButtonToggleGroup" vertical>
+                        <mat-button-toggle-group [(value)] = "redroot_seeddiameter_values" #group="matButtonToggleGroup" (change)="calculate_percent('Redroot',redroot_seedhead_values,'NULL',redroot_seedheight_values,$event.value)" vertical>
                             <mat-button-toggle value="1-6" aria-label="1">
                                 1-4
                                 </mat-button-toggle>
@@ -635,7 +635,7 @@
     <ng-container matColumnDef="lowercanopy">
           <mat-header-cell *matHeaderCellDef> Lower Canopy</mat-header-cell>
           <mat-cell></mat-cell>
-          <td mat-footer-cell *matFooterCellDef> Total:  {{lower_total}}%    (Percentages do not need to equal 100%)</td> 
+          <td mat-footer-cell *matFooterCellDef> Total Acres:  {{lower_total}}   </td> 
     </ng-container>
     
     <mat-header-row *matHeaderRowDef="['lowercanopy'] sticky: true"></mat-header-row>

@@ -1,5 +1,5 @@
 <h1>Fall Food Availability: Acres, Yield, Harvested, Unharvested</h1>
-<mat-grid-list [cols]="breakpoint" rowHeight="1000px" (window:resize)="onResize($event)">
+<mat-grid-list [cols]="breakpoint" rowHeight="1250px" (window:resize)="onResize($event)">
 
 <mat-grid-tile>
 
@@ -189,111 +189,282 @@
                     </mat-form-field>
                 </div> 
             </div>
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                <h3 fxFlex="50%">Wheat Acres</h3>
+                <h3 fxFlex="50%">Moist Soil Acres</h3>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                    Unharvested
+                </div> 
+                <div fxFlex="50%">
+                    Standing
+                </div>
+        </div>
+    
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="newFoodAvail.wheat_green"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                    </mat-form-field>
+                </div> 
+                <div fxFlex="50%">
+                    <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="newFoodAvail.soil_standing"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                    </mat-form-field>
+                </div>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                    Harvested
+                </div> 
+                <div fxFlex="50%"> 
+                    Mowed
+                </div> 
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
+            <div fxFlex="50%"> 
+                <mat-form-field class="wmgmt">
+                    <input type="text" [(ngModel)]="newFoodAvail.wheat_harv"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                </mat-form-field>
+            </div> 
+            <div fxFlex="50%"> 
+                <mat-form-field class="wmgmt">
+                    <input type="text" [(ngModel)]="newFoodAvail.soil_mowed"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                </mat-form-field>
+            </div> 
+        </div>
+
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                </div> 
+                <div fxFlex="50%"> 
+                    Disced
+                </div> 
+        </div>
+
+        
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                </div> 
+                <div fxFlex="50%"> 
+                        <mat-form-field class="wmgmt">
+                                <input type="text" [(ngModel)]="newFoodAvail.soil_disced"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        </mat-form-field>
+                </div> 
+        </div>
         
 </mat-card>
 </mat-grid-tile>
 
 <mat-grid-tile>
         <mat-card>
-
-                <div fxLayout="row" fxLayoutGap="0.5%">
-                        <h3 fxFlex="50%">Wheat Acres</h3>
-                        <h3 fxFlex="50%">Moist Soil Acres</h3>
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex=50%>
+                    <h3>Moist Soil Yield</h3>
                 </div>
-
-                <div fxLayout="row" fxLayoutGap="0.5%">
-                        <div fxFlex="50%"> 
-                            Unharvested
-                        </div> 
-                        <div fxFlex="50%">
-                            Standing
-                        </div>
+                <div fxFlex=50%>
                 </div>
-            
-                <div fxLayout="row" fxLayoutGap="0.5%">
-                        <div fxFlex="50%"> 
-                            <mat-form-field class="wmgmt">
-                                <input type="text" [(ngModel)]="newFoodAvail.wheat_green"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
-                            </mat-form-field>
-                        </div> 
-                        <div fxFlex="50%">
-                            <mat-form-field class="wmgmt">
-                                    <input type="text" [(ngModel)]="newFoodAvail.soil_standing"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
-                            </mat-form-field>
-                        </div>
-                </div>
-
-                <div fxLayout="row" fxLayoutGap="0.5%">
-                        <div fxFlex="50%"> 
-                            Harvested
-                        </div> 
-                        <div fxFlex="50%"> 
-                            Mowed
-                        </div> 
-                </div>
-
-                <div fxLayout="row" fxLayoutGap="0.5%">
-                    <div fxFlex="50%"> 
-                        <mat-form-field class="wmgmt">
-                            <input type="text" [(ngModel)]="newFoodAvail.wheat_harv"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
-                        </mat-form-field>
-                    </div> 
-                    <div fxFlex="50%"> 
-                        <mat-form-field class="wmgmt">
-                            <input type="text" [(ngModel)]="newFoodAvail.soil_mowed"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
-                        </mat-form-field>
-                    </div> 
-                </div>
-
-
-                <div fxLayout="row" fxLayoutGap="0.5%">
-                        <div fxFlex="50%"> 
-                        </div> 
-                        <div fxFlex="50%"> 
-                            Disced
-                        </div> 
-                </div>
-
-                
-                <div fxLayout="row" fxLayoutGap="0.5%">
-                        <div fxFlex="50%"> 
-                        </div> 
-                        <div fxFlex="50%"> 
-                                <mat-form-field class="wmgmt">
-                                        <input type="text" [(ngModel)]="newFoodAvail.soil_disced"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
-                                </mat-form-field>
-                        </div> 
-                </div>
-                
- 
-            
-            <h3>Moist Soil Yield</h3>
-
-            <div fxLayout="row" fxLayoutGap="0.5%">
-                    <div fxFlex=40%>
-                    yield on scale of 1-10, 1=lowest and 10=highest
-                    </div>
-                    <div fxFlex=60%>
-                            <button mat-raised-button color="primary" (click)="openBottomSheet()">Moist Soil Calculator</button>
-                    </div>
-                </div>            
+            </div>          
             
             <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex=50%>
+                        Use calculator to populate --->
+                </div>
+                <div fxFlex=50%>
+                    <button mat-raised-button color="primary" (click)="openBottomSheet()">Moist Soil Calculator</button>
+                </div>
+            </div>          
+            <h4>Upper Canopy</h4>
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                    Millet
+                </div> 
+                <div fxFlex="50%">
+                    Foxtail
+                </div>
+        </div>
+    
+        <div fxLayout="row" fxLayoutGap="0.5%">
                 <div fxFlex="50%"> 
                     <mat-form-field class="wmgmt">
-                        <input type="text" [(ngModel)]="newFoodAvail.yield_score"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.millet_output" [ngModelOptions]="{standalone:true}" matInput placeholder="">
                     </mat-form-field>
-                </div>  
+                </div> 
+                <div fxFlex="50%">
+                    <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.foxtail_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                    </mat-form-field>
+                </div>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
                 <div fxFlex="50%"> 
-                </div>  
+                    Rice Cut Grass
+                </div> 
+                <div fxFlex="50%"> 
+                    Panic Grass
+                </div> 
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
+            <div fxFlex="50%"> 
+                <mat-form-field class="wmgmt">
+                    <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.rice_cut_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                </mat-form-field>
+            </div> 
+            <div fxFlex="50%"> 
+                <mat-form-field class="wmgmt">
+                    <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.panic_grass_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                </mat-form-field>
+            </div> 
+        </div>
+
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                    Crabgrass
+                </div> 
+                <div fxFlex="50%"> 
+                    SprangleTop
+                </div> 
+        </div>
+
+        
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                    <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.crabgrass_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                    </mat-form-field>
+                </div> 
+                <div fxFlex="50%"> 
+                        <mat-form-field class="wmgmt">
+                                <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.sprangletop_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        </mat-form-field>
+                </div> 
+        </div>
+            
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                    Lapathifolium
+                </div> 
+                <div fxFlex="50%"> 
+                    Pennsylvanicum
+                </div> 
+        </div>
+            
+        <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%"> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.lapathifolium_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                    </mat-form-field>
+                </div> 
+                <div fxFlex="50%"> 
+                    <mat-form-field class="wmgmt">
+                        <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.pennsylvanicum_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                    </mat-form-field>
+                </div> 
             </div>
+
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="50%"> 
+                        Coccineum
+                    </div> 
+                    <div fxFlex="50%"> 
+                        Water Pepper
+                    </div> 
+            </div>
+                
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="50%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.coccineum_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+                    <div fxFlex="50%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.water_pepper_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="50%"> 
+                        Pigweed
+                    </div> 
+                    <div fxFlex="50%"> 
+                        Biden
+                    </div> 
+            </div>
+                
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="50%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.pigweed_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+                    <div fxFlex="50%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.bidens_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+            </div>
+
+
+            <h4>Lower Canopy</h4>
+
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="50%"> 
+                        Chufa
+                    </div> 
+                    <div fxFlex="50%"> 
+                        Redroot
+                    </div> 
+            </div>
+                
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="50%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]= "moistsoilservice.newMoistSoil.chufa_output" [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+                    <div fxFlex="50%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.redroot_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="50%"> 
+                        Sedge
+                    </div> 
+                    <div fxFlex="50%"> 
+                        Rush
+                    </div> 
+            </div>
+                
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                    <div fxFlex="50%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]= "moistsoilservice.newMoistSoil.sedge_output" [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+                    <div fxFlex="50%"> 
+                        <mat-form-field class="wmgmt">
+                            <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.rush_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                        </mat-form-field>
+                    </div> 
+            </div>
+            
             <button mat-raised-button color="primary" (click)="addWaterManagement()">Submit</button>
             <button mat-raised-button color="primary" (click)="clearNewWaterManagement()">Clear Fields</button>
             
 </mat-card>
-</mat-grid-tile>
-
-
-
-     
+</mat-grid-tile>   
 </mat-grid-list>

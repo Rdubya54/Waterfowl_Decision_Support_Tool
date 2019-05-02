@@ -42,6 +42,7 @@ import {ConnectionStatusDialog} from 'src/app/app.component';
 import {LoginDialog} from 'src/app/app.component';
 import { MatDialogRef } from '@angular/material';
 import { GaugeStatsComponent } from './components/gauge-stats/gauge-stats.component';
+import {MoistsoilService} from "./service/moistsoil.service"
 
 var config = {
   apiKey: "AIzaSyAJEdJ4jjbDdeCsWDlWJZ0ZRVBZfOJplMA",
@@ -87,7 +88,7 @@ firebase.initializeApp(config);
     MatExpansionModule,
   ],
   entryComponents: [BiweeklyWaterFoodComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,DataWrittenDialog],
-  providers: [Globals,LocalWaterManagementService,WatermanagementComponent],
+  providers: [Globals,LocalWaterManagementService,WatermanagementComponent,FoodAvailComponent,AppComponent,MoistsoilService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
