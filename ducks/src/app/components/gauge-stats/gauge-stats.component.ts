@@ -27,6 +27,8 @@ export class GaugeStatsComponent implements OnInit {
 
   public CA_list: string[]=[];
   public selected_CA;
+  public unit_list: string[]=[];
+  public selected_unit; 
   public Pool_list: string[]=[];
   public selected_Pool;
   public wcs_list: string[]=[];
@@ -34,7 +36,17 @@ export class GaugeStatsComponent implements OnInit {
   public gauge_list: string[]=[];
   public selected_gauge;
 
+
+/*   public crop_master_list:{[key:string]:string[]}={}; */
+  public crop_master_list:string[]=[];
+  public crop_keys:string[]=[];
+  public crop_values:string[]=[];
+
+  objectKeys = Object.keys;
+
+
   public image_name=0;
+  public total_acres=0;
   public dry=0;
   public sixinch=0;
   public twelveinch=0;
@@ -53,6 +65,7 @@ export class GaugeStatsComponent implements OnInit {
 
     this.gaugeservice.getCAs().subscribe(data => {
         this.CA_list=[];
+        this.unit_list=[];
         this.Pool_list=[];
         this.wcs_list=[];
         this.gauge_list=[];
@@ -62,48 +75,89 @@ export class GaugeStatsComponent implements OnInit {
     });
   }
 
-  getPools(CA){
+  getUnits(CA){
+    this.unit_list=[];
     this.Pool_list=[];
     this.wcs_list=[];
     this.gauge_list=[];
-    this.gaugeservice.getPools(CA).subscribe(data => {
+    this.gaugeservice.getUnits(CA).subscribe(data => {
+      data.forEach(doc => {
+        this.unit_list.push(doc.id)
+      });
+  });
+  }
+  
+
+  getPools(CA,unit){
+    this.Pool_list=[];
+    this.wcs_list=[];
+    this.gauge_list=[];
+    this.gaugeservice.getPools(CA,unit).subscribe(data => {
       data.forEach(doc => {
         this.Pool_list.push(doc.id)
       });
   });
   }
   
-  getWCS(CA,pool){
+  getWCS(CA,unit,pool){
     this.wcs_list=[];
     this.gauge_list=[];
-    this.gaugeservice.getWCS(CA,pool).subscribe(data => {
+    this.gaugeservice.getWCS(CA,unit,pool).subscribe(data => {
       data.forEach(doc => {
         this.wcs_list.push(doc.id)
       });
   });
   }
 
-  getGauge(CA,pool,wcs){
+  getGauge(CA,unit,pool,wcs){
     this.gauge_list=[];
-    this.gaugeservice.getGauge(CA,pool,wcs).subscribe(data => {
+    this.gaugeservice.getGauge(CA,unit,pool,wcs).subscribe(data => {
       data.forEach(doc => {
         this.gauge_list.push(doc.id)
       });
   });
   }
 
-  getStats(CA,pool,wcs,gauge){
-    this.gaugeservice.getStats(CA,pool,wcs,gauge).subscribe(data => {
-      this.image_name=data.get('Image_Name');
-      this.dry=data.get('Dry_not_Flooded');
-      this.sixinch=data.get('Shallowly_Flooded_0_6in')
-      this.twelveinch=data.get('Shallowly_Flooded_6_12in')
-      this.eighteeninch=data.get('Shallowly_Flooded_12_18in')
-      this.eighteenplus=data.get('Full_Flooded_18in')
+  getStats(CA,unit,pool,wcs,gauge){
+    this.gaugeservice.getStats(CA,unit,pool,wcs,gauge).subscribe(data => {
 
-      this.getImage(CA,pool,this.image_name);
-    });
+      this.gaugeservice.getHabitat(CA,unit,pool,wcs,gauge).subscribe(data => {
+        this.total_acres=data.get('Total_Acres')
+        this.dry=data.get('Dry_not_flooded');
+        this.sixinch=data.get('Shallowly_Flooded_0_6in')
+        this.twelveinch=data.get('Shallowly_Flooded_6-12in')
+        this.eighteeninch=data.get('Shallowly_Flooded_12_18in')
+        this.eighteenplus=data.get('Full_Flooded_18in')
+
+        this.gaugeservice.getImageName(CA,unit,pool,wcs,gauge).subscribe(data => {
+          this.image_name=data.get('Image_Name')
+          this.getImage(CA,pool,this.image_name)
+
+          this.gaugeservice.getCrops(CA,unit,pool,wcs,gauge).subscribe(data => {
+            data.forEach(doc => {
+              var crop=doc.id
+              var crop_list=[];
+              this.crop_master_list[crop]=crop_list
+              this.gaugeservice.getCropStats(CA,unit,pool,wcs,gauge,crop).subscribe(data => {
+                crop_list['Total Acres']=data.get('Total Acres');
+                crop_list['Dry_not_flooded']=data.get('Dry_not_flooded');
+                crop_list['Shallowly_Flooded_0_6in']=data.get('Shallowly_Flooded_0_6in');
+                crop_list['Shallowly_Flooded_6-12in']=data.get('Shallowly_Flooded_6-12in');
+                crop_list['Shallowly_Flooded_12_18in']=data.get('Shallowly_Flooded_12_18in');
+                crop_list['Full_Flooded_18in']=data.get('Full_Flooded_18in');
+                this.crop_master_list[crop]=crop_list;
+                this.crop_keys=Object.keys(this.crop_master_list)
+                //this.crop_values=Object.values(this.crop_master_list)
+                console.log(this.crop_master_list)
+                console.log(this.crop_values)
+              }); 
+            });
+          });
+        });      
+      });
+  });
   }
+
 
   getImage(CA,pool,image_name){
     var storage = firebase.storage().ref();

@@ -21,28 +21,51 @@ getCAs() {
   return this.firestore.collection('Gauge_Stats').get();    
 }
 
-getPools(CA) {
+getUnits(CA) {
+  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").get();
+}
+
+getPools(CA,unit) {
   console.log("selected CA is "+CA)
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Pools").get();   
+  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection("Pools").get();
 }
 
-getWCS(CA,pool) {
+getWCS(CA,unit,pool) {
   console.log("selected pool is "+pool)
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Pools").doc(pool).collection("WCS").get();   
+  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection("Pools").doc(pool).collection("WCS").get();
 }
 
-getGauge(CA,pool,wcs) {
+getGauge(CA,unit,pool,wcs) {
   console.log("selected wcs is "+wcs)
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Gauges").get();   
+  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Gauges").get();   
 }
 
-getStats(CA,pool,wcs,gauge) {
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection('Pools')
+getStats(CA,unit,pool,wcs,gauge) {
+  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection('Pools')
   .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).get();
-
 }
 
-/* getImage(CA,pool,image_name){
+getHabitat(CA,unit,pool,wcs,gauge) {
+  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection('Pools')
+  .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).collection('Stats').doc("Flooded_Habitat_By_Acres").get();
+}
+
+getCrops(CA,unit,pool,wcs,gauge) {
+  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection('Pools')
+  .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).collection('Stats').doc('Flooded_Crop_Stats_By_Acre').collection('Crops').get();
+}
+
+getCropStats(CA,unit,pool,wcs,gauge,crop){
+  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection('Pools')
+  .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).collection('Stats').doc('Flooded_Crop_Stats_By_Acre').collection('Crops').doc(crop).get();  
+}
+
+getImageName(CA,unit,pool,wcs,gauge) {
+  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection('Pools')
+  .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).collection('Stats').doc('Image_Name').get();
+}
+
+getImage(CA,pool,image_name){
   var storage = firebase.storage().ref();
   var imagepath=CA+"_"+pool+'/'+image_name+".jpg"
   console.log(imagepath)
@@ -52,6 +75,5 @@ getStats(CA,pool,wcs,gauge) {
 
       return url;
   });  
-} */
-
+} 
 }
