@@ -42,15 +42,7 @@ import { MatDialogRef } from '@angular/material';
 import { GaugeStatsComponent } from './components/gauge-stats/gauge-stats.component';
 import {MoistsoilService} from "./service/moistsoil.service"
 
-var config = {
-  apiKey: "AIzaSyChqXN2Wz2FRywEUwfEkfoxJJtc3hvr0CY",
-  authDomain: "waterfowltool.firebaseapp.com",
-  databaseURL: "https://waterfowltool.firebaseio.com",
-  projectId: "waterfowltool",
-  storageBucket: "waterfowltool.appspot.com",
-  messagingSenderId: "559890301050",
-  appId: "1:559890301050:web:8aca959fb66bcdd3"
-}; 
+
 
 firebase.initializeApp(config);
 
