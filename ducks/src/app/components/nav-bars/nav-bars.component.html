@@ -1,7 +1,7 @@
 <div class="example-container">
   <mat-toolbar color="primary" class="example-toolbar">
       <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
-      <h1 class="example-app-name">Wetland Waterfowl Data Management</h1>
+      <h1 class="example-app-name">Waterfowl Wetland Decision Support Tool</h1>
     </mat-toolbar>
 
 <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
@@ -23,17 +23,9 @@
                         <a mat-raised-button color="primary" id="dr_button" routerLink="/gaugestats" (click)="snav.toggle()">Pool Gauge Level Stats</a>
                     </div>
                 <div fxFlex="14%">
-                    <a mat-raised-button color="primary" id="dr_button" routerLink="/datareview" (click)="snav.toggle()">View Locally Stored Data</a>
-                </div>
-                <div fxFlex="14%">
                         <a mat-raised-button color="primary" id="dr_button" routerLink="/weather" (click)="snav.toggle()">Daily Weather Observations</a>
                 </div>
-                <div fxFlex="14%">
-                    <a mat-raised-button color="primary" id="dr_button" routerLink="/pumpmanagement" (click)="snav.toggle()">Pump Management</a>
-                </div>
-                <div fxFlex="14%">
-                  <a mat-raised-button color="primary" id="dr_button" routerLink="/pumptable" (click)="snav.toggle()">Pump </a>
-                </div>
+
 
 
               </div>

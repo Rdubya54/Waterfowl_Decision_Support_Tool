@@ -8,25 +8,61 @@ import { AngularFirestore } from 'angularfire2/firestore';
 })
 export class WatermanagementCloudService {
 
-  constructor(public db: AngularFirestore) { }
+  constructor(private firestore:AngularFirestore) { }
 
-   addWaterManagement(watermanagement:IWatermanagement) {
-    return this.db.collection('Watermanagement').add({
-      date: watermanagement.date,
-      pool: watermanagement.pool,
-      structure: watermanagement.structure,
-      elevation: watermanagement.elevation,
-      gate_manipulation: watermanagement.gate_manipulation,
-      gate_level: watermanagement.gate_level,
-      stoplog_change: watermanagement.stoplog_change,
-      stoplog_level:watermanagement.stoplog_level,
-      goose_numbers:watermanagement.goose_numbers,
-      duck_numbers:watermanagement.duck_numbers,
-      year:watermanagement.year,
-      time:watermanagement.time,
-      fiscal_year:watermanagement.fiscal_year,
-      notes:watermanagement.notes,
-      reasons:watermanagement.reasons
+
+   //this function pushes a water management record to the cloud
+   addWaterManagement(watermanagement:IWatermanagement,CA,unit,pool,wcs,date,time) {
+
+    console.log("inside of add is "+date)
+    
+    return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units")
+    .doc(unit).collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Water Management")
+    .doc(date).set({
+      Date:watermanagement.Date,
+      Elevation: watermanagement.Elevation,
+      Gate_manipulation: watermanagement.Gate_manipulation,
+      Gate_level: watermanagement.Gate_level,
+      Stoplog_change: watermanagement.Stoplog_change,
+      Stoplog_level:watermanagement.Stoplog_level,
+      Goose_numbers:watermanagement.Goose_numbers,
+      Duck_numbers:watermanagement.Duck_numbers,
+      Year:"dummy_year",
+      Time:"dummy time",
+      Fiscal_year:"dummy_fiscal",
+      Notes:watermanagement.Notes,
+      Reasons:watermanagement.Reasons,
+      Sort_time:time
     });
   }
+
+  //get the two latest records for the WCS
+  getprevWaterManagement(CA,unit,pool,wcs,sort_time){
+
+    console.log('sort time is '+sort_time)
+
+    //WHEN you need the last two for the pump at a specific time (used when viewing old records)
+    if (sort_time){
+      return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).
+      collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Water Management", 
+      ref=>ref.orderBy('Sort_time', 'desc').where('Sort_time',"<",sort_time).limit(2)).get();  
+ 
+    }
+
+    //when you just need the last two for the pump
+    else{
+      return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).
+      collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Water Management", 
+      ref=>ref.orderBy('Sort_time', 'desc').limit(2)).get();
+    }
+    
+  }
+
+  //gets watermanagement fields for an individual record
+  getWaterManagement(CA,unit,pool,wcs,record){
+    return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection("Pools")
+    .doc(pool).collection("WCS").doc(wcs).collection("Water Management").doc(record).get();
+  }
+
+
 }

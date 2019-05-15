@@ -1,8 +1,9 @@
 export class IWaterFood {
     id?: number;
-    month: string;
-    day: string;
-    pool: string;
+    Date:string;
+    CA:string;
+    Unit:string;
+    Pool: string;
     percent_of_full_pool: string;
     less_than_six:string;
     seven_to_twelve:string;
@@ -30,16 +31,16 @@ export class IWaterFood {
     notes:string;
     actions:string;
     response:string;
-    year:string;
-    time:string;
     fiscal_year:string;
+    Sort_time:string;
 }
 
 export class WaterFood implements IWaterFood {
     id?: 0;
-    month:'';
-    day: '';
-    pool: '';
+    Date:'';
+    CA:'';
+    Unit:'';
+    Pool: '';
     percent_of_full_pool: '';
     less_than_six:'';
     seven_to_twelve:'';
@@ -67,7 +68,6 @@ export class WaterFood implements IWaterFood {
     notes:'';
     actions:'';
     response:'';
-    year:'';
-    time:'';
     fiscal_year:'';
+    Sort_time:'';
 }

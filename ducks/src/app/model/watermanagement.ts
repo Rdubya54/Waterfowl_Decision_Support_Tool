@@ -1,38 +1,44 @@
 export class IWatermanagement {
 
         id?: number;
-        date: string;
-        pool: string;
-        structure: string;
-        elevation: string;
-        gate_manipulation:string;
-        gate_level:string;
-        stoplog_change:string;
-        stoplog_level:string;
-        duck_numbers:string;
-        goose_numbers:string;
-        year:string;
-        time:string;
-        fiscal_year:string;
-        notes:string;
-        reasons:string;
+        CA:string;
+        Unit:string;
+        Pool:string;
+        Structure:string;
+        Date: string;
+        Elevation: string;
+        Gate_manipulation:string;
+        Gate_level:string;
+        Stoplog_change:string;
+        Stoplog_level:string;
+        Duck_numbers:string;
+        Goose_numbers:string;
+        Year:string;
+        Time:string;
+        Fiscal_year:string;
+        Notes:string;
+        Reasons:string;
+        Sort_time:string;
 }
 
 export class Watermanagement implements IWatermanagement {
     id: 0;
-    date: '';
-    pool: '';
-    structure: '';
-    elevation: '';
-    gate_manipulation:'';
-    gate_level:'';
-    stoplog_change:'';
-    stoplog_level:'';
-    duck_numbers:'';
-    goose_numbers:'';
-    year:'';
-    time:'';
-    fiscal_year:'';
-    notes:'';
-    reasons:'';
+    CA:'';
+    Unit:'';
+    Pool:'';
+    Structure:'';
+    Date:'';
+    Elevation: '';
+    Gate_manipulation:'';
+    Gate_level:'';
+    Stoplog_change:'';
+    Stoplog_level:'';
+    Duck_numbers:'';
+    Goose_numbers:'';
+    Year:'';
+    Time:'';
+    Fiscal_year:'';
+    Notes:'';
+    Reasons:'';
+    Sort_time:'';
 }

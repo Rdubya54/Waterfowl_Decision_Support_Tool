@@ -6,8 +6,10 @@ import {ChangeDetectorRef, OnDestroy} from '@angular/core';
 import {Globals} from 'src/app/extra/globals';
 import {MatBottomSheet, MatBottomSheetRef} from '@angular/material';
 import {AppComponent} from 'src/app/app.component';
+import {dbService} from 'src/app/service/db.service';
 
 import {MoistsoilService} from 'src/app/service/moistsoil.service'
+import {FoodAvailCloudService} from 'src/app/service/food-avail-cloud.service';
 
 import {
   FoodAvail,
@@ -23,12 +25,22 @@ import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/st
 
 export class FoodAvailComponent implements OnInit {
   breakpoint:number;
-
+  breakpoint_top:number;
 
   private localservice: FoodAvailLocalService;
   watermanagements: any[];
   newFoodAvail: IFoodAvail = new FoodAvail();
   local_records: any[];
+
+  public CA_list: string[]=[];
+  public selected_CA;
+  public unit_list: string[]=[];
+  public selected_unit; 
+  public Pool_list: string[]=[];
+  public selected_Pool;
+  public wcs_list: string[]=[];
+  public selected_wcs;
+  public prev_data:string[]=[];
 
   public previous_records;
   public second_previous_records;
@@ -36,10 +48,11 @@ export class FoodAvailComponent implements OnInit {
   public buttonName: any = true;
   toggleActive:boolean = false;
 
-  constructor(private comp:AppComponent,private localService: FoodAvailLocalService,  private globals:Globals,
-    private firebase: AngularFireDatabase,private bottomSheet: MatBottomSheet,private moistsoilservice:MoistsoilService) {
+  constructor(private comp:AppComponent,private localService: FoodAvailLocalService,  public globals:Globals,
+    private foodavailservice: FoodAvailCloudService, private dbservice:dbService,private firebase: AngularFireDatabase,private bottomSheet: MatBottomSheet,public moistsoilservice:MoistsoilService) {
       this.localservice = localService;
       this.moistsoilservice=moistsoilservice;
+      this.dbservice=dbservice;
   }
 
   openBottomSheet(): void {
@@ -47,18 +60,77 @@ export class FoodAvailComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.breakpoint_top = (window.innerWidth <= 768) ? 1 : 1;
     this.breakpoint = (window.innerWidth <= 768) ? 1 : 2;
     this.newFoodAvail.millet_output=6;
+    this.dbservice.getCAs().subscribe(data => {
+      this.CA_list=[];
+      this.unit_list=[];
+      this.Pool_list=[];
+      this.wcs_list=[];
+      data.forEach(doc => {
+        this.CA_list.push(doc.id)
+      });
+  });
 
   }
+
+  getUnits(CA){
+    this.unit_list=[];
+    this.Pool_list=[];
+    this.wcs_list=[];
+    this.dbservice.getUnits(CA).subscribe(data => {
+      data.forEach(doc => {
+        this.unit_list.push(doc.id)
+      });
+  });
+  }
+  
+
+  getPools(CA,unit){
+    this.Pool_list=[];
+    this.wcs_list=[];
+    this.dbservice.getPools(CA,unit).subscribe(data => {
+      data.forEach(doc => {
+        this.Pool_list.push(doc.id)
+      });
+  });
+  }
+  
+  getWCS(CA,unit,pool){
+    this.wcs_list=[];
+    this.dbservice.getWCS(CA,unit,pool).subscribe(data => {
+      data.forEach(doc => {
+        this.wcs_list.push(doc.id)
+      });
+  });
+  }  
+
+
+  addData(CA,unit,pool,wcs) {
+    var d = new Date();
+    var day1=d.getDate();
+    var month1=d.getMonth();
+    var year1=d.getFullYear();
+    var time1=d.getTime()
+    var time=time1.toString();
+    console.log(day1)
+    console.log(month1)
+    console.log(year1)
+    var day=day1.toString();
+    var month=month1.toString();
+    var year=year1.toString();
+    var stringg=month+ "-" + day + "-" + year;
+
+    var full_date=stringg;
+    console.log(full_date)
+
+    this.foodavailservice.addFoodAvail(this.newFoodAvail,this.moistsoilservice.newMoistSoil,CA,unit,pool,wcs,full_date,time);     
+}
 
   onResize(event) {
     this.breakpoint = (event.target.innerWidth <= 768) ? 1 : 2;
     
-  }
-
-  change(){
-    this.newFoodAvail.millet_output=88;
   }
 
   addWaterManagement() {
@@ -175,7 +247,7 @@ export class BottomSheetOverviewExampleSheet {
   upper_total=0;
 
   constructor(private bottomSheetRef: MatBottomSheetRef<BottomSheetOverviewExampleSheet>,private food:FoodAvailComponent,
-    private moistsoilservice:MoistsoilService) {}
+    public moistsoilservice:MoistsoilService) {}
 
 
 

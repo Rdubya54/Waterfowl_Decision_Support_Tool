@@ -30,16 +30,6 @@
   ],
   "dataGroups": [
     {
-      "name": "jokes-api",
-      "urls": ["https://api.chucknorris.io/jokes/random"],
-      "cacheConfig": {
-        "strategy": "freshness",
-        "maxSize": 20,
-        "maxAge": "1h",
-        "timeout": "5s"
-      }
-    },
-    {
       "name": "esri-api",
       "urls": ["http://api.openweathermap.org/data/2.5/forecast?id=524901&APPID={80dc87045d3dae46154b1dc9f2455de1}"],
       "cacheConfig": {

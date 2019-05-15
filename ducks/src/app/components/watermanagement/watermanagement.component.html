@@ -1,60 +1,133 @@
-  <h1>Water Management</h1>
+<h1>Water Management</h1>
+<mat-grid-list [cols]="breakpoint_top" rowHeight="200px" (window:resize)="onResize($event)">
+<mat-grid-tile>
+    <mat-card class="example-container">
+        <h3>Parameters</h3>
+        <div fxLayout="row"  fxLayoutGap="30%">
+            <div fxFlex="1%"> 
+                <mat-form-field>
+                    <mat-select placeholder="Conservation Area" [(ngModel)]="selected_CA" (ngModelChange)="getUnits($event)">
+                    <mat-option *ngFor="let x of CA_list" [value]="x">
+                        {{x}}
+                    </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div fxFlex="1%"> 
+                <mat-form-field>
+                    <mat-select placeholder="Pool Unit" [(ngModel)]="selected_unit" (ngModelChange)="getPools(selected_CA,$event)">
+                    <mat-option *ngFor="let x of unit_list" [value]="x">
+                        {{x}}
+                    </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div fxFlex="1%"> 
+                <mat-form-field>
+                    <mat-select placeholder="Pools" [(ngModel)]="selected_Pool" (ngModelChange)="getWCS(selected_CA,selected_unit,$event)">
+                    <mat-option *ngFor="let x of Pool_list" [value]="x">
+                        {{x}}
+                    </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div> 
+        </div>
+        <div fxLayout="row"  fxLayoutGap="30%">
+            <div fxFlex="1%"> 
+                <mat-form-field>
+                    <mat-select placeholder="Water Control Structure" [(ngModel)]="selected_wcs" (ngModelChange)="getWatermanagement(selected_CA,selected_unit,selected_Pool,$event,'none')">
+                    <mat-option *ngFor="let x of wcs_list" [value]="x">
+                        {{x}}
+                    </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div> 
+            <div fxFlex="1%"> 
+                <mat-form-field>
+                    <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="getWatermanagement(selected_CA,selected_unit,selected_Pool,selected_wcs,$event)">
+                    <mat-option *ngFor="let x of date_list" [value]="x">
+                        {{x}}
+                    </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        </mat-card>
+    </mat-grid-tile>
+</mat-grid-list>
+
+<!-- <mat-grid-list [cols]="breakpoint_top" rowHeight="200px" (window:resize)="onResize($event)" *ngIf="globals.role === 'oline';">
+<mat-grid-tile>
+<mat-card class="example-container">
+    <h3>Parameters</h3>
+    <div fxLayout="row"  fxLayoutGap="30%">
+        <div fxFlex="33%"> 
+            <mat-form-field class="wmgmt">
+                <input type="text" [(ngModel)]="selected_CA"  [ngModelOptions]="{standalone:true}" matInput placeholder="Conservation Area" >
+            </mat-form-field>
+        </div>
+        <div fxFlex="33%"> 
+            <mat-form-field class="wmgmt">
+                <input type="text" [(ngModel)]="selected_unit"  [ngModelOptions]="{standalone:true}" matInput placeholder="Pool Unit" >
+            </mat-form-field>
+        </div>
+        <div fxFlex="33%"> 
+            <mat-form-field class="wmgmt">
+                <input type="text" [(ngModel)]="selected_Pool"  [ngModelOptions]="{standalone:true}" matInput placeholder="Pool" >
+            </mat-form-field>
+        </div>
+    </div>
+    <div fxLayout="row"  fxLayoutGap="30%">
+        <div fxFlex="33%"> 
+            <mat-form-field class="wmgmt">
+                <input type="text" [(ngModel)]="selected_wcs"  [ngModelOptions]="{standalone:true}" matInput placeholder="Water Control Structure" (ngModelChange)="getprevfromlocal(selected_CA,selected_unit,selected_Pool,$event)">
+            </mat-form-field>
+        </div>
+        <div fxFlex="33%"> 
+            <mat-form-field class="wmgmt">
+                <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="getprevfromlocal(selected_CA,selected_unit,$event)">
+                    <mat-option *ngFor="let x of date_list" [value]="x">
+                        {{x}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    </mat-card>
+</mat-grid-tile>
+
+</mat-grid-list>
+ -->
+
   <mat-grid-list [cols]="breakpoint" rowHeight="900px" (window:resize)="onResize($event)">
   <mat-grid-tile>
   <mat-card class="example-container">
   <div fxLayout="row"  fxLayoutGap="5%">
-        <div fxFlex="60%"> 
-        </div> 
-        <div class="previous" fxFlex="40%"> 
-            Previous Entry
-        </div> 
-  </div>
-  <div fxLayout="row"  fxLayoutGap="5%">
-      <div fxFlex="60%"> 
-          <mat-form-field class="wmgmt" style="font-size: 15px">
-          <input type="text" [(ngModel)]="newWaterManagement.date" [ngModelOptions]="{standalone:true}" matInput placeholder="Month/Day">
-          </mat-form-field>
-      </div> 
-      <div fxFlex="40%"> 
-          <mat-form-field class="prev" *ngIf="this.previous_records">  
-          <input type="text" [(ngModel)]="this.previous_records.date" [disabled]='true' matInput placeholder="">
+      <div fxFlex="70%"> 
+          <mat-form-field class="prev" *ngIf="data_length>0">  
+          <input type="text" [(ngModel)]="prev_data_master[0]['Date']" [disabled]='true' matInput placeholder="Last Record Date">
           </mat-form-field>
       </div> 
   </div>
   
-  <div fxLayout="row" fxLayoutGap="5%">
-    <div fxFlex="60%">
-        <mat-form-field>
-        <input type="text" [(ngModel)]="newWaterManagement.pool" [ngModelOptions]="{standalone:true}" matInput placeholder="Pool">
-        </mat-form-field>
-    </div>
-  </div>
-
-  <div fxLayout="row" fxLayoutGap="5%" >
-      <div fxFlex="60%">
-        <mat-form-field>
-            <input type="text" [(ngModel)]="newWaterManagement.structure" [ngModelOptions]="{standalone:true}"  matInput placeholder="Structure">
-        </mat-form-field>
-      </div>
-  </div>
 
   <div fxLayout="row"  fxLayoutGap="5%">
         <div fxFlex="60%"> 
         </div> 
         <div class="previous" fxFlex="40%"> 
-            Previous Entry
+            Previous Record Date
         </div> 
   </div>
 
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%">
           <mat-form-field class="wmgmt">
-              <input type="text" [(ngModel)]="newWaterManagement.elevation"  [ngModelOptions]="{standalone:true}" matInput placeholder="Elevation" (change)="updateChart('elevation')">
+              <input type="text" [(ngModel)]="newWaterManagement.Elevation"  [ngModelOptions]="{standalone:true}" matInput placeholder="Elevation" (change)="updateChart('elevation')">
           </mat-form-field>
       </div> 
       <div fxFlex="40%"> 
-          <mat-form-field class="prev" *ngIf="this.previous_records" > 
-              <input type="text" [(ngModel)]="this.previous_records.elevation" [disabled]='true' matInput placeholder="" >
+          <mat-form-field class="prev" *ngIf="data_length>0"> 
+              <input type="text" [(ngModel)]="this.prev_data_master[0]['Elevation']" [disabled]='true' matInput placeholder="" >
           </mat-form-field>
       </div> 
   </div>
@@ -62,12 +135,12 @@
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%"> 
           <mat-form-field class="wmgmt"  width="75%">
-              <input type="text" [(ngModel)]="newWaterManagement.gate_manipulation"  [ngModelOptions]="{standalone:true}" matInput placeholder="Gate Manipulation">
+              <input type="text" [(ngModel)]="newWaterManagement.Gate_manipulation"  [ngModelOptions]="{standalone:true}" matInput placeholder="Gate Manipulation">
           </mat-form-field>
       </div> 
       <div fxFlex="40%">
-          <mat-form-field class="prev" *ngIf="this.previous_records"> 
-              <input type="text" [(ngModel)]="this.previous_records.gate_manipulation" [disabled]='true' matInput placeholder="">
+          <mat-form-field class="prev" *ngIf="data_length>0"> 
+              <input type="text" [(ngModel)]="prev_data_master[0]['Gate_manipulation']"  [disabled]='true' matInput placeholder="">
           </mat-form-field>
       </div> 
   </div>
@@ -75,24 +148,24 @@
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%"> 
           <mat-form-field class="wmgmt">
-              <input type="text" [(ngModel)]="newWaterManagement.gate_level"  [ngModelOptions]="{standalone:true}" matInput placeholder="Gate Level" (change)="updateChart('gate_level')">
+              <input type="text" [(ngModel)]="newWaterManagement.Gate_level"  [ngModelOptions]="{standalone:true}" matInput placeholder="Gate Level" (change)="updateChart('gate_level')">
           </mat-form-field>
       </div> 
       <div fxFlex="40%">
-          <mat-form-field class="prev" *ngIf="this.previous_records"> 
-              <input type="text" [(ngModel)]="this.previous_records.gate_level" [disabled]='true' matInput placeholder="">
+          <mat-form-field class="prev" *ngIf="data_length>0"> 
+              <input type="text" [(ngModel)]="prev_data_master[0]['Gate_level']"  [disabled]='true' matInput placeholder="">
           </mat-form-field>
         </div> 
     </div>
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%"> 
           <mat-form-field class="wmgmt">
-              <input type="text" [(ngModel)]="newWaterManagement.stoplog_change"  [ngModelOptions]="{standalone:true}" matInput placeholder="Stoplog Change">
+              <input type="text" [(ngModel)]="newWaterManagement.Stoplog_change"  [ngModelOptions]="{standalone:true}" matInput placeholder="Stoplog Change">
           </mat-form-field>
       </div> 
       <div fxFlex="40%">
-          <mat-form-field class="prev" *ngIf="this.previous_records" > 
-              <input type="text" [(ngModel)]="this.previous_records.stoplog_change" [disabled]='true' matInput placeholder="">
+          <mat-form-field class="prev" *ngIf="data_length>0" > 
+              <input type="text" [(ngModel)]="prev_data_master[0]['Stoplog_change']" [disabled]='true' matInput placeholder="">
           </mat-form-field>
       </div> 
   </div>
@@ -100,25 +173,12 @@
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%"> 
           <mat-form-field class="wmgmt">
-              <input type="text" [(ngModel)]="newWaterManagement.stoplog_level"  [ngModelOptions]="{standalone:true}" matInput placeholder="Stoplog Level">
+              <input type="text" [(ngModel)]="newWaterManagement.Stoplog_level"  [ngModelOptions]="{standalone:true}" matInput placeholder="Stoplog Level">
           </mat-form-field>
       </div> 
       <div fxFlex="40%">
-          <mat-form-field class="prev" *ngIf="this.previous_records" > 
-              <input type="text" [(ngModel)]="this.previous_records.stoplog_level" [disabled]='true'  matInput placeholder="">
-          </mat-form-field>
-      </div> 
-  </div>
-
-  <div fxLayout="row" fxLayoutGap="5%">
-      <div fxFlex="60%"> 
-              <mat-form-field class="wmgmt">
-                  <input type="text" [(ngModel)]="newWaterManagement.duck_numbers"  [ngModelOptions]="{standalone:true}" matInput placeholder="Duck Numbers" (change)="updateChart('bird_nums')">
-                </mat-form-field>   
-      </div> 
-      <div fxFlex="40%">
-          <mat-form-field class="prev" *ngIf="this.previous_records"> 
-              <input type="text" [(ngModel)]="this.previous_records.duck_numbers" [disabled]='true' matInput placeholder="">
+          <mat-form-field class="prev" *ngIf="data_length>0" > 
+              <input type="text" [(ngModel)]="prev_data_master[0]['Stoplog_level']" [disabled]='true'  matInput placeholder="">
           </mat-form-field>
       </div> 
   </div>
@@ -126,16 +186,37 @@
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%"> 
               <mat-form-field class="wmgmt">
-                  <input type="text"  [(ngModel)]="newWaterManagement.goose_numbers"  [ngModelOptions]="{standalone:true}" matInput placeholder="Goose Numbers" (change)="updateChart('bird_nums')">
+                  <input type="text" [(ngModel)]="newWaterManagement.Duck_numbers"  [ngModelOptions]="{standalone:true}" matInput placeholder="Duck Numbers" (change)="updateChart('bird_nums')">
                 </mat-form-field>   
       </div> 
       <div fxFlex="40%">
-          <mat-form-field class="prev" *ngIf="this.previous_records"> 
-              <input type="text" [(ngModel)]="this.previous_records.goose_numbers" [disabled]='true' matInput placeholder="">
+          <mat-form-field class="prev" *ngIf="data_length>0">
+              <input type="text" [(ngModel)]="prev_data_master[0]['Duck_numbers']" [disabled]='true' matInput placeholder="">
+          </mat-form-field>
+      </div> 
+  </div>
+
+  <div fxLayout="row" fxLayoutGap="5%">
+      <div fxFlex="60%"> 
+              <mat-form-field class="wmgmt">
+                  <input type="text"  [(ngModel)]="newWaterManagement.Goose_numbers"  [ngModelOptions]="{standalone:true}" matInput placeholder="Goose Numbers" (change)="updateChart('bird_nums')">
+                </mat-form-field>   
+      </div> 
+      <div fxFlex="40%">
+          <mat-form-field class="prev" *ngIf="data_length>0"> 
+              <input type="text" [(ngModel)]="prev_data_master[0]['Goose_numbers']" [disabled]='true' matInput placeholder="">
           </mat-form-field>
           
       </div> 
   </div>
+
+  <div fxLayout="row"  fxLayoutGap="5%">
+        <div fxFlex="80%">
+                <mat-form-field class="prev"> 
+                    <input type="text" [(ngModel)]="newWaterManagement.Fiscal_year" matInput placeholder="Fiscal Year">
+                </mat-form-field>
+        </div> 
+    </div>
 
   <mat-sidenav #rightSidenav mode="side"  class="rightSidenav"
   [fixedInViewport]="true" [fixedTopGap]="250">
@@ -176,27 +257,28 @@
         <div fxLayout="row" fxLayoutGap="0.5%">
                 <div fxFlex="100%"> 
                     <mat-form-field class="notes">
-                    <textarea [(ngModel)]="newWaterManagement.notes"  [ngModelOptions]="{standalone:true}" matInput placeholder="Notes" rows="10" cols="40"></textarea>
+                    <textarea [(ngModel)]="newWaterManagement.Notes"  [ngModelOptions]="{standalone:true}" matInput placeholder="Notes" rows="10" cols="40"></textarea>
                   </mat-form-field>
                 </div> 
             </div>
 
-            <div fxLayout="row" fxLayoutGap="0.5%">
+<!--             <div fxLayout="row" fxLayoutGap="0.5%">
                     <div fxFlex="100%"> 
                         <mat-form-field *ngIf="this.previous_records" class="notes">
                             <textarea [(ngModel)]="this.previous_records.notes" [disabled]='true' matInput placeholder="Previous Notes" rows=10></textarea>
                       </mat-form-field>
                     </div> 
-            </div>
+            </div> -->
           
             <div fxLayout="row" fxLayoutGap="0.5%">
                   <div fxFlex="100%"> 
                       <mat-form-field class="notes">
-                      <textarea [(ngModel)]="newWaterManagement.reasons"  [ngModelOptions]="{standalone:true}" matInput placeholder="Reason for Mangement Action" rows=10></textarea>
+                      <textarea [(ngModel)]="newWaterManagement.Reasons"  [ngModelOptions]="{standalone:true}" matInput placeholder="Reason for Mangement Action" rows=10></textarea>
                     </mat-form-field>
                   </div> 
               </div>
-              <button mat-raised-button color="primary" (click)="addWaterManagement()">Submit</button>
+              <button *ngIf="globals.role === 'online';"  mat-raised-button color="primary" (click)="addWaterManagement(selected_CA,selected_unit,selected_Pool,selected_wcs,selected_date)">Push to Cloud</button>
+              <button *ngIf="globals.role === 'offline';" mat-raised-button color="primary" (click)="localaddWatermanagement('new')">Push to Local</button>
               <button mat-raised-button color="primary" (click)="clearNewWaterManagement()">Clear Fields</button>
         </mat-card>
 </mat-grid-tile>       

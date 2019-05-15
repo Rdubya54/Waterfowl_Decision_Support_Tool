@@ -5,7 +5,6 @@ import {
   BaseService
  } from './base.service';
 
-
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
  
@@ -18,6 +17,27 @@ import { IWatermanagement } from '../model/watermanagement';
   constructor() {
    super();
   }
+  public CA_list: string[]=[];
+
+  standardizeinputs(watermanagement: IWatermanagement){
+    var CA=watermanagement.CA.toUpperCase();
+    CA=CA.replace(/ /g,"_");
+    watermanagement.CA=CA;
+
+    var Unit=watermanagement.Unit.toUpperCase();
+    Unit=Unit.replace(/ /g,"_");
+    watermanagement.Unit=Unit;
+
+    var Pool=watermanagement.Pool.toUpperCase();
+    Pool=Pool.replace(/ /g,"_");
+    watermanagement.Pool=Pool;    
+
+    var Structure=watermanagement.Structure.toUpperCase();
+    Structure=Structure.replace(/ /g,"_");
+    watermanagement.Structure=Structure;    
+
+  }
+
 
   getWaterManagment() {
     return this.connection.select({
@@ -25,11 +45,51 @@ import { IWatermanagement } from '../model/watermanagement';
     });
   }
 
-  addWaterManagement(watermangement: IWatermanagement) {
+  getprevWaterManagements(CA,unit,pool,wcs){
+    console.log(wcs)
+    return this.connection.select({
+      from: "WaterManagement",
+      where:{
+        CA: CA,
+        Unit:unit,
+        Pool:pool,
+        Structure: wcs,
+      },
+      order: {
+        by: "Sort_time",
+        type: "desc" 
+    }
+
+    });
+  }
+
+
+  getprevWaterManagement_forupdate(CA,unit,pool,wcs,date){
+    console.log(wcs)
+    return this.connection.select({
+      from: "WaterManagement",
+      where:{
+        CA: CA,
+        Unit:unit,
+        Pool:pool,
+        Structure: wcs,
+        Date:date
+      },
+      order: {
+        by: "Sort_time",
+        type: "desc" 
+    }
+
+    });
+  }
+
+  addWaterManagement(watermanagement: IWatermanagement) {
+    /* this.standardizeinputs(watermanagement) */
+    console.log("C!!!!!!!!!! CA IS "+watermanagement.CA)
     return this.connection.insert({
       into: 'WaterManagement',
       return: true, // as id is autoincrement, so we would like to    get the inserted value
-      values: [watermangement]
+      values: [watermanagement]
     });
   }
   
@@ -41,4 +101,71 @@ import { IWatermanagement } from '../model/watermanagement';
       }
     });
   }
+
+
+  getCAs() {
+    return this.connection.select({
+      from: 'WaterManagement'
+    });
+  }
+
+  getUnits(CA){
+    return this.connection.select({
+      from: "WaterManagement",
+      where:{
+        CA: CA,
+      },
+      order: {
+        by: "Sort_time",
+        type: "desc" 
+    }
+
+    });
+  }
+
+  getPools(CA,Unit){
+    return this.connection.select({
+      from: "WaterManagement",
+      where:{
+        CA: CA,
+        Unit:Unit,
+      },
+      order: {
+        by: "Sort_time",
+        type: "desc" 
+    }
+    });
+  }
+
+  getWCS(CA,Unit,Pool){
+    return this.connection.select({
+      from: "WaterManagement",
+      where:{
+        CA: CA,
+        Unit:Unit,
+        Pool:Pool
+      },
+      order: {
+        by: "Sort_time",
+        type: "desc" 
+    }
+    });
+  }
+
+  getDates(CA,Unit,Pool,wcs){
+    return this.connection.select({
+      from: "WaterManagement",
+      where:{
+        CA: CA,
+        Unit:Unit,
+        Pool:Pool,
+        Structure:wcs
+      },
+      order: {
+        by: "Sort_time",
+        type: "desc" 
+    }
+    });
+  }
+
 }

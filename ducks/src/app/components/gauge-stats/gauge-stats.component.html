@@ -54,7 +54,7 @@
           </div> 
           <div fxFlex="1%"> 
               <mat-form-field>
-                  <mat-select placeholder="Gauge" [(ngModel)]="selected_gauge" (ngModelChange)="getStats(selected_CA,selected_unit,selected_Pool,selected_wcs,$event)">
+                  <mat-select placeholder="Gauge (meters)" [(ngModel)]="selected_gauge" (ngModelChange)="getStats(selected_CA,selected_unit,selected_Pool,selected_wcs,$event)">
                     <mat-option *ngFor="let x of gauge_list" [value]="x">
                       {{x}}
                     </mat-option>

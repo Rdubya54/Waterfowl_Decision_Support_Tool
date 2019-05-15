@@ -42,64 +42,76 @@ import { IFoodAvail } from '../model/food-avail';
       autoIncrement: true
      },
      {
-      name: 'date',
+      name: 'Date',
       //notNull: true,
       dataType: DATA_TYPE.String
      },
      {
-      name: 'pool',
+      name: 'CA',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'structure',
+      name: 'Unit',
       dataType: DATA_TYPE.String
      },
      {
-      name: 'elevation',
+      name: 'Pool',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'gate_manipulation',
+      name: 'Structure',
+      dataType: DATA_TYPE.String
+     },
+     {
+      name: 'Elevation',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'gate_level',
+      name: 'Gate_manipulation',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'stoplog_change',
+      name: 'Gate_level',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'stoplog_level',
+      name: 'Stoplog_change',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'duck_numbers',
+      name: 'Stoplog_level',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'goose_numbers',
+      name: 'Duck_numbers',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'year',
+      name: 'Goose_numbers',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'time',
+      name: 'Year',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'fiscal_year',
+      name: 'Time',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'notes',
+      name: 'Fiscal_year',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'reasons',
+      name: 'Notes',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'Reasons',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'Sort_time',
       dataType: DATA_TYPE.String,
      }
     ],
@@ -158,141 +170,149 @@ import { IFoodAvail } from '../model/food-avail';
       autoIncrement: true
      },
      {
-      name: 'month',
+      name: 'Date',
       //notNull: true,
       dataType: DATA_TYPE.String
      },
      {
-      name: 'day',
-      dataType: DATA_TYPE.String,
-     },
-     {
-      name: 'pool',
+      name: 'CA',
       dataType: DATA_TYPE.String
      },
      {
-      name: 'percent_of_full_pool',
+      name: 'Unit',
+      dataType: DATA_TYPE.String
+     },
+     {
+      name: 'Pool',
+      dataType: DATA_TYPE.String
+     },
+     {
+      name: 'Percent_of_full_pool',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'less_than_six',
+      name: 'Less_than_six',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'seven_to_twelve',
+      name: 'Seven_to_twelve',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'thirteen_or_more',
+      name: 'Thirteen_or_more',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'habitat_standing',
+      name: 'Habitat_standing',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'habitat_mowed',
+      name: 'Habitat_mowed',
       dataType: DATA_TYPE.String,
      },    
      {
-      name: 'habitat_disced',
+      name: 'Habitat_disced',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'habitat_unharv_corn',
+      name: 'Habitat_unharv_corn',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'habitat_harv_corn',
+      name: 'Habitat_harv_corn',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'habitat_unharv_milo',
+      name: 'Habitat_unharv_milo',
       dataType: DATA_TYPE.String,
      },     
      {
-      name: 'habitat_harv_milo',
+      name: 'Habitat_harv_milo',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'habitat_unharv_beans',
+      name: 'Habitat_unharv_beans',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'habitat_harv_beans',
+      name: 'Habitat_harv_beans',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'habitat_browse',
+      name: 'Habitat_browse',
       dataType: DATA_TYPE.String,
      },
      ,
      {
-      name: 'ice_standing',
+      name: 'Ice_standing',
       dataType: DATA_TYPE.String,
      },     
      {
-      name: 'ice_mowed',
+      name: 'Ice_mowed',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'ice_descend',
+      name: 'Ice_descend',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'ice_unharv_corn',
+      name: 'Ice_unharv_corn',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'ice_harv_corn',
+      name: 'Ice_harv_corn',
       dataType: DATA_TYPE.String,
      },     
      {
-      name: 'ice_unharv_milo',
+      name: 'Ice_unharv_milo',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'ice_harv_milo',
+      name: 'Ice_harv_milo',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'ice_unharv_beans',
+      name: 'Ice_unharv_beans',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'ice_harv_beans',
+      name: 'Ice_harv_beans',
       dataType: DATA_TYPE.String,
      },     
      {
-      name: 'ice_unharv_beans',
+      name: 'Ice_unharv_beans',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'ice_browse',
+      name: 'Ice_browse',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'notes',
+      name: 'Notes',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'actions',
+      name: 'Actions',
       dataType: DATA_TYPE.String,
      },    
      {
-      name: 'response',
+      name: 'Response',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'year',
+      name: 'Year',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'time',
+      name: 'Time',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'fiscal_year',
+      name: 'Fiscal_year',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'Sort_time',
       dataType: DATA_TYPE.String,
      },
     ]
