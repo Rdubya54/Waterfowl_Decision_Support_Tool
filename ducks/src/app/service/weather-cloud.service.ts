@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { IWeather } from 'src/app/model/weather';
+import { IWeather,Weather } from 'src/app/model/weather';
 import { AngularFirestore } from 'angularfire2/firestore';
 
 @Injectable({
@@ -8,21 +8,33 @@ import { AngularFirestore } from 'angularfire2/firestore';
 })
 export class WeatherCloudService {
 
+  constructor(public firestore: AngularFirestore) { }
 
-  constructor(public db: AngularFirestore) { }
-
-   addWeather(weather:IWeather) {
-    return this.db.collection('Daily_Weather_Observations').add({
-      month: weather.month,
-      day: weather.day,
-      area_ice: weather.area_ice,
-      ice_thick: weather.ice_thick,
-      low_temp: weather.low_temp,
-      wind_dir: weather.wind_dir,
-      wind_speed: weather.wind_speed,
-      river_stage:weather.river_stage,
-      other_observations:weather.other_observations,
-      year:weather.year,
+  addWeather(Weather:IWeather){
+    return this.firestore.collection('Conservation_Areas').doc(Weather.CA)
+    .collection("Daily Weather Observation").doc(Weather.date).set({
+        CA:Weather.CA,
+        date:Weather.date,
+        sort_time:Weather.sort_time,
+        area_ice: Weather.area_ice,
+        ice_thick: Weather.ice_thick,
+        low_temp: Weather.low_temp,
+        wind_dir: Weather.wind_dir,
+        wind_speed: Weather.wind_speed,
+        river_stage:Weather.river_stage,
+        other_observations:Weather.other_observations,
     });
+  }
+
+  //get Weather
+  getWeather(CA,date){
+    return this.firestore.collection('Conservation_Areas').doc(CA).collection("Daily Weather Observation").doc(date).get();
+  }
+
+  //get prev weather for offline tree walking purposes
+  getprevWeather(CA){
+
+      return this.firestore.collection('Conservation_Areas').doc(CA).collection("Daily Weather Observation", 
+      ref=>ref.orderBy('sort_time', 'desc').limit(1)).get();
   }
 }

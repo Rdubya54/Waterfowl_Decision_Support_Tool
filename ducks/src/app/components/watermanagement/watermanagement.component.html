@@ -51,53 +51,14 @@
                     </mat-select>
                 </mat-form-field>
             </div>
+            <div fxFlex="1%"> 
+                <button mat-raised-button color="primary" (click)="openBottomSheet()">Past Seven Records</button>
+            </div>
         </div>
         </mat-card>
     </mat-grid-tile>
 </mat-grid-list>
 
-<!-- <mat-grid-list [cols]="breakpoint_top" rowHeight="200px" (window:resize)="onResize($event)" *ngIf="globals.role === 'oline';">
-<mat-grid-tile>
-<mat-card class="example-container">
-    <h3>Parameters</h3>
-    <div fxLayout="row"  fxLayoutGap="30%">
-        <div fxFlex="33%"> 
-            <mat-form-field class="wmgmt">
-                <input type="text" [(ngModel)]="selected_CA"  [ngModelOptions]="{standalone:true}" matInput placeholder="Conservation Area" >
-            </mat-form-field>
-        </div>
-        <div fxFlex="33%"> 
-            <mat-form-field class="wmgmt">
-                <input type="text" [(ngModel)]="selected_unit"  [ngModelOptions]="{standalone:true}" matInput placeholder="Pool Unit" >
-            </mat-form-field>
-        </div>
-        <div fxFlex="33%"> 
-            <mat-form-field class="wmgmt">
-                <input type="text" [(ngModel)]="selected_Pool"  [ngModelOptions]="{standalone:true}" matInput placeholder="Pool" >
-            </mat-form-field>
-        </div>
-    </div>
-    <div fxLayout="row"  fxLayoutGap="30%">
-        <div fxFlex="33%"> 
-            <mat-form-field class="wmgmt">
-                <input type="text" [(ngModel)]="selected_wcs"  [ngModelOptions]="{standalone:true}" matInput placeholder="Water Control Structure" (ngModelChange)="getprevfromlocal(selected_CA,selected_unit,selected_Pool,$event)">
-            </mat-form-field>
-        </div>
-        <div fxFlex="33%"> 
-            <mat-form-field class="wmgmt">
-                <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="getprevfromlocal(selected_CA,selected_unit,$event)">
-                    <mat-option *ngFor="let x of date_list" [value]="x">
-                        {{x}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-    </div>
-    </mat-card>
-</mat-grid-tile>
-
-</mat-grid-list>
- -->
 
   <mat-grid-list [cols]="breakpoint" rowHeight="900px" (window:resize)="onResize($event)">
   <mat-grid-tile>
@@ -222,9 +183,6 @@
   [fixedInViewport]="true" [fixedTopGap]="250">
     <p>{{Graph_Title}}</p>
 
-<!--     <div *ngIf="chart">
-    <canvas id="canvas">{{ chart }}</canvas>
-    </div>  -->
   </mat-sidenav>
   
   
@@ -262,13 +220,6 @@
                 </div> 
             </div>
 
-<!--             <div fxLayout="row" fxLayoutGap="0.5%">
-                    <div fxFlex="100%"> 
-                        <mat-form-field *ngIf="this.previous_records" class="notes">
-                            <textarea [(ngModel)]="this.previous_records.notes" [disabled]='true' matInput placeholder="Previous Notes" rows=10></textarea>
-                      </mat-form-field>
-                    </div> 
-            </div> -->
           
             <div fxLayout="row" fxLayoutGap="0.5%">
                   <div fxFlex="100%"> 

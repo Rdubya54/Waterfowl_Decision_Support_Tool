@@ -670,14 +670,14 @@ Apache-2.0
 
 firebase/storage
 
-@angular/material/table
-
 @angular/fire/database
 MIT
 
 firebase/database
 
 @angular/material/button-toggle
+
+@angular/material/table
 
 @angular/material/bottom-sheet
 

@@ -11,13 +11,13 @@ import { Chart } from 'chart.js';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {AppComponent} from 'src/app/app.component';
 import {dbService} from 'src/app/service/db.service';
-
-
+import {MatBottomSheet, MatBottomSheetRef} from '@angular/material';
 
 import {
   Watermanagement,
   IWatermanagement
 } from 'src/app/model/watermanagement';
+
 import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/style-transforms';
 import { forEach } from '@angular/router/src/utils/collection';
 
@@ -29,7 +29,7 @@ import { forEach } from '@angular/router/src/utils/collection';
   providers:[LocalWaterManagementService,ChartService]
 })
 export class WatermanagementComponent implements OnInit {
-  
+
   @ViewChild('rightSidenav') public sidenav: MatSidenav;
   ngVersion: string = VERSION.full;
   matVersion: string = '5.1.0'
@@ -56,7 +56,7 @@ export class WatermanagementComponent implements OnInit {
   public CA_list: string[]=[];
   public selected_CA;
   public unit_list: string[]=[];
-  public selected_unit; 
+  public selected_unit;
   public Pool_list: string[]=[];
   public selected_Pool;
   public wcs_list: string[]=[];
@@ -72,33 +72,38 @@ export class WatermanagementComponent implements OnInit {
 
   public data_length=this.prev_data_master.length;
    constructor(private comp:AppComponent, private localService: LocalWaterManagementService, private cloudservice: WatermanagementCloudService, public globals:Globals,
-     private dbservice_cloud:dbService, private sidenavService:ChartService) {
+     private dbservice_cloud:dbService, private sidenavService:ChartService,private bottomSheet: MatBottomSheet) {
+  }
+
+  //opens past seven day page
+  openBottomSheet(): void {
+    this.bottomSheet.open(PastSevenDays);
   }
 
   ngOnInit() : void {
 
-//set up layout stuff
-this.sidenavService.setSidenav(this.sidenav);
-this.breakpoint = (window.innerWidth <= 768) ? 1 : 3;
-this.breakpoint_top = (window.innerWidth <= 768) ? 1 : 1;
-this.sidenavService.setSidenav(this.sidenav);
+  //set up layout stuff
+  this.sidenavService.setSidenav(this.sidenav);
+  this.breakpoint = (window.innerWidth <= 768) ? 1 : 3;
+  this.breakpoint_top = (window.innerWidth <= 768) ? 1 : 1;
+  this.sidenavService.setSidenav(this.sidenav);
 
-this.CA_list=[];
-this.unit_list=[];
-this.Pool_list=[];
-this.wcs_list=[];
+  this.CA_list=[];
+  this.unit_list=[];
+  this.Pool_list=[];
+  this.wcs_list=[];
 
 
   //if app is online push any locally cached data to the cloud
   if (this.globals.role==="online"){
-    this.pushtocloudfromlocal();
+/*     this.pushtocloudfromlocal(); */
 
     //get available CA's from dropdown menu
     this.dbservice_cloud.getCAs().subscribe(data => {
       data.forEach(doc => {
         this.CA_list.push(doc.id)
       });
-    }); 
+    });
   }
 
   else if (this.globals.role==="offline"){
@@ -113,10 +118,10 @@ this.wcs_list=[];
       });
     });
   }
-} 
+}
 
 
-//fetches list of availabe units in CA for dropdown
+// fetches list of availabe units in CA for dropdown
 getUnits(CA){
   this.unit_list=[];
   this.Pool_list=[];
@@ -139,11 +144,11 @@ getUnits(CA){
           this.unit_list.push(Unit)
           console.log(this.unit_list)
       });
-    });    
+    });
   }
 }
 
-
+// fetches list of availabe pools in units for dropdown
 getPools(CA,unit){
   this.Pool_list=[];
 
@@ -164,12 +169,12 @@ getPools(CA,unit){
           this.Pool_list.push(pool)
           console.log(this.Pool_list)
       });
-    });   
+    });
   }
 
 }
-  
-//fetche list of available strucutres in pool for dropdown
+
+// fetche list of available strucutres in pool for dropdown
 getWCS(CA,unit,pool){
   this.wcs_list=[];
 
@@ -189,11 +194,11 @@ getWCS(CA,unit,pool){
           this.wcs_list.push(wcs)
           console.log(this.wcs_list)
       });
-    });   
+    });
   }
 }
 
-//fetches list of available record dates for pool for dropdown
+// fetches list of available record dates for pool for dropdown
 getDates(CA,unit,pool,wcs,location){
   this.date_list=["Create New Record"];
 
@@ -215,8 +220,8 @@ getDates(CA,unit,pool,wcs,location){
   }
 }
 
-//get last two records for EVERY water control structure
-downloadallprevs(){
+// get last two records for EVERY water control structure
+/* downloadallprevs(){
   this.dbservice_cloud.getCAs().subscribe(data => {
     data.forEach(doc => {
       console.log("CA is"+doc.id)
@@ -241,20 +246,20 @@ downloadallprevs(){
                     });
                   });
                 });
-              }); 
+              });
             });
-          }); 
+          });
         });
-      }); 
+      });
     });
   });
-}
+} */
 
-//retrives an indivudal watermangement record from the cloud
-getindividualrecord(CA,unit,pool,wcs,date){
+// retrives an indivudal watermangement record from the cloud
+/* getindividualrecord(CA,unit,pool,wcs,date){
   this.cloudservice.getWaterManagement(CA,unit,pool,wcs,date).
   subscribe(data=>{
-    this.newWaterManagement.CA=CA;                                                                          
+    this.newWaterManagement.CA=CA;
     this.newWaterManagement.Unit=unit;
     this.newWaterManagement.Pool=pool;
     this.newWaterManagement.Structure=wcs;
@@ -273,46 +278,38 @@ getindividualrecord(CA,unit,pool,wcs,date){
     this.localaddWatermanagement("from_cloud");
 
   })
-}
+} */
 
-//get the previous records for the target wcs
-//from local storage
+// get the previous records for the target wcs
+// from local storage
 getprevfromlocal(selected_CA,selected_unit,selected_Pool,selected_wcs,selected_date){
-   console.log("selected date is "+selected_date)
-  //get dates for dropdwown if no dates are selected
+  // get dates for dropdwown if no dates are selected
   if (selected_date==="Create New Record" || selected_date in window){
-  //also get available dates for date drop down
+  // also get available dates for date drop down
   this.getDates(selected_CA,selected_unit,selected_Pool,selected_wcs,"local")
-  } 
+  }
 
-  //if a new record is being created, not an old record being edited
+  // if a new record is being created, not an old record being edited
   if (selected_date==="Create New Record" || selected_date in window){
-    console.log('fetching previous records from local!!!!!!')
     this.localService.getprevWaterManagements(selected_CA,selected_unit,selected_Pool,selected_wcs)
       .then(data=>{
-            console.log(data)
             this.watermanagements=data;
 
             var listt=this.watermanagements;
 
             for (let i = 0; i < 2; i++){
               var second_to_last_entry=last_entry
-              console.log("i is "+i)
-              console.log("it is "+listt[i])
               var last_entry=JSON.parse(JSON.stringify({"Date":listt[i].Date,"Elevation":listt[i].Elevation,
               "Gate_manipulation":listt[i].Gate_manipulation,"Gate_level":listt[i].Gate_level,"Stoplog_change":listt[i].Stoplog_change,
               "Stoplog_level":listt[i].Stoplog_level,"Duck_numbers":listt[i].Duck_numbers,
               "Goose_numbers":listt[i].Goose_numbers,"Notes":listt[i].Notes}));
-              console.log("i am "+listt[i].Date)
             }
-            
+
             this.prev_data=[];
             this.prev_data_2=[];
             this.prev_data_master=[];
             this.prev_data=last_entry;
             this.prev_data_2=second_to_last_entry;
-            console.log("it is "+this.prev_data);
-            console.log("it is "+this.prev_data_2);
             this.prev_data_master.push(this.prev_data_2)
             this.prev_data_master.push(this.prev_data)
             this.data_length=this.prev_data_master.length
@@ -322,11 +319,8 @@ getprevfromlocal(selected_CA,selected_unit,selected_Pool,selected_wcs,selected_d
 
   //if an old record is being updated
   else if (selected_date!=="Create New Record" && selected_date!==""){
-    console.log('fetching previous records from local!!!!!!')
     this.localService.getprevWaterManagement_forupdate(selected_CA,selected_unit,selected_Pool,selected_wcs,selected_date)
       .then(data=>{
-            console.log(data)
-            console.log("old reccord bing upddate")
             this.watermanagements=data;
 
             this.newWaterManagement.CA=selected_CA;
@@ -369,10 +363,7 @@ localaddWatermanagement(location){
     }
 
     else{
-      console.log("adding from cloud to local")
     }
-
-    console.log("date here is "+this.newWaterManagement.Date)
 
     //put watermanagement record into IndexDB
     this.localService.addWaterManagement(this.newWaterManagement).
@@ -382,7 +373,7 @@ localaddWatermanagement(location){
         this.clearNewWaterManagement();
 
         //only refresh the page if a new record is being added. you dont want to refresh
-        //everytime local pushes to the cloud otherwise it will keep refreshing even when theres 
+        //everytime local pushes to the cloud otherwise it will keep refreshing even when theres
         //no new data
         if (location === "new"){
         this.comp.openDataWrittenDialog();
@@ -397,13 +388,16 @@ localaddWatermanagement(location){
 
 //this function handles pushing data that is stored in local to the cloud
 //once the app gets back online
-pushtocloudfromlocal(){
-  console.log("pushing to cloud from local")
+/* pushtocloudfromlocal(){
   this.localService.getWaterManagment().
     then(data => {
         this.watermanagements = data;
 
         this.watermanagements.forEach(record =>{
+          this.newWaterManagement.CA=record["CA"],
+          this.newWaterManagement.Unit=record["Unit"],
+          this.newWaterManagement.Pool=record["Pool"],
+          this.newWaterManagement.Structure=record["Structure"],
           this.newWaterManagement.Date=record["Date"],
           this.newWaterManagement.Elevation=record["Elevation"],
           this.newWaterManagement.Gate_manipulation=record["Gate_manipulation"],
@@ -419,13 +413,9 @@ pushtocloudfromlocal(){
           this.newWaterManagement.Reasons=record["Reasons"],
           this.newWaterManagement.Sort_time=record["Sort_time"]
 
-          console.log("adding watermanagement from local to cloud")
-          console.log(record)
-
           //add the locally stored Watermanagement to Cloud (if the record was already there it is being updated
           //but since everything is the same it is basically doing nothing)
-          this.cloudservice.addWaterManagement(this.newWaterManagement,record["CA"],record["Unit"],record["Pool"],record["Structure"],
-            record["Date"],record["Sort_time"])
+          this.cloudservice.addWaterManagement(this.newWaterManagement)
 
           //delete the record from local
           this.localService.deleteWaterManagement(record["id"]);
@@ -433,16 +423,14 @@ pushtocloudfromlocal(){
 
         //now redownload database from cloud now that it has been updated with
         //the local data that was pushed
-        this.downloadallprevs()
-          
+        // this.downloadallprevs()
+
       }).catch(error => {
           console.error(error);
           alert(error.message);
-  }); 
-
- 
+  });
 }
-
+ */
 //this function is for updating records in the cloud
 updateWatermanagement(CA,unit,pool,wcs,date){
     this.cloudservice.getWaterManagement(CA,unit,pool,wcs,date).
@@ -460,16 +448,14 @@ updateWatermanagement(CA,unit,pool,wcs,date){
       this.newWaterManagement.Reasons=data.get('Reasons');
       this.newWaterManagement.Sort_time=data.get('Sort_time');
 
-      console.log(this.newWaterManagement.Sort_time)
-      console.log("Date when grabbing is " +this.newWaterManagement.Date)
 
       //get two records that are after the record we are about to update
       this.cloudservice.getprevWaterManagement(CA,unit,pool,wcs,this.newWaterManagement.Sort_time).
       subscribe(data => {
-  
+
         this.doc_array.length=0;
         this.prev_data_master.length=0;
-  
+
         data.forEach(doc => {
         console.log(doc.id)
         this.doc_array.push(doc.id)
@@ -477,7 +463,6 @@ updateWatermanagement(CA,unit,pool,wcs,date){
         });
 
         this.updateChartdata(CA,unit,pool,wcs)
-        console.log("mast is"+this.prev_data_master)
         this.makeChart();
 
       });
@@ -489,12 +474,11 @@ updateChartdata(CA,unit,pool,wcs){
 
     if (this.doc_array.length>=1){
 
-      //get two records ready to put in chart 
+      //get two records ready to put in chart
       this.cloudservice.getWaterManagement(CA,unit,pool,wcs,this.doc_array[0]).
       subscribe(data=>{
         this.prev_data.length=0;
         this.prev_data['Date']=data.get('Date');
-        console.log(data.get('Date'))
         this.prev_data['Elevation']=data.get('Elevation');
         this.prev_data['Gate_manipulation']=data.get('Gate_manipulation');
         this.prev_data['Gate_level']=data.get('Gate_level');
@@ -504,8 +488,6 @@ updateChartdata(CA,unit,pool,wcs){
         this.prev_data['Goose_numbers']=data.get('Goose_numbers');
         this.prev_data_master.push(this.prev_data);
         this.data_length=this.prev_data_master.length
-        console.log(this.prev_data_master)
-
       });
 
     }
@@ -515,7 +497,6 @@ updateChartdata(CA,unit,pool,wcs){
       subscribe(data=>{
         this.prev_data_2.length=0;
         this.prev_data_2['Date']=data.get('Date');
-        console.log(data.get('Date'))
         this.prev_data_2['Elevation']=data.get('Elevation');
         this.prev_data_2['Gate_manipulation']=data.get('Gate_manipulation');
         this.prev_data_2['Gate_level']=data.get('Gate_level');
@@ -525,8 +506,7 @@ updateChartdata(CA,unit,pool,wcs){
         this.prev_data_2['Goose_numbers']=data.get('Goose_numbers');
         this.prev_data_master.push(this.prev_data_2);
         this.data_length=this.prev_data_master.length
-        console.log(this.prev_data_master)
-        
+
       });
     }
 
@@ -585,11 +565,11 @@ getWatermanagement(CA,unit,pool,wcs,date) {
 
     this.getDates(CA,unit,pool,wcs,"cloud")
 
-    //this where code goes if we are going to update a record 
+    //this where code goes if we are going to update a record
     if (date!=="none"){
-      this.updateWatermanagement(CA,unit,pool,wcs,date) 
+      this.updateWatermanagement(CA,unit,pool,wcs,date)
     }
-    
+
     //this is where code goes if we are just creating a new one
     else{
 
@@ -604,7 +584,7 @@ getWatermanagement(CA,unit,pool,wcs,date) {
       this.newWaterManagement.Fiscal_year='';
       this.newWaterManagement.Notes='';
       this.newWaterManagement.Reasons='';
-      this.newWaterManagement.Sort_time='Create New Record';      
+      this.newWaterManagement.Sort_time='Create New Record';
 
     console.log(this.newWaterManagement.Sort_time)
 
@@ -615,13 +595,9 @@ getWatermanagement(CA,unit,pool,wcs,date) {
       this.prev_data_master.length=0;
 
       data.forEach(doc => {
-      console.log(doc.id)
       this.doc_array.push(doc.id)
 
-      });        
-      
-        console.log(this.doc_array[0])
-
+      });
 
         this.cloudservice.getWaterManagement(CA,unit,pool,wcs,this.doc_array[0]).
       subscribe(data=>{
@@ -650,10 +626,9 @@ getWatermanagement(CA,unit,pool,wcs,date) {
         this.newWaterManagement.Goose_numbers=this.prev_data['Goose_numbers'];
         this.newWaterManagement.Notes=data.get('Notes');
         this.newWaterManagement.Reasons=data.get('Reasons')
-      
+
         this.prev_data_master.push(this.prev_data);
         this.data_length=this.prev_data_master.length
-        console.log(this.prev_data_master)
 
       });
 
@@ -661,7 +636,6 @@ getWatermanagement(CA,unit,pool,wcs,date) {
       subscribe(data=>{
         this.prev_data_2.length=0;
         this.prev_data_2['Date']=data.get('Date');
-        console.log(data.get('Date'))
         this.prev_data_2['Elevation']=data.get('Elevation');
         this.prev_data_2['Gate_manipulation']=data.get('Gate_manipulation');
         this.prev_data_2['Gate_level']=data.get('Gate_level');
@@ -671,11 +645,10 @@ getWatermanagement(CA,unit,pool,wcs,date) {
         this.prev_data_2['Goose_numbers']=data.get('Goose_numbers');
         this.prev_data_master.push(this.prev_data_2);
         this.data_length=this.prev_data_master.length
-        console.log(this.prev_data_master)
 
         this.makeChart();
-      });  
-    }); 
+      });
+    });
     }
   }
 
@@ -686,7 +659,6 @@ getWatermanagement(CA,unit,pool,wcs,date) {
 
   //creates timestamps to write to dbs
   getdatesfordb(){
-    console.log("creating dates")
     var d = new Date();
     var day1=d.getDate();
     //get month is zero based so add 1
@@ -706,17 +678,19 @@ getWatermanagement(CA,unit,pool,wcs,date) {
 addWaterManagement(CA,unit,pool,wcs,date) {
 
   if (date==="Create New Record" || date===""){
-      console.log("date in funciton is "+date)
+      this.newWaterManagement.CA=this.selected_CA;
+      this.newWaterManagement.Unit=this.selected_unit;
+      this.newWaterManagement.Pool=this.selected_Pool;
+      this.newWaterManagement.Structure=this.selected_wcs
       this.getdatesfordb();
   }
   else{
 /*     full_date=this.newWaterManagement.Date */
   }
-    console.log(this.newWaterManagement.Sort_time)
-    this.cloudservice.addWaterManagement(this.newWaterManagement,CA,unit,pool,wcs,this.newWaterManagement.Date,this.newWaterManagement.Sort_time);
-    //always also update local service when update cloud otherwise old local service record will overwrite updated record 
+    this.cloudservice.addWaterManagement(this.newWaterManagement);
+    //always also update local service when update cloud otherwise old local service record will overwrite updated record
     //after it is pushed
-    this.localService.addWaterManagement(this.newWaterManagement);    
+    this.localService.addWaterManagement(this.newWaterManagement);
     this.comp.openDataWrittenDialog();
   }
 
@@ -738,7 +712,7 @@ addWaterManagement(CA,unit,pool,wcs,date) {
     //this.makeChart(chart_name);
     this.sidenav.toggle();
   }
-  
+
   //creates initial chart
   makeChart(){
     this.dates=[this.prev_data_master[1]['Date'],this.prev_data_master[0]['Date'],"Current Entry"];
@@ -747,11 +721,8 @@ addWaterManagement(CA,unit,pool,wcs,date) {
     this.ducks_num_data=[this.prev_data_master[1]['Duck_numbers'],this.prev_data_master[0]['Duck_numbers'],this.newWaterManagement.Duck_numbers];
     this.geese_num_data=[this.prev_data_master[1]['Goose_numbers'],this.prev_data_master[0]['Goose_number'],this.newWaterManagement.Goose_numbers];
 
-    console.log(this.elevation_data)
-    console.log(this.gate_level_data)
-    console.log(this.ducks_num_data)
     this.Graph_Title="Water Elevation";
-    
+
      this.chart = new Chart('canvas_elevation', {
       type: 'line',
       data: {
@@ -777,10 +748,10 @@ addWaterManagement(CA,unit,pool,wcs,date) {
           }]
         }
       }
-    }) 
+    })
 
     this.Graph_Title="Gate Level";
-    
+
     this.chart = new Chart('canvas_gate_level', {
       type: 'line',
       data: {
@@ -806,10 +777,10 @@ addWaterManagement(CA,unit,pool,wcs,date) {
           }]
         }
       }
-    })  
+    })
 
     this.Graph_Title="Number of Ducks and Geese";
-    
+
     this.chart = new Chart('canvas_birds', {
       type: 'line',
       data: {
@@ -843,7 +814,7 @@ addWaterManagement(CA,unit,pool,wcs,date) {
         }
       }
     })
-    return "done";  
+    return "done";
   }
 
   //update chart when data changes live inside of app
@@ -868,7 +839,7 @@ addWaterManagement(CA,unit,pool,wcs,date) {
     else if (chart_name=="bird_nums"){
      var chart_type ='canvas_birds';
     }
-    
+
     if (chart_name=="elevation"||chart_name=="gate_level"){
     this.chart = new Chart(chart_type, {
       type: 'line',
@@ -933,7 +904,7 @@ addWaterManagement(CA,unit,pool,wcs,date) {
             }]
           }
         }
-      })    
+      })
     }
 
     else if (this.newWaterManagement.Duck_numbers){
@@ -969,8 +940,20 @@ addWaterManagement(CA,unit,pool,wcs,date) {
             }]
           }
         }
-      })       
+      })
     }
     }
   }
+}
+
+
+@Component({
+  selector: 'past-seven-days',
+  templateUrl: 'past-seven-days.html',
+  styleUrls: ['past-seven-days.css']
+})
+export class PastSevenDays {
+
+  constructor(private bottomSheetRef: MatBottomSheetRef<PastSevenDays>) {}
+
 }

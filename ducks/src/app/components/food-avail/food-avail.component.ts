@@ -6,10 +6,12 @@ import {ChangeDetectorRef, OnDestroy} from '@angular/core';
 import {Globals} from 'src/app/extra/globals';
 import {MatBottomSheet, MatBottomSheetRef} from '@angular/material';
 import {AppComponent} from 'src/app/app.component';
-import {dbService} from 'src/app/service/db.service';
 
+import {dbService} from 'src/app/service/db.service';
+import {LocalDbService} from 'src/app/service/local-db.service'
 import {MoistsoilService} from 'src/app/service/moistsoil.service'
 import {FoodAvailCloudService} from 'src/app/service/food-avail-cloud.service';
+
 
 import {
   FoodAvail,
@@ -28,7 +30,7 @@ export class FoodAvailComponent implements OnInit {
   breakpoint_top:number;
 
   private localservice: FoodAvailLocalService;
-  watermanagements: any[];
+  foodavails: any[];
   newFoodAvail: IFoodAvail = new FoodAvail();
   local_records: any[];
 
@@ -40,21 +42,27 @@ export class FoodAvailComponent implements OnInit {
   public selected_Pool;
   public wcs_list: string[]=[];
   public selected_wcs;
+  public date_list: string[]=["Create New Record"];
+  public selected_date;
   public prev_data:string[]=[];
 
   public previous_records;
   public second_previous_records;
 
+  public placeholderid;
+
   public buttonName: any = true;
   toggleActive:boolean = false;
 
   constructor(private comp:AppComponent,private localService: FoodAvailLocalService,  public globals:Globals,
-    private foodavailservice: FoodAvailCloudService, private dbservice:dbService,private firebase: AngularFireDatabase,private bottomSheet: MatBottomSheet,public moistsoilservice:MoistsoilService) {
+    private cloudservice: FoodAvailCloudService, private dbservice:dbService,private dbservice_local:LocalDbService,private firebase: AngularFireDatabase,
+    private bottomSheet: MatBottomSheet,public moistsoilservice:MoistsoilService) {
       this.localservice = localService;
       this.moistsoilservice=moistsoilservice;
       this.dbservice=dbservice;
   }
 
+  //opens Moist Soil Calculator
   openBottomSheet(): void {
     this.bottomSheet.open(BottomSheetOverviewExampleSheet);
   }
@@ -62,7 +70,7 @@ export class FoodAvailComponent implements OnInit {
   ngOnInit() {
     this.breakpoint_top = (window.innerWidth <= 768) ? 1 : 1;
     this.breakpoint = (window.innerWidth <= 768) ? 1 : 2;
-    this.newFoodAvail.millet_output=6;
+
     this.dbservice.getCAs().subscribe(data => {
       this.CA_list=[];
       this.unit_list=[];
@@ -73,44 +81,333 @@ export class FoodAvailComponent implements OnInit {
       });
   });
 
-  }
-
-  getUnits(CA){
-    this.unit_list=[];
-    this.Pool_list=[];
-    this.wcs_list=[];
-    this.dbservice.getUnits(CA).subscribe(data => {
-      data.forEach(doc => {
-        this.unit_list.push(doc.id)
-      });
-  });
-  }
   
+  //if app is online push any locally cached data to the cloud
+  if (this.globals.role==="online"){
 
-  getPools(CA,unit){
-    this.Pool_list=[];
-    this.wcs_list=[];
-    this.dbservice.getPools(CA,unit).subscribe(data => {
+    //get available CA's from dropdown menu
+    this.dbservice.getCAs().subscribe(data => {
       data.forEach(doc => {
-        this.Pool_list.push(doc.id)
+        this.CA_list.push(doc.id)
       });
+    });
+  }
+
+  else if (this.globals.role==="offline"){
+    console.log("GETTING CAs")
+    this.localService.getCAs().then(data => {
+      this.foodavails = data;
+
+      this.foodavails.forEach(record =>{
+          var CA=record["CA"]
+          this.CA_list.push(CA)
+          console.log(this.CA_list)
+      });
+    });
+  }
+}
+
+
+// fetches list of availabe units in CA for dropdown
+getUnits(CA){
+  console.log("GETTING UNITS:"+this.globals.role)
+  this.unit_list=[];
+  this.Pool_list=[];
+
+  if (this.globals.role==="online"){
+  console.log("getting from oneline")
+  this.dbservice.getUnits(CA).subscribe(data => {
+    data.forEach(doc => {
+      console.log("unit is "+doc.id)
+      this.unit_list.push(doc.id)
+    });
   });
   }
-  
-  getWCS(CA,unit,pool){
-    this.wcs_list=[];
-    this.dbservice.getWCS(CA,unit,pool).subscribe(data => {
-      data.forEach(doc => {
-        this.wcs_list.push(doc.id)
+
+  else if (this.globals.role==="offline"){
+    console.log("getting from offline")
+    this.localService.getUnits(CA).then(data => {
+      this.foodavails = data;
+
+      this.foodavails.forEach(record =>{
+          var Unit=record["unit"]
+          this.unit_list.push(Unit)
+          console.log(this.unit_list)
       });
+    });
+  }
+}
+
+// fetches list of availabe pools in units for dropdown
+getPools(CA,unit){
+  this.Pool_list=[];
+
+  if (this.globals.role==="online"){
+  this.dbservice.getPools(CA,unit).subscribe(data => {
+    data.forEach(doc => {
+      this.Pool_list.push(doc.id)
+    });
   });
-  }  
+  }
 
+  else if (this.globals.role==="offline"){
+    this.localService.getPools(CA,unit).then(data => {
+      this.foodavails = data;
 
-  addData(CA,unit,pool,wcs) {
+      this.foodavails.forEach(record =>{
+          var pool=record["pool"]
+          this.Pool_list.push(pool)
+          console.log(this.Pool_list)
+      });
+    });
+  }
+}
+
+// fetches list of available strucutres in pool for dropdown
+getWCS(CA,unit,pool){
+  this.wcs_list=[];
+
+  if (this.globals.role==="online"){
+  this.dbservice.getWCS(CA,unit,pool).subscribe(data => {
+    data.forEach(doc => {
+      this.wcs_list.push(doc.id)
+    });
+  });
+  }
+  else if (this.globals.role==="offline"){
+    this.localService.getWCS(CA,unit,pool).then(data => {
+      this.foodavails = data;
+
+      this.foodavails.forEach(record =>{
+          var wcs=record["structure"]
+          this.wcs_list.push(wcs)
+          console.log(this.wcs_list)
+      });
+    });
+  }
+}
+
+// fetches list of available record dates for pool for dropdown
+getDates(CA,unit,pool,wcs){
+  this.date_list=["Create New Record"];
+  console.log('locatin:'+location)
+
+  if (this.globals.role==="online"){
+  this.dbservice.getDates_foodavail(CA,unit,pool,wcs).subscribe(data => {
+    data.forEach(doc => {
+      this.date_list.push(doc.id)
+    });
+  });
+  }
+
+  else if (this.globals.role==="offline"){
+  this.localService.getDates(CA,unit,pool,wcs).then(data => {
+    data.forEach(doc => {
+      console.log(doc['date'])
+      this.date_list.push(doc['date'])
+    });
+  });
+  }
+}
+
+//read a foodavail record
+getFoodAvail(CA,Unit,Pool,WCS,date){
+
+  //when you are only getting old data
+  if (this.selected_date!=='Create New Record'){
+
+    //populate page with old record
+    if (this.globals.role==="online"){
+      console.log('fetching cloud')
+      this.cloudservice.getFoodAvail(CA,Unit,Pool,WCS,date).
+      subscribe(data=>{
+        console.log(data)
+        this.newFoodAvail.CA=data.get('CA')
+        this.newFoodAvail.unit=data.get('unit')
+        this.newFoodAvail.pool=data.get('pool')
+        this.newFoodAvail.structure=data.get('structure')
+        this.newFoodAvail.date=data.get('date')
+        this.newFoodAvail.sort_time=data.get('sort_time')
+        this.newFoodAvail.corn_unharv=data.get('corn_unharv')
+        this.newFoodAvail.corn_harv=data.get('corn_harv')
+        this.newFoodAvail.corn_yield=data.get('corn_yield')
+        this.newFoodAvail.corn_yield_field=data.get('corn_yield_field')
+        this.newFoodAvail.beans_unharv=data.get('beans_unharv')
+        this.newFoodAvail.beans_harv=data.get('beans_harv')
+        this.newFoodAvail.beans_yield=data.get('beans_yield')
+        this.newFoodAvail.beans_yield_field=data.get('beans_yield_field')
+        this.newFoodAvail.milo_unharv=data.get('milo_unharv')
+        this.newFoodAvail.milo_harv=data.get('milo_harv')
+        this.newFoodAvail.milo_yield=data.get('milo_yield')
+        this.newFoodAvail.milo_yield_field=data.get('milo_yield_field')
+        this.newFoodAvail.wheat_green=data.get('wheat_green')
+        this.newFoodAvail.wheat_harv=data.get('wheat_harv')
+        this.newFoodAvail.soil_standing=data.get('soil_standing')
+        this.newFoodAvail.soil_mowed=data.get('soil_mowed')
+        this.newFoodAvail.soil_disced=data.get('soil_disced')
+        this.newFoodAvail.millet_output=data.get('millet_output')
+        this.newFoodAvail.foxtail_output=data.get('foxtail_output')
+        this.newFoodAvail.rice_cut_output=data.get('rice_cut_output')
+        this.newFoodAvail.panic_grass_output=data.get('panic_grass_output')
+        this.newFoodAvail.crabgrass_output=data.get('crabgrass_output')
+        this.newFoodAvail.sprangletop_output=data.get('sprangletop_output')
+        this.newFoodAvail.lapathifolium_output=data.get('lapathifolium_output')
+        this.newFoodAvail.pennsylvanicum_output=data.get('pennsylvanicum_output')
+        this.newFoodAvail.coccineum_output=data.get('coccineum_output')
+        this.newFoodAvail.water_pepper_output=data.get('water_pepper_output')
+        this.newFoodAvail.pigweed_output=data.get('pigweed_output')
+        this.newFoodAvail.bidens_output=data.get('bidens_output')
+        this.newFoodAvail.other_seed_output=data.get('other_seed_output')
+        this.newFoodAvail.open_water_output=data.get('open_water_output')
+        this.newFoodAvail.recently_disced_output=data.get('recently_disced_output')
+        this.newFoodAvail.chufa_output=data.get('chufa_output')
+        this.newFoodAvail.redroot_output=data.get('redroot_output')
+        this.newFoodAvail.sedge_output=data.get('sedge_output')
+        this.newFoodAvail.rush_output=data.get('rush_output')
+        this.moistsoilservice.newMoistSoil.millet_output=data.get('millet_output')
+        this.moistsoilservice.newMoistSoil.foxtail_output=data.get('foxtail_output')
+        this.moistsoilservice.newMoistSoil.rice_cut_output=data.get('rice_cut_output')
+        this.moistsoilservice.newMoistSoil.panic_grass_output=data.get('panic_grass_output')
+        this.moistsoilservice.newMoistSoil.crabgrass_output=data.get('crabgrass_output')
+        this.moistsoilservice.newMoistSoil.sprangletop_output=data.get('sprangletop_output')
+        this.moistsoilservice.newMoistSoil.lapathifolium_output=data.get('lapathifolium_output')
+        this.moistsoilservice.newMoistSoil.pennsylvanicum_output=data.get('pennsylvanicum_output')
+        this.moistsoilservice.newMoistSoil.coccineum_output=data.get('coccineum_output')
+        this.moistsoilservice.newMoistSoil.water_pepper_output=data.get('water_pepper_output')
+        this.moistsoilservice.newMoistSoil.pigweed_output=data.get('pigweed_output')
+        this.moistsoilservice.newMoistSoil.bidens_output=data.get('bidens_output')
+        this.moistsoilservice.newMoistSoil.other_seed_output=data.get('other_seed_output')
+        this.moistsoilservice.newMoistSoil.open_water_output=data.get('open_water_output')
+        this.moistsoilservice.newMoistSoil.recently_disced_output=data.get('recently_disced_output')
+        this.moistsoilservice.newMoistSoil.chufa_output=data.get('chufa_output')
+        this.moistsoilservice.newMoistSoil.redroot_output=data.get('redroot_output')
+        this.moistsoilservice.newMoistSoil.sedge_output=data.get('sedge_output')
+        this.moistsoilservice.newMoistSoil.rush_output=data.get('rush_output')
+
+      })
+    }
+
+      //populate page with old record
+     else if (this.globals.role==="offline"){
+      this.localservice.getFoodAvail_selected(CA,Unit,Pool,WCS,date).
+        then(data => {
+            this.foodavails = data;
+            this.foodavails.forEach(record =>{
+              console.log(record)
+              this.placeholderid=record["id"]
+              this.newFoodAvail.CA=record['CA']
+              this.newFoodAvail.unit=record['unit']
+              this.newFoodAvail.pool=record['pool']
+              this.newFoodAvail.structure=record['structure']
+              this.newFoodAvail.date=record['date']
+              this.newFoodAvail.sort_time=record['sort_time']
+              this.newFoodAvail.corn_unharv=record['corn_unharv']
+              this.newFoodAvail.corn_harv=record['corn_harv']
+              this.newFoodAvail.corn_yield=record['corn_yield']
+              this.newFoodAvail.corn_yield_field=record['corn_yield_field']
+              this.newFoodAvail.beans_unharv=record['beans_unharv']
+              this.newFoodAvail.beans_harv=record['beans_harv']
+              this.newFoodAvail.beans_yield=record['beans_yield']
+              this.newFoodAvail.beans_yield_field=record['beans_yield_field']
+              this.newFoodAvail.milo_unharv=record['milo_unharv']
+              this.newFoodAvail.milo_harv=record['milo_harv']
+              this.newFoodAvail.milo_yield=record['milo_yield']
+              this.newFoodAvail.milo_yield_field=record['milo_yield_field']
+              this.newFoodAvail.wheat_green=record['wheat_green']
+              this.newFoodAvail.wheat_harv=record['wheat_harv']
+              this.newFoodAvail.soil_standing=record['soil_standing']
+              this.newFoodAvail.soil_mowed=record['soil_mowed']
+              this.newFoodAvail.soil_disced=record['soil_disced']
+              this.newFoodAvail.millet_output=record['millet_output']
+              this.newFoodAvail.foxtail_output=record['foxtail_output']
+              this.newFoodAvail.rice_cut_output=record['rice_cut_output']
+              this.newFoodAvail.panic_grass_output=record['panic_grass_output']
+              this.newFoodAvail.crabgrass_output=record['crabgrass_output']
+              this.newFoodAvail.sprangletop_output=record['sprangletop_output']
+              this.newFoodAvail.lapathifolium_output=record['lapathifolium_output']
+              this.newFoodAvail.pennsylvanicum_output=record['pennsylvanicum_output']
+              this.newFoodAvail.coccineum_output=record['coccineum_output']
+              this.newFoodAvail.water_pepper_output=record['water_pepper_output']
+              this.newFoodAvail.pigweed_output=record['pigweed_output']
+              this.newFoodAvail.bidens_output=record['bidens_output']
+              this.newFoodAvail.other_seed_output=record['other_seed_output']
+              this.newFoodAvail.open_water_output=record['open_water_output']
+              this.newFoodAvail.recently_disced_output=record['recently_disced_output']
+              this.newFoodAvail.chufa_output=record['chufa_output']
+              this.newFoodAvail.redroot_output=record['redroot_output']
+              this.newFoodAvail.sedge_output=record['sedge_output']
+              this.newFoodAvail.rush_output=record['rush_output'] 
+              this.moistsoilservice.newMoistSoil.millet_output=record['millet_output']
+              this.moistsoilservice.newMoistSoil.foxtail_output=record['foxtail_output']
+              this.moistsoilservice.newMoistSoil.rice_cut_output=record['rice_cut_output']
+              this.moistsoilservice.newMoistSoil.panic_grass_output=record['panic_grass_output']
+              this.moistsoilservice.newMoistSoil.crabgrass_output=record['crabgrass_output']
+              this.moistsoilservice.newMoistSoil.sprangletop_output=record['sprangletop_output']
+              this.moistsoilservice.newMoistSoil.lapathifolium_output=record['lapathifolium_output']
+              this.moistsoilservice.newMoistSoil.pennsylvanicum_output=record['pennsylvanicum_output']
+              this.moistsoilservice.newMoistSoil.coccineum_output=record['coccineum_output']
+              this.moistsoilservice.newMoistSoil.water_pepper_output=record['water_pepper_output']
+              this.moistsoilservice.newMoistSoil.pigweed_output=record['pigweed_output']
+              this.moistsoilservice.newMoistSoil.bidens_output=record['bidens_output']
+              this.moistsoilservice.newMoistSoil.other_seed_output=record['other_seed_output']
+              this.moistsoilservice.newMoistSoil.open_water_output=record['open_water_output']
+              this.moistsoilservice.newMoistSoil.recently_disced_output=record['recently_disced_output']
+              this.moistsoilservice.newMoistSoil.chufa_output=record['chufa_output']
+              this.moistsoilservice.newMoistSoil.redroot_output=record['redroot_output']
+              this.moistsoilservice.newMoistSoil.sedge_output=record['sedge_output']
+              this.moistsoilservice.newMoistSoil.rush_output=record['rush_output']
+            });
+        });
+    }
+  }
+}
+
+//write data to either local or cloud depending on online status
+addData(selected_date){
+
+    this.newFoodAvail.CA=this.selected_CA;
+    this.newFoodAvail.unit=this.selected_unit
+    this.newFoodAvail.pool=this.selected_Pool
+    this.newFoodAvail.structure=this.selected_wcs
+
+    //if updating a record you will already have all of this info
+    if (selected_date==="Create New Record"){
+      this.getdatesfordb()
+    }
+
+    else {
+      this.newFoodAvail.date=this.selected_date
+    }
+
+    //if app is offline, write to indexdb
+    if (this.globals.role=="offline"){
+    this.localservice.addFoodAvail(this.newFoodAvail).
+    then((addedFoodAvails: IFoodAvail[]) => {
+    if (addedFoodAvails.length > 0) {
+      if(this.selected_date!=='Create New Record'){
+        this.localService.deleteFoodAvail(this.placeholderid)
+      }
+
+      this.foodavails.push(addedFoodAvails[0]);
+      this.clearNewFoodAvail();
+    }
+    })
+  }
+
+  //if app is online, write to cloud (firestore for the time being)
+  else{
+    this.cloudservice.addFoodAvail(this.newFoodAvail);
+  }
+
+  //display writtn to dialog and refresh the page
+  this.comp.openDataWrittenDialog();
+}
+ 
+//creates timestamps to write to dbs
+getdatesfordb(){
     var d = new Date();
     var day1=d.getDate();
-    var month1=d.getMonth();
+    var month1=(d.getMonth()+1);
     var year1=d.getFullYear();
     var time1=d.getTime()
     var time=time1.toString();
@@ -125,45 +422,18 @@ export class FoodAvailComponent implements OnInit {
     var full_date=stringg;
     console.log(full_date)
 
-    this.foodavailservice.addFoodAvail(this.newFoodAvail,this.moistsoilservice.newMoistSoil,CA,unit,pool,wcs,full_date,time);     
+
+    this.newFoodAvail.date=full_date
+    this.newFoodAvail.sort_time=time;
 }
 
-  onResize(event) {
-    this.breakpoint = (event.target.innerWidth <= 768) ? 1 : 2;
-    
-  }
-
-  addWaterManagement() {
-
-    var status=this.globals.role;
-
-    //if app is offline, write to indexdb
-    if (status=="offline"){
-      this.localservice.addWaterManagement(this.newFoodAvail).
-      then((addedWaterManagements: IFoodAvail[]) => {
-      if (addedWaterManagements.length > 0) {
-        this.watermanagements.push(addedWaterManagements[0]);
-        this.clearNewWaterManagement();
-        this.comp.openDataWrittenDialog();
-      }
-      })
-      .catch(error => {
-      console.error(error);
-      alert(error.message);
-      });
-    }
-
-
-  //if app is online, write to cloud (firestore for the time being)
-  else{
-    //this.cloudservice.addWaterManagement(this.newWaterManagement);    
-  }
-  }
-
-  clearNewWaterManagement() {
+clearNewFoodAvail() {
     this.newFoodAvail = new FoodAvail();
-  }
+}
 
+onResize(event) {
+    this.breakpoint = (event.target.innerWidth <= 768) ? 1 : 2; 
+}
 
 }
 
@@ -212,33 +482,9 @@ const LOWER_DATA: PeriodicElement[] = [
 })
 export class BottomSheetOverviewExampleSheet {
 
-
-
   displayedColumns: string[] = ['Plant_Species', 'Percent_of_Pool', 'Number_of_Seed_Heads', 'Plant_Height', 'Seed_Height','Seed_Diameter'];
   upper_dataSource = UPPER_DATA;
   lower_dataSource = LOWER_DATA;
-
-/*   millet_output=0;
-  foxtail_output=0;
-  rice_cut_output=0;
-  panic_grass_output=0;
-  crabgrass_output=0;
-  sprangletop_output=0;
-  lapathifolium_output=0;
-  pennsylvanicum_output=0;
-  coccineum_output=0;
-  water_pepper_output=0;
-  pigweed_output=0;
-  bidens_output=0;
-  other_seed_output=0;
-  non_seed_output=0;
-  open_water_output=0;
-  recently_disced_output=0;
-
-  chufa_output=0;
-  redroot_output=0;
-  sedge_output=0;
-  rush_output=0; */
 
   display_upper_table=false;
   display_lower_table=false;
@@ -249,28 +495,12 @@ export class BottomSheetOverviewExampleSheet {
   constructor(private bottomSheetRef: MatBottomSheetRef<BottomSheetOverviewExampleSheet>,private food:FoodAvailComponent,
     public moistsoilservice:MoistsoilService) {}
 
-
-
   openLink(event: MouseEvent): void {
     this.bottomSheetRef.dismiss();
     event.preventDefault();
   }
 
   calculate_percent(type,seedhead,plantheight,seedheight,seeddiameter){
-
-/*     if (seedhead!='NULL'){
-      seedhead=this.get_median_of_range(seedhead);
-    }
-    if (plantheight!='NULL'){
-      plantheight=this.get_median_of_range(plantheight);
-    }
-    if (seedheight!='NULL'){
-      seedheight=this.get_median_of_range(seedheight);
-    }
-    if (seeddiameter!='NULL'){
-      seedhead=this.get_median_of_range(seedhead);
-    } */
-
     console.log(type)
     console.log(seedhead)
     console.log(plantheight)
@@ -278,10 +508,17 @@ export class BottomSheetOverviewExampleSheet {
     console.log(seeddiameter)
 
     if (seedhead && plantheight && seedheight && seeddiameter){
-      seedhead=this.get_median_of_range(seedhead);
-      plantheight=this.get_median_of_range(plantheight);
-      seedheight=this.get_median_of_range(seedheight);
-      seeddiameter=this.get_median_of_range(seeddiameter);
+      var seedhead_og=seedhead;
+      seedhead=this.get_median_of_range(seedhead,type,'seedhead');
+      plantheight=this.get_median_of_range(plantheight,type,'plantheight');
+      seedheight=this.get_median_of_range(seedheight,type,'seedheight');
+      seeddiameter=this.get_median_of_range(seeddiameter,type,'seeddiameter');
+
+      console.log(seedhead)
+      console.log(plantheight)
+      console.log(seedheight)
+      console.log(seeddiameter)
+  
 
 
     var π = 3.1416; 
@@ -303,6 +540,7 @@ export class BottomSheetOverviewExampleSheet {
       //convert from pounds to grams
       console.log("calculated")
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.millet_output=seed_prod;
       this.calculate_total("upper");
     }
@@ -311,6 +549,7 @@ export class BottomSheetOverviewExampleSheet {
       seed_prod=(0.03289 * VolG);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.foxtail_output=seed_prod;
       this.calculate_total("upper");
     }
@@ -319,6 +558,7 @@ export class BottomSheetOverviewExampleSheet {
       seed_prod=(0.2814 * HEADS);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.rice_cut_output=seed_prod;
       this.calculate_total("upper");
     }
@@ -327,6 +567,7 @@ export class BottomSheetOverviewExampleSheet {
       seed_prod=(0.36369 * plantheight) + (0.01107 * HEADS);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.panic_grass_output=seed_prod;
       this.calculate_total("upper");
     }
@@ -335,6 +576,7 @@ export class BottomSheetOverviewExampleSheet {
       seed_prod=(0.02798 * HEADS);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.crabgrass_output=seed_prod;
       this.calculate_total("upper");
     }
@@ -343,81 +585,84 @@ export class BottomSheetOverviewExampleSheet {
       seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.sprangletop_output=seed_prod;
       this.calculate_total("upper");
     }
 
     else if (type==='Lapathifolium'){
-      //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
+      seed_prod=(0.10673*HEADS);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.lapathifolium_output=seed_prod;
       this.calculate_total("upper");
     }
     
     else if (type==='Pennsylvanicum'){
-      //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
+      seed_prod=(0.10673*HEADS);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.pennsylvanicum_output=seed_prod;
       this.calculate_total("upper");
     }
 
     else if (type==='Coccineum'){
-      //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
+      seed_prod=(0.10673*HEADS);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.coccineum_output=seed_prod;
       this.calculate_total("upper");
     }
 
     else if (type==='Water Pepper'){
-      seed_prod=plantheight+seeddiameter+seedhead+seedheight;
-      //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
+      seed_prod=(0.484328*plantheight)+(0.0033*VolG);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.water_pepper_output=seed_prod;
       this.calculate_total("upper");
     }
 
     else if (type==='Pigweed'){
-      //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
-      //convert from pounds to grams
-      seed_prod=seed_prod*142.74;
+      seed_prod=seedhead_og;
       this.moistsoilservice.newMoistSoil.pigweed_output=seed_prod;
       this.calculate_total("upper");
     }
 
     else if (type==='Bidens'){
-      //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
-      //convert from pounds to grams
-      seed_prod=seed_prod*142.74;
+      seed_prod=seedhead_og;
       this.moistsoilservice.newMoistSoil.bidens_output=seed_prod;
       this.calculate_total("upper");
     }
 
     else if (type==='Chufa'){
-      //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
+      seed_prod=(0.00208*VolH);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.chufa_output=seed_prod;
       this.calculate_total("lower");
     }
 
     
     else if (type==='Redroot'){
-      //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
+      seed_prod=(3.08247*HEADS)+(2.38866*seeddiameter)-(3.40976*seedheight);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.redroot_output=seed_prod;
       this.calculate_total("lower");
     }
 
     
     else if (type==='Sedge'){
-      //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
+      seed_prod=(2.00187*plantheight)+(0.01456*HEADS);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.sedge_output=seed_prod;
       this.calculate_total("lower");
     }
@@ -427,6 +672,7 @@ export class BottomSheetOverviewExampleSheet {
       //seed_prod=(1.4432 * plantheight) + (0.00027 * VolE);
       //convert from pounds to grams
       seed_prod=seed_prod*142.74;
+      seed_prod=seed_prod.toFixed(2);
       this.moistsoilservice.newMoistSoil.rush_output=seed_prod;
       this.calculate_total("lower");
     }
@@ -434,55 +680,241 @@ export class BottomSheetOverviewExampleSheet {
     else{
     }
   }
-  }
+}
 
-  get_median_of_range(value_range) {
+  get_median_of_range(value_range,type,button) {
 
     var increment=1;
 
-    console.log(value_range)
+    console.log('range:'+value_range)
+    console.log('type:'+type)
 
     var is_decimal = value_range.includes(".")
+    var is_max = value_range.includes("+")
+    var is_min = value_range.includes('<')
 
-    console.log(is_decimal)
 
     if (is_decimal===true){
       increment=0.01;
     }
 
-    console.log(value_range)
-    var res = value_range.split("-");
-    console.log(res[1])
+    if (is_max==false && is_min==false){
+      console.log('is normal')
+      console.log(value_range)
+      var res = value_range.split("-");
+      console.log(res[0])
+      console.log(res[1])
 
-    var lower_limit=Number(res[0]);
-    var upper_limit=Number(res[1]);
+      var lower_limit=Number(res[0]);
+      var upper_limit=Number(res[1]);
 
-    var median_array=[];
-    var i;
+      var median_array=[];
+      var i;
 
-    for (i = lower_limit; i <= upper_limit; i=(i+increment)) { 
-      median_array.push(i);
+      for (i = lower_limit; i <= upper_limit; i=(i+increment)) { 
+        median_array.push(i);
+      } 
+
+      console.log(median_array)
+      var median = 0, numsLen = median_array.length;
       
-    } 
-    console.log(median_array)
-    var median = 0, numsLen = median_array.length;
-    
-    console.log("nums length is "+numsLen)
-    // is even
-    if (numsLen % 2 === 0 ) 
-    {
-        console.log("even")
-        // average of two middle numbers
-        
-        median = (median_array[numsLen / 2 - 1] + median_array[numsLen / 2]) / 2;
-    } 
-    else { // is odd
-        // middle number only
-        console.log("odd")
-        median = median_array[(numsLen - 1) / 2];
+      console.log("nums length is "+numsLen)
+      // is even
+      if (numsLen % 2 === 0 ) 
+      {
+          console.log("even")
+          // average of two middle numbers
+          
+          median = (median_array[numsLen / 2 - 1] + median_array[numsLen / 2]) / 2;
+      } 
+      else { // is odd
+          // middle number only
+          console.log("odd")
+          median = median_array[(numsLen - 1) / 2];
+      }
+    }
+
+    else if(is_min==true){
+      console.log('is min')
+      if (type==='Panic Grass'){
+        if (button==='seedhead'){
+          median=5.5;
+        }
+        else if (button==='plantheight'){
+          median=0.50;
+        }
+      }
+      else if (type==='Crabgrass'){
+        if (button==='seedhead'){
+          median=5.5;
+        }
+      }
+      else if (type==='Sprangletop'){
+        if (button==='seedhead'){
+          median=5.5;
+        }
+        else if (button==='plantheight'){
+          median=.255;
+        }
+        else if (button==='seedheight'){
+          median=7.5;
+        }
+        else if (button==='seeddiameter'){
+          median=4.5;
+        }
+      }
+      else if (type==='Water Pepper'){
+        if (button==='plantheight'){
+          median=0.205;
+        }
+      }
+
+      else if (type==='Sedge'){
+        if (button==='seedhead'){
+          median=2.5;
+        }
+
+        else if (button==='plantheight'){
+          median=0.25;
+        }
+      } 
+    }
+
+    //if this is a button that says for example 19+ you have to hard code the medians
+    else if (is_max==true){
+      console.log('is max')
+      if (type==='Millet'){
+        if (button==='seedhead'){
+          median=21.5;
+        }
+        else if (button==='plantheight'){
+          median=1.75;
+        }
+        else if (button==='seedheight'){
+          median=21.5;
+        }
+        else if (button==='seeddiameter'){
+          median=14.5;
+        }
+      }
+
+      else if (type==='Foxtail'){
+        if (button==='seedhead'){
+          median=14.5;
+        }
+        else if (button==='plantheight'){
+          median=-99999;
+        }
+        else if (button==='seedheight'){
+          median=11;
+        }
+        else if (button==='seeddiameter'){
+          median=2.05;
+        }
+      }
+
+      else if (type==='Rice Cut Grass'){
+        if (button==='seedhead'){
+          median=11;
+        }
+      }
+
+      else if (type==='Panic Grass'){
+        if (button==='seedhead'){
+          median=15.5;
+        }
+        else if (button==='plantheight'){
+          median=1.50;
+        }
+      }
+
+      else if (type==='Crabgrass'){
+        if (button==='seedhead'){
+          median=15.5;
+        }
+      }
+
+      else if (type==='Sprangletop'){
+        if (button==='seedhead'){
+          median=15.5;
+        }
+        else if (button==='plantheight'){
+          median=.755;
+        }
+        else if (button==='seedheight'){
+          median=22.5;
+        }
+        else if (button==='seeddiameter'){
+          median=12.5;
+        }
+      }
+
+      else if (type==='Lapathifolium'){
+        if (button==='seedhead'){
+          median=42.5;
+        }
+      }
+
+      else if (type==='Pennsylvanicum'){
+        if (button==='seedhead'){
+          median=42.5;
+        }
+      }
+
+      else if (type==='Coccineum'){
+        if (button==='seedhead'){
+          median=42.5;
+        }
+      }
+
+      else if (type==='Water Pepper'){
+        if (button==='seedhead'){
+          median=42.5;
+        }
+        else if (button==='plantheight'){
+          median=1.105;
+        }
+        else if (button==='seedheight'){
+          median=11;
+        }
+        else if (button==='seeddiameter'){
+          median=1.1;
+        }
+      }
+
+      else if (type==='Chufa'){
+        if (button==='seedhead'){
+          median=11;
+        }
+        else if (button==='seeddiameter'){
+          median=21.5;
+        }
+      }
+
+      else if (type==='Redroot'){
+        if (button==='seedhead'){
+          median=5.5;
+        }
+        else if (button==='seedheight'){
+          median=11;
+        }
+        else if (button==='seeddiameter'){
+          median=11;
+        }
+      } 
+
+      else if (type==='Sedge'){
+        if (button==='seedhead'){
+          median=7.5;
+        }
+        else if (button==='plantheight'){
+          median=0.75;
+        }
+      } 
+
     }
     
-    console.log(median)
+    console.log('median:'+median)
     return median;
   }
 
@@ -498,27 +930,60 @@ export class BottomSheetOverviewExampleSheet {
   }
 
   calculate_total(table){
-    console.log("in here")
     if (table==="upper"){
-      console.log("in here2")
-      this.upper_total=
-      this.moistsoilservice.newMoistSoil.millet_output+
-      this.moistsoilservice.newMoistSoil.foxtail_output+
-      this.moistsoilservice.newMoistSoil.rice_cut_output+
-      this.moistsoilservice.newMoistSoil.panic_grass_output+
-      this.moistsoilservice.newMoistSoil.crabgrass_output+
-      this.moistsoilservice.newMoistSoil.sprangletop_output+
-      this.moistsoilservice.newMoistSoil.lapathifolium_output+
-      this.moistsoilservice.newMoistSoil.pennsylvanicum_output+
-      this.moistsoilservice.newMoistSoil.coccineum_output+
-      this.moistsoilservice.newMoistSoil.water_pepper_output+
-      this.moistsoilservice.newMoistSoil.pigweed_output+
-      this.moistsoilservice.newMoistSoil.bidens_output+
-      this.moistsoilservice.newMoistSoil.other_seed_output+
-      this.moistsoilservice.newMoistSoil.non_seed_output+
-      this.moistsoilservice.newMoistSoil.open_water_output+
-      this.moistsoilservice.newMoistSoil.recently_disced_output;
-      console.log("upper total is "+this.upper_total.toString())
+
+      this.upper_total=0;
+
+      if (this.moistsoilservice.newMoistSoil.millet_output && this.moistsoilservice.newMoistSoil.millet_output!==null){
+        console.log(this.moistsoilservice.newMoistSoil.millet_output)
+        this.upper_total=this.upper_total+Number(this.moistsoilservice.newMoistSoil.millet_output);
+      }
+
+      if (this.moistsoilservice.newMoistSoil.foxtail_output && this.moistsoilservice.newMoistSoil.foxtail_output!==null){
+        console.log(this.moistsoilservice.newMoistSoil.foxtail_output)
+        this.upper_total=this.upper_total+Number(this.moistsoilservice.newMoistSoil.foxtail_output);
+      }
+
+      if (this.moistsoilservice.newMoistSoil.rice_cut_output && this.moistsoilservice.newMoistSoil.rice_cut_output!==null){
+        this.upper_total=this.upper_total+Number(this.moistsoilservice.newMoistSoil.rice_cut_output);
+      }
+
+      if (this.moistsoilservice.newMoistSoil.panic_grass_output && this.moistsoilservice.newMoistSoil.panic_grass_output!==null){
+        this.upper_total=this.upper_total+Number(this.moistsoilservice.newMoistSoil.panic_grass_output);
+      }
+
+      if (this.moistsoilservice.newMoistSoil.crabgrass_output && this.moistsoilservice.newMoistSoil.crabgrass_output!==null){
+        this.upper_total=this.upper_total+Number(this.moistsoilservice.newMoistSoil.crabgrass_output);
+      }
+
+      if (this.moistsoilservice.newMoistSoil.sprangletop_output && this.moistsoilservice.newMoistSoil.sprangletop_output!==null){
+        this.upper_total=this.upper_total+Number(this.moistsoilservice.newMoistSoil.sprangletop_output);
+      }
+
+      if (this.moistsoilservice.newMoistSoil.lapathifolium_output && this.moistsoilservice.newMoistSoil.lapathifolium_output!==null){
+        this.upper_total=this.upper_total+Number(this.moistsoilservice.newMoistSoil.lapathifolium_output);
+      }
+
+      if (this.moistsoilservice.newMoistSoil.pennsylvanicum_output && this.moistsoilservice.newMoistSoil.pennsylvanicum_output!==null){
+        this.upper_total=this.upper_total+Number(this.moistsoilservice.newMoistSoil.pennsylvanicum_output);
+      }
+
+      if (this.moistsoilservice.newMoistSoil.coccineum_output && this.moistsoilservice.newMoistSoil.coccineum_output!==null){
+        this.upper_total=this.upper_total+Number(this.moistsoilservice.newMoistSoil.coccineum_output);
+      }
+
+      if (this.moistsoilservice.newMoistSoil.water_pepper_output && this.moistsoilservice.newMoistSoil.water_pepper_output!==null){
+        this.upper_total=this.upper_total+Number(this.moistsoilservice.newMoistSoil.water_pepper_output);
+      }
+
+      if (this.moistsoilservice.newMoistSoil.pigweed_output && this.moistsoilservice.newMoistSoil.pigweed_output!==null){
+        this.upper_total=this.upper_total+Number(this.moistsoilservice.newMoistSoil.pigweed_output);
+      }
+
+      this.upper_total=Number(this.upper_total.toFixed(2))
+
+
+      console.log("upper total is "+this.upper_total)
     }
 
     else if (table==="lower"){

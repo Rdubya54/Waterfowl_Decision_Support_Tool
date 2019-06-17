@@ -124,13 +124,14 @@ import { IFoodAvail } from '../model/food-avail';
       autoIncrement: true
      },
      {
-      name: 'month',
+      name: 'Date',
       //notNull: true,
       dataType: DATA_TYPE.String
      },
      {
-      name: 'day',
-      dataType: DATA_TYPE.String,
+      name: 'CA',
+      //notNull: true,
+      dataType: DATA_TYPE.String
      },
      {
       name: 'area_ice',
@@ -158,6 +159,10 @@ import { IFoodAvail } from '../model/food-avail';
      },
      {
       name: 'other_observations',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'sort_time',
       dataType: DATA_TYPE.String,
      }
     ]
@@ -326,20 +331,23 @@ import { IFoodAvail } from '../model/food-avail';
       autoIncrement: true
      },
      {
-      name: 'month',
-      //notNull: true,
+      name: 'CA',
       dataType: DATA_TYPE.String
      },
      {
-      name: 'day',
+      name: 'unit',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'year',
+      name: 'pool',
       dataType: DATA_TYPE.String
      },
      {
-      name: 'structure',
+      name: 'wcs',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'date',
       dataType: DATA_TYPE.String,
      },
      {
@@ -412,9 +420,85 @@ import { IFoodAvail } from '../model/food-avail';
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'yield_score',
+      name: 'millet_output',
       dataType: DATA_TYPE.String,
-     },     
+     },
+     {
+      name: 'foxtail_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'rice_cut_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'panic_grass_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'crabgrass_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'sprangletop_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'lapathifolium_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'pennsylvanicum_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'coccineum_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'water_pepper_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'pigweed_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'bidens_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'other_seed_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'open_water_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'recently_disced_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'chufa_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'redroot_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'sedge_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'rush_output',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'sort_time',
+      dataType: DATA_TYPE.String,
+     }, 
     ]
   };
 

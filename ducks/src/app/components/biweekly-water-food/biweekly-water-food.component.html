@@ -477,7 +477,7 @@
                               </mat-form-field>
                           </div> 
                       </div>
-                          <button *ngIf="globals.role === 'online';" mat-raised-button color="primary" (click)="addData(selected_CA,selected_unit,selected_Pool)">Submit</button>
+                          <button *ngIf="globals.role === 'online';" mat-raised-button color="primary" (click)="addData()">Submit</button>
                           <button *ngIf="globals.role === 'offline';" mat-raised-button color="primary" (click)="local_addData('new')">Push to Local</button>
                           <button mat-raised-button color="primary" (click)="clearNewWaterFood()">Clear Fields</button>
                     </mat-card>

@@ -142,7 +142,7 @@
               </div>
               <div *ngIf="element.Plant_Species==='Panic Grass'">
                 <mat-button-toggle-group [(value)] = "panicgrass_seedhead_values" #group="matButtonToggleGroup" (change)="calculate_percent('Panic Grass',$event.value,panicgrass_plantheight_values,'NULL','NULL')" vertical>
-                        <mat-button-toggle value="-10" aria-label="Text align left">
+                        <mat-button-toggle value="<10" aria-label="Text align left">
                         <10
                         </mat-button-toggle>
                         <mat-button-toggle value="10+" aria-label="Text align center">
@@ -152,7 +152,7 @@
               </div>
               <div *ngIf="element.Plant_Species==='Crabgrass'">
                 <mat-button-toggle-group [(value)] = "crabgrass_seedhead_values" #group="matButtonToggleGroup" (change)="calculate_percent('Crabgrass',$event.value,'NULL','NULL','NULL')" vertical>
-                        <mat-button-toggle value="-10" aria-label="Text align left">
+                        <mat-button-toggle value="<10" aria-label="Text align left">
                         <10
                         </mat-button-toggle>
                         <mat-button-toggle value="+10" aria-label="Text align center">
@@ -162,7 +162,7 @@
               </div>
               <div *ngIf="element.Plant_Species==='Sprangletop'">
                 <mat-button-toggle-group [(value)] = "sprangletop_seedhead_values" #group="matButtonToggleGroup" (change)="calculate_percent('Sprangletop',$event.value,sprangletop_plantheight_values,sprangletop_seedheight_values,sprangletop_seeddiameter_values)" vertical>
-                        <mat-button-toggle value="-10" aria-label="Text align left">
+                        <mat-button-toggle value="<10" aria-label="Text align left">
                         <10
                         </mat-button-toggle>
                         <mat-button-toggle value="10+" aria-label="Text align center">
@@ -236,26 +236,26 @@
               </div>
               <div *ngIf="element.Plant_Species==='Pigweed'">
                 <mat-button-toggle-group [(value)] = "pigweed_seedhead_values" #group="matButtonToggleGroup" (change)="calculate_percent('Pigweed',$event.value,'NULL','NULL','NULL')" vertical>
-                        <mat-button-toggle value="1" aria-label="Text align left">
+                        <mat-button-toggle value="Small Amount" aria-label="Text align left">
                         1
                         </mat-button-toggle>
-                        <mat-button-toggle value="2" aria-label="Text align center">
+                        <mat-button-toggle value="Moderate Amount" aria-label="Text align center">
                         2
                         </mat-button-toggle>
-                        <mat-button-toggle value="3" aria-label="Text align left">
+                        <mat-button-toggle value="Large Amount" aria-label="Text align left">
                         3
                         </mat-button-toggle>
                   </mat-button-toggle-group>            
               </div>
               <div *ngIf="element.Plant_Species==='Bidens'">
                 <mat-button-toggle-group [(value)] = "bidens_seedhead_values" #group="matButtonToggleGroup" (change)="calculate_percent('Bidens',$event.value,'NULL','NULL','NULL')" vertical>
-                      <mat-button-toggle value="1" aria-label="Text align left">
+                      <mat-button-toggle value="Small Amount" aria-label="Text align left">
                       1
                       </mat-button-toggle>
-                      <mat-button-toggle value="2" aria-label="Text align center">
+                      <mat-button-toggle value="Moderate Amount" aria-label="Text align center">
                       2
                       </mat-button-toggle>
-                      <mat-button-toggle value="3" aria-label="Text align left">
+                      <mat-button-toggle value="Large Amount" aria-label="Text align left">
                       3
                       </mat-button-toggle>
                   </mat-button-toggle-group>            
@@ -285,7 +285,7 @@
             </div>
             <div *ngIf="element.Plant_Species==='Panic Grass'">
                     <mat-button-toggle-group [(value)] = "panicgrass_plantheight_values" #group="matButtonToggleGroup" (change)="calculate_percent('Panic Grass',panicgrass_seedhead_values,$event.value,'NULL','NULL')" vertical>
-                          <mat-button-toggle value="100-" aria-label="1">
+                          <mat-button-toggle value="100<" aria-label="1">
                           <100
                           </mat-button-toggle>
                           <mat-button-toggle value="100+" aria-label="2">
@@ -295,7 +295,7 @@
             </div>
             <div *ngIf="element.Plant_Species==='Sprangletop'">
               <mat-button-toggle-group [(value)] = "sprangletop_plantheight_values" #group="matButtonToggleGroup" (change)="calculate_percent('Sprangletop',sprangletop_seedhead_values,$event.value,sprangletop_seedheight_values,sprangletop_seeddiameter_values)" vertical>
-                  <mat-button-toggle value="50-" aria-label="1">
+                  <mat-button-toggle value="50<" aria-label="1">
                       <50
                       </mat-button-toggle>
                       <mat-button-toggle value="50+" aria-label="2">
@@ -305,7 +305,7 @@
             </div>
             <div *ngIf="element.Plant_Species==='Water Pepper'">
               <mat-button-toggle-group [(value)] = "water_pepper_plantheight_values" #group="matButtonToggleGroup" (change)="calculate_percent('Water Pepper',water_pepper_seedhead_values,$event.value,water_pepper_seedheight_values,water_pepper_seeddiameter_values)" vertical>
-                    <mat-button-toggle value="30-" aria-label="1">
+                    <mat-button-toggle value="30<" aria-label="1">
                     <=30
                     </mat-button-toggle>
                     <mat-button-toggle value="40-60" aria-label="2">
@@ -367,7 +367,7 @@
                 </div>
                 <div *ngIf="element.Plant_Species==='Sprangletop'">
                   <mat-button-toggle-group [(value)] = "sprangletop_seedheight_values" #group="matButtonToggleGroup" (change)="calculate_percent('Sprangletop',sprangletop_seedhead_values,sprangletop_plantheight_values,$event.value,sprangletop_seeddiameter_values)" vertical>
-                          <mat-button-toggle value="15-" aria-label="1">
+                          <mat-button-toggle value="15<" aria-label="1">
                           <15
                           </mat-button-toggle>
                           <mat-button-toggle value="15+" aria-label="2">
@@ -431,7 +431,7 @@
                 </div>
                 <div *ngIf="element.Plant_Species==='Sprangletop'">
                   <mat-button-toggle-group [(value)] = "sprangletop_seeddiameter_values" #group="matButtonToggleGroup" (change)="calculate_percent('Sprangletop',sprangletop_seedhead_values,sprangletop_plantheight_values,sprangletop_seedheight_values,$event.value)" vertical>
-                          <mat-button-toggle value="8-" aria-label="1">
+                          <mat-button-toggle value="8<" aria-label="1">
                           <8
                           </mat-button-toggle>
                           <mat-button-toggle value="8+" aria-label="2">
@@ -475,13 +475,6 @@
 </mat-table>
 </div>
 
-
-
-
-
-
-
-
 <div *ngIf="display_lower_table===true">
 <mat-table [dataSource]="lower_dataSource" class="example-container mat-elevation-z8">
 
@@ -494,21 +487,19 @@
       <mat-header-cell *matHeaderCellDef [ngClass]="'smallWidthClass'"> lbs per Acre  </mat-header-cell>
       <mat-cell *matCellDef="let element" [ngClass]="'smallWidthClass'"> {{element.Percent_of_Pool}} 
        <div *ngIf="element.Plant_Species==='Chufa'" layout="row" layout-align="start center" flex>
-<!--             <button mat-flat-button color="primary" (click)="calculate_percent('Chufa',chufa_seedhead_values,'NULL','NULL',chufa_seeddiameter_values)">Calculate</button> -->
             <span flex></span>
-            {{moistsoilservice.newMoistSoil.chufa_output}}
+            <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.chufa_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
       </div> 
       <div *ngIf="element.Plant_Species==='Redroot'">
-<!--             <button mat-flat-button color="primary" (click)="calculate_percent('Redroot',redroot_seedhead_values,'NULL',redroot_seedheight_values,redroot_seeddiameter_values)">Calculate</button> -->
               {{moistsoilservice.newMoistSoil.redroot_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Sedge'">
-<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Sedge',sedge_seedhead_values,sedge_plantheight_values,'NULL','NULL')">Calculate</button> -->
           {{moistsoilservice.newMoistSoil.sedge_output}}
       </div> 
       <div *ngIf="element.Plant_Species==='Rush'">
-<!--         <button mat-flat-button color="primary" (click)="calculate_percent('Rush','NULL','NULL','NULL')">Calculate</button> -->
-          {{moistsoilservice.newMoistSoil.rush_output}}
+        <mat-form-field>
+          <input matInput placeholder="" [(ngModel)]="moistsoilservice.newMoistSoil.rush_output">
+        </mat-form-field>
       </div>
  
       </mat-cell>
@@ -549,7 +540,7 @@
               </div>
               <div *ngIf="element.Plant_Species==='Sedge'">
                 <mat-button-toggle-group [(value)] = "sedge_seedhead_values" #group="matButtonToggleGroup" (change)="calculate_percent('Sedge',$event.value,sedge_plantheight_values,'NULL','NULL')" vertical>
-                        <mat-button-toggle value="5-" aria-label="Text align left">
+                        <mat-button-toggle value="5<" aria-label="Text align left">
                         <5
                         </mat-button-toggle>
                         <mat-button-toggle value="5+" aria-label="Text align center">
@@ -566,7 +557,7 @@
       <mat-cell *matCellDef="let element"[ngClass]="'smallWidthClass'"> {{element.Plant_Height}} 
             <div *ngIf="element.Plant_Species==='Sedge'">
                     <mat-button-toggle-group [(value)] = "sedge_plantheight_values" #group="matButtonToggleGroup" (change)="calculate_percent('Sedge',sedge_seedhead_values,$event.value,'NULL','NULL')" vertical>
-                            <mat-button-toggle value="50-" aria-label="1">
+                            <mat-button-toggle value="50<" aria-label="1">
                             <50
                             </mat-button-toggle>
                             <mat-button-toggle value="50+" aria-label="2">

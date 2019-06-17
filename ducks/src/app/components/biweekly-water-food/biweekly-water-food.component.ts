@@ -66,7 +66,7 @@ export class BiweeklyWaterFoodComponent implements OnInit {
 
     //if app is online push any locally cached data to the cloud
     if (this.globals.role==="online"){
-      this.pushtocloudfromlocal();
+      /* this.pushtocloudfromlocal(); */
 
       this.dbservice_cloud.getCAs().subscribe(data => {
         data.forEach(doc => {
@@ -88,6 +88,7 @@ export class BiweeklyWaterFoodComponent implements OnInit {
     }
   }
 
+//get units for drop down
 getUnits(CA){
   this.unit_list=[];
   this.Pool_list=[];
@@ -114,7 +115,7 @@ getUnits(CA){
   }
 }
 
-
+//get pools for drop down
 getPools(CA,unit){
   this.Pool_list=[];
 
@@ -139,6 +140,7 @@ getPools(CA,unit){
   }
 }
 
+//get dates for drop down
 getDates(CA,unit,pool){
   this.date_list=["Create New Record"];
 
@@ -165,8 +167,8 @@ getDates(CA,unit,pool){
 }
 
 
-//get last records for EVERY pool from cloud
-downloadallprevs(){
+//get last record for EVERY pool from cloud
+/* downloadallprevs(){
   this.dbservice_cloud.getCAs().subscribe(data => {
     data.forEach(doc => {
       console.log("CA is"+doc.id)
@@ -193,13 +195,16 @@ downloadallprevs(){
       }); 
     });
   });
-}
+} */
 
 //this function is for updating old records 
 updateWaterFood(CA,unit,pool,date){
     if (this.globals.role==="online"){
     this.cloudservice.getWaterFood(CA,unit,pool,date).
     subscribe(data=>{
+      this.newWaterFood.CA=data.get('CA');
+      this.newWaterFood.Unit=data.get('Unit');
+      this.newWaterFood.Pool=data.get('Pool')
       this.newWaterFood.Sort_time=data.get('Sort_time');
       this.newWaterFood.Date=data.get('Date');
       this.newWaterFood.percent_of_full_pool=data.get("Percent_of_Pool_Full");
@@ -234,42 +239,6 @@ updateWaterFood(CA,unit,pool,date){
 
       this.newWaterFood.fiscal_year=data.get("fiscal_year");
 
-      //get the record after the record we are about to update
-/*       this.cloudservice.getprevWaterFood(CA,unit,pool,this.newWaterFood.Sort_time).subscribe(data => {
-        data.forEach(doc => {
-          console.log(doc.id)
-          this.cloudservice.getWaterFood(CA,unit,pool,doc.id).
-          subscribe(data=>{
-            console.log(data.get('Date'))
-            this.prev_data['Date']=data.get('Date');
-            this.prev_data['Percent_of_Pool_Full']=data.get('Percent_of_Pool_Full');
-            this.prev_data['less_than_six']=data.get('Percentage_Flooded_under_Six_Inches');
-            this.prev_data['seven_to_twelve']=data.get('Percentage_Flooded_Seven_to_Tweleve_Inches');
-            this.prev_data['thirteen_or_more']=data.get('Percentage_Flooded_Thirteen_or_more_Inches');
-            this.prev_data['habitat_standing']=data.get('Percentage_Habitat_Flooded_Moist_Soil_Standing');
-            this.prev_data['habitat_mowed']=data.get('Percentage_Habitat_Flooded_Moist_Soil_Mowed');
-            this.prev_data['habitat_disced']=data.get('Percentage_Habitat_Flooded_Moist_Soil_Disced');
-            this.prev_data['habitat_unharv_corn']=data.get('Percentage_of_Habitat_Flooded_Unharvested_Corn');
-            this.prev_data['habitat_harv_corn']=data.get('Percentage_of_Habitat_Flooded_Harvested_Corn');
-            this.prev_data['habitat_unharv_milo']=data.get('Percentage_of_Habitat_Flooded_Unharvested_Milo');
-            this.prev_data['habitat_harv_milo']=data.get('Percentage_of_Habitat_Flooded_Harvested_Milo');
-            this.prev_data['habitat_unharv_beans']=data.get('Percentage_of_Habitat_Flooded_Unharvested_Beans');
-            this.prev_data['habitat_harv_beans']=data.get('Percentage_of_Habitat_Flooded_Harvested_Beans');
-            this.prev_data['habitat_browse']=data.get('Percentage_of_Habitat_Flooded_Green_Browse');
-            this.prev_data['ice_standing']=data.get('Percentage_of_Ice_on_Flooded_Habitat_Moist_Soil_Standing');
-            this.prev_data['ice_mowed']=data.get('Percentage_of_Ice_on_Flooded_Habitat_Moist_Soil_Mowed');
-            this.prev_data['ice_disced']=data.get('Percentage_of_Ice_on_Flooded_Habitat_Moist_Soil_Disced');
-            this.prev_data['ice_unharv_corn']=data.get('Percentage_of_Ice_on_Flooded_Habitat_Moist_Soil_Unharvested_Corn');
-            this.prev_data['ice_harv_corn']=data.get('Percentage_of_Ice_on_Flooded_Habitat_Moist_Soil_Harvested_Corn');
-            this.prev_data['ice_unharv_milo']=data.get('Percentage_of_Ice_on_Flooded_Habitat_Moist_Soil_Unharvested_Milo');
-            this.prev_data['ice_harv_milo']=data.get('Percentage_of_Ice_on_Flooded_Habitat_Moist_Soil_Harvested_Milo');
-            this.prev_data['ice_unharv_beans']=data.get('Percentage_of_Ice_on_Flooded_Habitat_Moist_Soil_Unharvested_Beans');
-            this.prev_data['ice_harv_beans']=data.get('Percentage_of_Ice_on_Flooded_Habitat_Moist_Soil_Harvested_Beans');
-            this.prev_data['ice_browse']=data.get('Percentage_of_Ice_on_Flooded_Habitat_Moist_Soil_Ice_Browse');
-            console.log(this.prev_data['Percent_of_Pool_Full'])
-          });     
-        });    
-      }); */
   });
 
 }
@@ -327,7 +296,7 @@ updateWaterFood(CA,unit,pool,date){
     }
 }
 
-//retrives an indivudal waterfood record from the cloud
+//retrives an indivudal waterfood record from the cloud, using the CA,unit,pool, and date
 getindividualrecord(CA,unit,pool,date){
   this.cloudservice.getWaterFood(CA,unit,pool,date).
   subscribe(data=>{
@@ -377,7 +346,7 @@ getindividualrecord(CA,unit,pool,date){
 
 //this function handles pushing data that is stored in local to the cloud
 //once the app gets back online
-pushtocloudfromlocal(){
+/* pushtocloudfromlocal(){
   console.log("pushing to cloud from local")
   this.localService.getData().
     then(data => {
@@ -427,11 +396,10 @@ pushtocloudfromlocal(){
 
           //add the locally stored Watermanagement to Cloud (if the record was already there it is being added
           //but sense everything is the same it is basically doing nothing)
-           this.cloudservice.addWaterFood(this.newWaterFood,record["CA"],record["Unit"],record["Pool"],
-            record["Date"],record["Sort_time"]) 
+           this.cloudservice.addWaterFood(this.newWaterFood,) 
 
           //delete the record from local
-          this.localService.deleteWaterManagement(record["id"]);
+          this.localService.deleteWaterFood(record["id"]);
         })
 
         //now redownload database from cloud now that it has been updated with
@@ -442,48 +410,32 @@ pushtocloudfromlocal(){
           console.error(error);
           alert(error.message);
   }); 
+} */
 
- 
-}
-
+//pushes data to IndexDB
 local_addData(location){
     //if new record set these properties. if adding data already in cloud
     //the record already has these properties and you dont want to overwrite them
     if (location === "new"){
-
       this.getdatesfordb();
       this.newWaterFood.CA=this.selected_CA;
       this.newWaterFood.Unit=this.selected_unit;
       this.newWaterFood.Pool=this.selected_Pool;
+      this.localService.addData(this.newWaterFood);
+      this.comp.openDataWrittenDialog()
     }
 
     else{
       console.log("adding from cloud to local")
+      this.localService.addData(this.newWaterFood);
     }
 
+    
+
     console.log("date here is "+this.newWaterFood.Date)
-
-    //put watermanagement record into IndexDB
-    this.localService.addData(this.newWaterFood).
-    then((addedWaterManagements: IWaterFood[]) => {
-      if (addedWaterManagements.length > 0) {
-        this.clearNewWaterFood();
-
-        //only refresh the page if a new record is being added. you dont want to refresh
-        //everytime local pushes to the cloud otherwise it will keep refreshing even when theres 
-        //no new data
-        if (location === "new"){
-        this.comp.openDataWrittenDialog();
-        }
-      }
-      })
-      .catch(error => {
-      console.error(error);
-      alert(error.message);
-    });
 }
 
-//this function loads previous data when page intially loads
+//this function loads previous record data when page intially loads
 getprevWaterFood(CA,unit,pool,date){
   console.log("CA now is "+CA)
   //if no date selected, get the date
@@ -575,58 +527,21 @@ getprevWaterFood(CA,unit,pool,date){
         });  
       });
     }
-
- /*    else{
-      this.localservice.getprevWaterFood_forupdate(CA,unit,pool,this.newWaterFood.Sort_time).then(data=> {
-
-        this.waterfoods = data;
-
-        this.waterfoods.forEach(record =>{
-          this.prev_data['Date']=record["Date"],
-          this.prev_data['Percent_of_Pool_Full']=record["percent_of_full_pool"];
-          this.prev_data['less_than_six']=record["less_than_six"];
-          this.prev_data['seven_to_twelve']=record["seven_to_twelve"]
-          this.prev_data['thirteen_or_more']=record["thirteen_or_more"]
-          this.prev_data['habitat_standing']=record["habitat_standing"]
-          this.prev_data['habitat_disced']=record["habitat_disced"]
-          this.prev_data['habitat_mowed'] =record["habitat_mowed"]
-          this.prev_data['habitat_harv_corn']=record["habitat_harv_corn"]
-          this.prev_data['habitat_unharv_corn']=record["habitat_unharv_corn"]
-          this.prev_data['habitat_harv_beans']=record["habitat_harv_beans"]
-          this.prev_data['habitat_unharv_beans']=record["habitat_unharv_beans"]
-          this.prev_data['habitat_harv_milo']=record["habitat_harv_milo"]
-          this.prev_data['habitat_unharv_milo']=record["habitat_unharv_milo"]
-          this.prev_data['habitat_browse']=record["habitat_browse"]
-
-          this.prev_data['ice_standing']=record["ice_standing"]
-          this.prev_data['ice_disced'] =record["ice_disced"]
-          this.prev_data['ice_mowed']=record["ice_mowed"]
-          this.prev_data['ice_harv_corn']=record["ice_harv_corn"]
-          this.prev_data['ice_unharv_corn']=record["ice_unharv_corn"]
-          this.prev_data['ice_harv_beans']=record["ice_harv_beans"]
-          this.prev_data['ice_unharv_beans']=record["ice_unharv_beans"]
-          this.prev_data['ice_harv_milo']=record["ice_harv_milo"]
-          this.prev_data['ice_unharv_milo']=record["ice_unharv_milo"]
-          this.prev_data['ice_browse']=record["ice_browse"]
-
-          this.prev_data['notes']=record["notes"]
-          this.prev_data['response']=record["response"]
-          this.prev_data['actions']=record["actions"]
-
-          this.newWaterFood.Sort_time=record["Sort_time"]
-    });
-  }); */
-//}
 }
 }
 
-addData(CA,unit,pool) {
+//pushes data to the cloud
+addData(){
+      this.newWaterFood.CA=this.selected_CA;
+      this.newWaterFood.Unit=this.selected_unit
+      this.newWaterFood.Pool=this.selected_Pool
+
       this.getdatesfordb();
-      this.cloudservice.addWaterFood(this.newWaterFood,CA,unit,pool,this.newWaterFood.Date,this.newWaterFood.Sort_time);   
+      this.cloudservice.addWaterFood(this.newWaterFood);   
       this.comp.openDataWrittenDialog();
 }
   
-  //creates timestamps to write to dbs
+//creates timestamps to write to dbs
 getdatesfordb(){
   console.log("creating dates")
   var d = new Date();
@@ -641,14 +556,15 @@ getdatesfordb(){
   var year=year1.toString();
   var stringg=month+ "-" + day + "-" + year;
 
-  this.newWaterFood.Date=  stringg;
+  this.newWaterFood.Date=stringg;
 }
     
-
+//used to reformat page when screen is resized
 onResize(event) {
   this.breakpoint = (event.target.innerWidth <= 768) ? 1 : 4;
 }
 
+//clears all fields
 clearNewWaterFood() {
   this.newWaterFood = new WaterFood();
 }

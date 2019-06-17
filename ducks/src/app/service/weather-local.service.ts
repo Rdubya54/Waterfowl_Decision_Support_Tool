@@ -20,7 +20,42 @@ export class WeatherLocalService extends BaseService {
     super();
   }
 
-  getWeather() {
+  getCAs() {
+    return this.connection.select({
+      from: 'Daily_Weather_Observations'
+    });
+  }
+
+  getDates(CA){
+    return this.connection.select({
+      from: 'Daily_Weather_Observations',
+      where:{
+        CA: CA,
+      },
+      order: {
+        by: "sort_time",
+        type: "desc" 
+    }
+
+    });
+  }
+
+  getWeather(CA,date) {
+    return this.connection.select({
+      from: 'Daily_Weather_Observations',
+      where:{
+        CA: CA,
+        date:date
+      },
+      order: {
+        by: "sort_time",
+        type: "desc" 
+    }
+    });
+  }
+
+  
+  getWeather_all() {
     return this.connection.select({
       from: 'Daily_Weather_Observations'
     });

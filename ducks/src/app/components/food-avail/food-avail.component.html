@@ -36,14 +36,23 @@
                     <div fxLayout="row"  fxLayoutGap="30%">
                         <div fxFlex="1%"> 
                             <mat-form-field>
-                                <mat-select placeholder="Water Control Structure" [(ngModel)]="selected_wcs" >
+                                <mat-select placeholder="Water Control Structure" [(ngModel)]="selected_wcs" (ngModelChange)="getDates(selected_CA,selected_unit,selected_Pool,$event)">
                                 <mat-option *ngFor="let x of wcs_list" [value]="x">
                                     {{x}}
                                 </mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div> 
+                        <div fxFlex="1%"> 
+                                <mat-form-field>
+                                    <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="getFoodAvail(selected_CA,selected_unit,selected_Pool,selected_wcs,$event)">
+                                    <mat-option *ngFor="let x of date_list" [value]="x">
+                                        {{x}}
+                                    </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                         </div>
+                    </div>
                 </mat-card>
         </mat-grid-tile>    
 </mat-grid-list>
@@ -53,33 +62,6 @@
 <mat-grid-tile>
 
 <mat-card>
-
-        <div fxLayout="row" fxLayoutGap="0.5%">
-                <div fxFlex="33%"> 
-                    <mat-form-field class="wmgmt">
-                    <input type="text" [(ngModel)]="newFoodAvail.month" [ngModelOptions]="{standalone:true}" matInput placeholder="Month">
-                    </mat-form-field>
-                    /
-                </div> 
-                <div fxFlex="33%">
-                    <mat-form-field class="wmgmt">  
-                            <input type="text" [(ngModel)]="newFoodAvail.day" [ngModelOptions]="{standalone:true}" matInput placeholder="Day">
-                    </mat-form-field>
-                </div> 
-                <div fxFlex="33%">
-                    <mat-form-field class="wmgmt">  
-                            <input type="text" [(ngModel)]="newFoodAvail.year" [ngModelOptions]="{standalone:true}" matInput placeholder="Year">
-                    </mat-form-field>
-                </div> 
-            </div>
-        
-        
-            <div fxLayout="row" fxLayoutGap="0.5%">
-            <mat-form-field>
-            <input type="text" [(ngModel)]="newFoodAvail.structure" [ngModelOptions]="{standalone:true}" matInput placeholder="Structure">
-            </mat-form-field>
-            </div>    
-
 
     <div fxLayout="row" fxLayoutGap="0.5%">
         <h3 fxFlex="50%">Corn Acres</h3>
@@ -448,14 +430,14 @@
                         Pigweed
                     </div> 
                     <div fxFlex="50%"> 
-                        Biden
+                        Bidens
                     </div> 
             </div>
                 
             <div fxLayout="row" fxLayoutGap="0.5%">
                     <div fxFlex="50%"> 
                         <mat-form-field class="wmgmt">
-                            <input type="text" [(ngModel)]="moistsoilservice.newMoistSoil.pigweed_output"  [ngModelOptions]="{standalone:true}" matInput placeholder="">
+                            <input type="text" [(ngModel)]= "moistsoilservice.newMoistSoil.pigweed_output" [ngModelOptions]="{standalone:true}" matInput placeholder="">
                         </mat-form-field>
                     </div> 
                     <div fxFlex="50%"> 
@@ -464,7 +446,6 @@
                         </mat-form-field>
                     </div> 
             </div>
-
 
             <h4>Lower Canopy</h4>
 
@@ -512,8 +493,8 @@
                     </div> 
             </div>
             
-            <button mat-raised-button color="primary" (click)="addData(selected_CA,selected_unit,selected_Pool,selected_wcs)">Submit</button>
-            <button mat-raised-button color="primary" (click)="clearNewWaterManagement()">Clear Fields</button>
+            <button mat-raised-button color="primary" (click)="addData(selected_date)">Submit</button>
+            <button mat-raised-button color="primary" (click)="clearNewFoodAvail()">Clear Fields</button>
             
 </mat-card>
 </mat-grid-tile>   

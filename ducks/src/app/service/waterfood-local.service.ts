@@ -90,7 +90,7 @@ import { IWaterFood } from '../model/water-food';
   }
 
   
-  deleteWaterManagement(the_id){
+  deleteWaterFood(the_id){
     return this.connection.remove({
       from: 'Biweekly_Water_Status_and_Food_Availability',
       where: {

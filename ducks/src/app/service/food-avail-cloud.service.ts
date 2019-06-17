@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IFoodAvail, FoodAvail } from 'src/app/model/food-avail';
-import {IMoistSoil,MoistSoil} from 'src/app/model/moist-soil'
 import { AngularFirestore } from 'angularfire2/firestore';
-import { WaterFood } from '../model/water-food';
 
 @Injectable({
   providedIn: 'root'
@@ -11,17 +9,17 @@ export class FoodAvailCloudService {
 
   constructor(private firestore:AngularFirestore) { }
 
-  addFoodAvail(foodavail:IFoodAvail,moistsoil:IMoistSoil, CA,unit,pool,wcs,date,time) {
+  addFoodAvail(foodavail:IFoodAvail) {
+    console.log('it is :'+foodavail.CA)
 
-    console.log("ca is "+CA)
-    console.log("ca is "+unit)
-    console.log("ca is "+pool)
-    console.log("ca is "+wcs)
-
-    return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units")
-    .doc(unit).collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Fall Food Availability").doc("4-4-2019").set({
-          Date:date,
-          Sort_time:time,
+    return this.firestore.collection('Conservation_Areas').doc(foodavail.CA).collection("Units")
+    .doc(foodavail.unit).collection("Pools").doc(foodavail.pool).collection("WCS").doc(foodavail.structure).collection("Fall Food Availability").doc(foodavail.date).set({
+          CA:foodavail.CA,
+          unit:foodavail.unit,
+          pool:foodavail.pool,
+          wcs:foodavail.structure,
+          date:foodavail.date,
+          sort_time:foodavail.sort_time,
           corn_unharv:foodavail.corn_unharv,
           corn_harv:foodavail.corn_harv,
           corn_yield:foodavail.corn_yield,
@@ -39,26 +37,36 @@ export class FoodAvailCloudService {
           soil_standing:foodavail.soil_standing,
           soil_mowed:foodavail.soil_mowed,
           soil_disced:foodavail.soil_disced,
-          millet_output:moistsoil.millet_output,
-          foxtail_output:moistsoil.foxtail_output,
-          rice_cut_output:moistsoil.rice_cut_output,
-          panic_grass_output:moistsoil.panic_grass_output,
-          crabgrass_output:moistsoil.crabgrass_output,
-          sprangletop_output:moistsoil.sprangletop_output,
-          lapathifolium_output:moistsoil.lapathifolium_output,
-          pennsylvanicum_output:moistsoil.pennsylvanicum_output,
-          coccineum_output:moistsoil.coccineum_output,
-          water_pepper_output:moistsoil.water_pepper_output,
-          pigweed_output:moistsoil.pigweed_output,
-          bidens_output:moistsoil.bidens_output,
-          other_seed_output:"",
-          non_seed_output:"",
-          open_water_output:"",
-          recently_disced_output:"",
-          chufa_output:moistsoil.chufa_output,
-          redroot_output:moistsoil.redroot_output,
-          sedge_output:moistsoil.sedge_output,
-          rush_output:moistsoil.rush_output,
+          millet_output:foodavail.millet_output,
+          foxtail_output:foodavail.foxtail_output,
+          rice_cut_output:foodavail.rice_cut_output,
+          panic_grass_output:foodavail.panic_grass_output,
+          crabgrass_output:foodavail.crabgrass_output,
+          sprangletop_output:foodavail.sprangletop_output,
+          lapathifolium_output:foodavail.lapathifolium_output,
+          pennsylvanicum_output:foodavail.pennsylvanicum_output,
+          coccineum_output:foodavail.coccineum_output,
+          water_pepper_output:foodavail.water_pepper_output,
+          pigweed_output:foodavail.pigweed_output,
+          bidens_output:foodavail.bidens_output,
+          chufa_output:foodavail.chufa_output,
+          redroot_output:foodavail.redroot_output,
+          sedge_output:foodavail.sedge_output,
+          rush_output:foodavail.rush_output,
     });
+  }
+
+  //gets foodavail 
+  getFoodAvail(CA,unit,pool,wcs,date){
+    return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection("Pools")
+    .doc(pool).collection("WCS").doc(wcs).collection("Fall Food Availability").doc(date).get();
+  }
+
+  //get prev foodavails for offline tree walking purposes
+  getprevFoodAvails(CA,unit,pool,wcs){
+
+      return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection("Pools")
+      .doc(pool).collection("WCS").doc(wcs).collection("Fall Food Availability", 
+      ref=>ref.orderBy('sort_time', 'desc').limit(1)).get();
   }
 }

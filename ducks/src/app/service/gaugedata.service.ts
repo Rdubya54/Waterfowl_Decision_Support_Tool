@@ -18,50 +18,50 @@ constructor(private firestore:AngularFirestore) {
 
 
 getCAs() {
-  return this.firestore.collection('Gauge_Stats').get();    
+  return this.firestore.collection('Conservation_Areas').get();    
 }
 
 getUnits(CA) {
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").get();
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").get();
 }
 
 getPools(CA,unit) {
   console.log("selected CA is "+CA)
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection("Pools").get();
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection("Pools").get();
 }
 
 getWCS(CA,unit,pool) {
   console.log("selected pool is "+pool)
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection("Pools").doc(pool).collection("WCS").get();
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection("Pools").doc(pool).collection("WCS").get();
 }
 
 getGauge(CA,unit,pool,wcs) {
   console.log("selected wcs is "+wcs)
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Gauges").get();   
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Gauges").get();   
 }
 
 getStats(CA,unit,pool,wcs,gauge) {
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection('Pools')
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection('Pools')
   .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).get();
 }
 
 getHabitat(CA,unit,pool,wcs,gauge) {
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection('Pools')
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection('Pools')
   .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).collection('Stats').doc("Flooded_Habitat_By_Acres").get();
 }
 
 getCrops(CA,unit,pool,wcs,gauge) {
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection('Pools')
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection('Pools')
   .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).collection('Stats').doc('Flooded_Crop_Stats_By_Acre').collection('Crops').get();
 }
 
 getCropStats(CA,unit,pool,wcs,gauge,crop){
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection('Pools')
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection('Pools')
   .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).collection('Stats').doc('Flooded_Crop_Stats_By_Acre').collection('Crops').doc(crop).get();  
 }
 
 getImageName(CA,unit,pool,wcs,gauge) {
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection('Pools')
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection('Pools')
   .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).collection('Stats').doc('Image_Name').get();
 }
 

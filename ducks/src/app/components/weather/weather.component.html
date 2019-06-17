@@ -1,182 +1,96 @@
 <h1>Daily Weather Observations</h1>
 
-<p *ngIf="joke">{{ joke.value }}</p>
+<mat-grid-list [cols]="breakpoint_top" rowHeight="200px" (window:resize)="onResize($event)">
+    <mat-grid-tile>
+    <mat-card class="example-container">
+            <h3>Parameters</h3>
+            <div fxLayout="row"  fxLayoutGap="30%">
+                    <div fxFlex="1%"> 
+                        <mat-form-field>
+                            <mat-select placeholder="Conservation Area" [(ngModel)]="selected_CA" (ngModelChange)="getDates($event)">
+                            <mat-option *ngFor="let x of CA_list" [value]="x">
+                                {{x}}
+                            </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div fxFlex="1%"> 
+                            <mat-form-field>
+                                <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="getWeather(selected_CA,$event)">
+                                <mat-option *ngFor="let x of date_list" [value]="x">
+                                    {{x}}
+                                </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                    </div>
+                </div>
+    </mat-card>  
+    </mat-grid-tile>
+</mat-grid-list>
 
-<mat-grid-list cols="2" rowHeight="80px">
-    <form class="example-container">
-      <mat-grid-tile>
-          <mat-form-field class="text">
-              <input type="text" [(ngModel)]="newWeather.month" [ngModelOptions]="{standalone:true}" matInput placeholder="Month">
-          </mat-form-field>
-      </mat-grid-tile>
-       <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWeather.day" [ngModelOptions]="{standalone:true}" matInput placeholder="Day">
-          </mat-form-field>
-        </mat-grid-tile>
-        <mat-grid-tile>
+<mat-grid-list [cols]="breakpoint_top" rowHeight="800px" (window:resize)="onResize($event)">   
+    <mat-grid-tile>
+        <mat-card>
+        <div fxLayout="row"  fxLayoutGap="30%">
+            <div fxFlex="1%">
+            </div>
+            <div fxFlex="1%">
+              <button mat-raised-button color="primary">Fetch Data from API</button>
+            </div>
+        </div>
+        <div fxLayout="row"  fxLayoutGap="30%">
+          <div fxFlex="1%">
             <mat-form-field>
-                <input type="text" [(ngModel)]="newWeather.area_ice" [ngModelOptions]="{standalone:true}" matInput placeholder="Percent Area Covered in Ice">
+              <input type="text" [(ngModel)]="newWeather.area_ice" [ngModelOptions]="{standalone:true}" matInput placeholder="Percent Area Covered in Ice">
             </mat-form-field>
-        </mat-grid-tile>
-         <mat-grid-tile>
+          </div>
+          <div fxFlex="1%">
             <mat-form-field>
                 <input type="text" [(ngModel)]="newWeather.ice_thick" [ngModelOptions]="{standalone:true}" matInput placeholder="Thickness of Ice">
             </mat-form-field>
-          </mat-grid-tile>
-          <mat-grid-tile>
+          </div>
+        </div>
+
+        <div fxLayout="row"  fxLayoutGap="30%">
+            <div fxFlex="1%">
               <mat-form-field>
-                  <input type="text" [(ngModel)]="newWeather.low_temp" [ngModelOptions]="{standalone:true}" matInput placeholder="Low Temperture">
+                <input type="text" [(ngModel)]="newWeather.low_temp" [ngModelOptions]="{standalone:true}" matInput placeholder="Low Temperture">
               </mat-form-field>
-          </mat-grid-tile>
-           <mat-grid-tile>
+            </div>
+            <div fxFlex="1%">
               <mat-form-field>
                   <input type="text" [(ngModel)]="newWeather.wind_dir" [ngModelOptions]="{standalone:true}" matInput placeholder="Wind Direction">
               </mat-form-field>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <mat-form-field>
-                    <input type="text" [(ngModel)]="newWeather.wind_speed" [ngModelOptions]="{standalone:true}" matInput placeholder="Wind Speed">
-                </mat-form-field>
-            </mat-grid-tile>
-             <mat-grid-tile>
-                <mat-form-field>
-                    <input type="text" [(ngModel)]="newWeather.river_stage" [ngModelOptions]="{standalone:true}" matInput placeholder="River Stage">
-                </mat-form-field>
-              </mat-grid-tile>
-              <mat-grid-tile>
-                  <mat-form-field>
-                       <textarea [(ngModel)]="newWeather.other_observations"  [ngModelOptions]="{standalone:true}" matInput placeholder="Other Weather Observations"></textarea>
-                     </mat-form-field>
-               </mat-grid-tile>
-               <mat-grid-tile>
-                  <mat-form-field>
-                      <input type="text" [(ngModel)]="newWeather.year" [ngModelOptions]="{standalone:true}" matInput placeholder="Year">
-                  </mat-form-field>
-                </mat-grid-tile>
+            </div>
+        </div>
+
+        <div fxLayout="row"  fxLayoutGap="30%">
+            <div fxFlex="1%">
+              <mat-form-field>
+                <input type="text" [(ngModel)]="newWeather.wind_speed" [ngModelOptions]="{standalone:true}" matInput placeholder="Wind Speed">
+              </mat-form-field>
+            </div>
+            <div fxFlex="1%">
+              <mat-form-field>
+                  <input type="text" [(ngModel)]="newWeather.river_stage" [ngModelOptions]="{standalone:true}" matInput placeholder="River Stage">
+              </mat-form-field>
+            </div>
+        </div>
+
+        <div fxLayout="row"  fxLayoutGap="30%">
+            <div fxFlex="1%">
+              <mat-form-field>
+                <input type="text" [(ngModel)]="newWeather.other_observations" [ngModelOptions]="{standalone:true}" matInput placeholder="Other Weather Observations">
+              </mat-form-field>
+            </div>
+            <div fxFlex="1%">
+            </div>
+        </div>
+        <button *ngIf="this.globals.role === 'online';"  mat-raised-button color="primary" (click)="addWeather(selected_CA,selected_date)">Push to Cloud</button>
+        <button *ngIf="this.globals.role === 'offline';" mat-raised-button color="primary" (click)="addWeather(selected_CA,selected_date)">Push to Local</button>
+        <button mat-raised-button color="primary" (click)="clearNewWeather()">Clear Fields</button> 
+  </mat-card>
+</mat-grid-tile>
+</mat-grid-list>
 
 
- <!---      <mat-grid-tile>
-         <mat-form-field>
-              <textarea [(ngModel)]="newWaterManagement.notes"  [ngModelOptions]="{standalone:true}" matInput placeholder="Notes"></textarea>
-            </mat-form-field>
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWaterManagement.pool" [ngModelOptions]="{standalone:true}" matInput placeholder="Pool">
-            </mat-form-field> 
-      </mat-grid-tile>
-    <mat-grid-tile></mat-grid-tile>
-    <mat-grid-tile></mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWaterManagement.structure" [ngModelOptions]="{standalone:true}"  matInput placeholder="Structure">
-            </mat-form-field>  
-      </mat-grid-tile>
-      <mat-grid-tile></mat-grid-tile>
-      <mat-grid-tile></mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWaterManagement.elevation"  [ngModelOptions]="{standalone:true}" matInput placeholder="Elevation">
-            </mat-form-field>   
-      </mat-grid-tile>
-      <mat-grid-tile>
-        <mat-form-field>
-          <input type="text"  matInput placeholder="PrevElevation">
-        </mat-form-field>
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <textarea  matInput placeholder="Previous Notes"></textarea>
-            </mat-form-field>
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWaterManagement.gate_manipulation"  [ngModelOptions]="{standalone:true}" matInput placeholder="Gate Manipulation">
-            </mat-form-field>   
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-            <input type="text"  matInput placeholder="PrevElevation">
-          </mat-form-field>
-        </mat-grid-tile>
-      <mat-grid-tile></mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWaterManagement.gate_level"  [ngModelOptions]="{standalone:true}" matInput placeholder="Gate Level">
-            </mat-form-field>   
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-            <input type="text"  matInput placeholder="PrevGate_Level">
-          </mat-form-field>
-        </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <textarea [(ngModel)]="newWaterManagement.reasons"  [ngModelOptions]="{standalone:true}" matInput placeholder="Reasons for management action:"></textarea>
-            </mat-form-field>
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWaterManagement.stoplog_change"  [ngModelOptions]="{standalone:true}" matInput placeholder="Stoplog Change">
-            </mat-form-field>   
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-            <input type="text"  matInput placeholder="Prev Stoplog Change">
-          </mat-form-field>
-        </mat-grid-tile>
-      <mat-grid-tile></mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWaterManagement.stoplog_level"  [ngModelOptions]="{standalone:true}" matInput placeholder="Stoplog Level">
-            </mat-form-field>   
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-            <input type="text"  matInput placeholder="PrevStoploglevel">
-          </mat-form-field>
-        </mat-grid-tile>
-      <mat-grid-tile></mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWaterManagement.duck_numbers"  [ngModelOptions]="{standalone:true}" matInput placeholder="Duck Numbers">
-            </mat-form-field>   
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-            <input type="text"  matInput placeholder="PrevDuckNumbers">
-          </mat-form-field>
-        </mat-grid-tile>
-      <mat-grid-tile></mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWaterManagement.goose_numbers"  [ngModelOptions]="{standalone:true}" matInput placeholder="Goose Numbers">
-            </mat-form-field>  
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-            <input type="text"  matInput placeholder="PrevDuckNumbers">
-          </mat-form-field>
-        </mat-grid-tile>
-      <mat-grid-tile></mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWaterManagement.year"  [ngModelOptions]="{standalone:true}" matInput placeholder="Year">
-            </mat-form-field>  
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWaterManagement.fiscal_year"  [ngModelOptions]="{standalone:true}" matInput placeholder="Fiscal Year">
-            </mat-form-field>  
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <mat-form-field>
-              <input type="text" [(ngModel)]="newWaterManagement.time"  [ngModelOptions]="{standalone:true}" matInput placeholder="Time">
-            </mat-form-field>  
-      </mat-grid-tile> -->
-    </form>
-  </mat-grid-list>
-  
-  <button mat-raised-button color="primary" (click)="addWeather()">Add to Local Database</button>
-  <button mat-raised-button color="primary" (click)="clearNewWeather()">Clear Fields</button>

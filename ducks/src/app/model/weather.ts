@@ -1,8 +1,8 @@
 export class IWeather {
 
     id?: number;
-    month: string;
-    day: string;
+    CA:string;
+    date:string;
     area_ice: string;
     ice_thick: string;
     low_temp:string;
@@ -10,13 +10,13 @@ export class IWeather {
     wind_speed:string;
     river_stage:string;
     other_observations:string;
-    year:string;
+    sort_time:string
 }
 
 export class Weather implements IWeather {
     id: 0;
-    month: "";
-    day: "";
+    CA:"";
+    date:"";
     area_ice: "";
     ice_thick: "";
     low_temp:"";
@@ -24,5 +24,5 @@ export class Weather implements IWeather {
     wind_speed:"";
     river_stage:"";
     other_observations:"";
-    year:"";
+    sort_time:"";
 }

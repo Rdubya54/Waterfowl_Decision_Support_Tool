@@ -16,36 +16,47 @@ constructor(private firestore:AngularFirestore) {
 }
 
 getCAs() {
-  return this.firestore.collection('Gauge_Stats').get();    
+  return this.firestore.collection('Conservation_Areas').get();    
 }
 
 getUnits(CA) {
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").get();
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").get();
 }
 
 getPools(CA,unit) {
   console.log("selected CA is "+CA)
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection("Pools").get();
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection("Pools").get();
 }
 
 getWCS(CA,unit,pool) {
   console.log("selected pool is "+pool)
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection("Pools").doc(pool).collection("WCS").get();
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection("Pools").doc(pool).collection("WCS").get();
 }
 
 getDates(CA,unit,pool,wcs) {
   console.log("selected pool is "+pool)
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit)
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit)
   .collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Water Management")
+  .get();
+}
+
+getDates_foodavail(CA,unit,pool,wcs) {
+  console.log("selected pool is "+pool)
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit)
+  .collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Fall Food Availability")
   .get();
 }
 
 getDates_waterfood(CA,unit,pool) {
   console.log("selected pool is "+pool)
-  return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit)
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit)
   .collection("Pools").doc(pool).collection("Biweekly Water and Food Availability")
   .get();
 }
 
+getDates_weather(CA){
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Daily Weather Observation")
+  .get();
+}
 
 }

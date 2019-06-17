@@ -9,12 +9,15 @@ export class BiweeklyWaterFoodService {
 
   constructor(private firestore:AngularFirestore) { }
 
-   addWaterFood(waterfood:IWaterFood,CA,unit,pool,date,time) {
+   addWaterFood(waterfood:IWaterFood) {
     console.log(waterfood)
 
-    return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units")
-    .doc(unit).collection("Pools").doc(pool).collection("Biweekly Water and Food Availability").doc(date).set({
-              Date:date,
+    return this.firestore.collection('Conservation_Areas').doc(waterfood.CA).collection("Units")
+    .doc(waterfood.Unit).collection("Pools").doc(waterfood.Pool).collection("Biweekly Water and Food Availability").doc(waterfood.Date).set({
+              CA:waterfood.CA,
+              Unit:waterfood.Unit,
+              Pool:waterfood.Pool,
+              Date:waterfood.Date,
               Percent_of_Pool_Full: waterfood.percent_of_full_pool,
               Percentage_Flooded_under_Six_Inches: waterfood.less_than_six,
               Percentage_Flooded_Seven_to_Tweleve_Inches: waterfood.seven_to_twelve,
@@ -45,7 +48,7 @@ export class BiweeklyWaterFoodService {
               year: "dumyy",
               time: "dummy",
               fiscal_year: "dumy",
-              Sort_time:time
+              Sort_time:waterfood.Sort_time
     });
   }
 
@@ -54,7 +57,7 @@ export class BiweeklyWaterFoodService {
 
     //WHEN you need the last two for the pool at a specific time (used when viewing old records)
     if (sort_time){
-      return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).
+      return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).
       collection("Pools").doc(pool).collection("Biweekly Water and Food Availability", 
       ref=>ref.orderBy('Sort_time', 'desc').where('Sort_time',"<",sort_time).limit(1)).get();  
  
@@ -62,14 +65,14 @@ export class BiweeklyWaterFoodService {
 
     //when you just need the last record
     else{
-      return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).
+      return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).
       collection("Pools").doc(pool).collection("Biweekly Water and Food Availability", 
       ref=>ref.orderBy('Sort_time', 'desc').limit(1)).get();
     }
   }
 
   getWaterFood(CA,unit,pool,record){
-    return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection("Pools")
+    return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection("Pools")
     .doc(pool).collection("Biweekly Water and Food Availability").doc(record).get();
   }
 }

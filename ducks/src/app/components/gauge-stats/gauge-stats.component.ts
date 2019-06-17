@@ -56,6 +56,8 @@ export class GaugeStatsComponent implements OnInit {
   public image_url;
   public symbo_url;
 
+  public cropstatus;
+
   constructor(private gaugeservice:GaugedataService,private firestore:AngularFirestore) {
     this.getSymbology();
   }
@@ -75,6 +77,7 @@ export class GaugeStatsComponent implements OnInit {
     });
   }
 
+  //fetch all units for CA for dropdown
   getUnits(CA){
     this.unit_list=[];
     this.Pool_list=[];
@@ -87,7 +90,7 @@ export class GaugeStatsComponent implements OnInit {
   });
   }
   
-
+  //fetch all pools for unit for dropdown
   getPools(CA,unit){
     this.Pool_list=[];
     this.wcs_list=[];
@@ -99,6 +102,7 @@ export class GaugeStatsComponent implements OnInit {
   });
   }
   
+  //fetch all WCSs for pool for dropdown
   getWCS(CA,unit,pool){
     this.wcs_list=[];
     this.gauge_list=[];
@@ -109,6 +113,7 @@ export class GaugeStatsComponent implements OnInit {
   });
   }
 
+  //fetch all gauges for wcs for dropdown
   getGauge(CA,unit,pool,wcs){
     this.gauge_list=[];
     this.gaugeservice.getGauge(CA,unit,pool,wcs).subscribe(data => {
@@ -118,6 +123,7 @@ export class GaugeStatsComponent implements OnInit {
   });
   }
 
+  //fetch stats for the particular gauge for dropdown
   getStats(CA,unit,pool,wcs,gauge){
     this.gaugeservice.getStats(CA,unit,pool,wcs,gauge).subscribe(data => {
 
@@ -129,12 +135,16 @@ export class GaugeStatsComponent implements OnInit {
         this.eighteeninch=data.get('Shallowly_Flooded_12_18in')
         this.eighteenplus=data.get('Full_Flooded_18in')
 
+        this.cropstatus='No Crop Data Available For Pool';
+        this.crop_master_list=[]
+
         this.gaugeservice.getImageName(CA,unit,pool,wcs,gauge).subscribe(data => {
           this.image_name=data.get('Image_Name')
           this.getImage(CA,pool,this.image_name)
 
           this.gaugeservice.getCrops(CA,unit,pool,wcs,gauge).subscribe(data => {
             data.forEach(doc => {
+              this.cropstatus='';
               var crop=doc.id
               var crop_list=[];
               this.crop_master_list[crop]=crop_list
@@ -158,9 +168,10 @@ export class GaugeStatsComponent implements OnInit {
   });
   }
 
-
+  //fetch image for the particular Gauge
   getImage(CA,pool,image_name){
     var storage = firebase.storage().ref();
+    var CA =CA.replace(" ","_")
     var imagepath=CA+"_"+pool+'/'+image_name+".jpg"
     console.log(imagepath)
     var ref = storage.child(imagepath)
@@ -171,6 +182,7 @@ export class GaugeStatsComponent implements OnInit {
     });  
   }
 
+  //get map symbology image
   getSymbology(){
     var storage = firebase.storage().ref();
     var imagepath='symbology/Symbology_Image.JPG'

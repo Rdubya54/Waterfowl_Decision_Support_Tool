@@ -61,6 +61,7 @@ export class LocalDbService extends BaseService{
     });
   }
 
+
   getDates(CA,Unit,Pool){
     return this.connection.select({
       from: "Biweekly_Water_Status_and_Food_Availability",
@@ -77,4 +78,20 @@ export class LocalDbService extends BaseService{
     });
   }
 
+  getDates_2(CA,Unit,Pool,wcs){
+    return this.connection.select({
+      from: "Biweekly_Water_Status_and_Food_Availability",
+      where:{
+        CA: CA,
+        Unit:Unit,
+        Pool:Pool,
+        WCS:wcs
+      },
+      order: {
+        by: "Sort_time",
+        type: "desc" 
+    }
+
+    });
+  }
 }

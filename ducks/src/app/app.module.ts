@@ -16,7 +16,7 @@ import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { WatermanagementComponent } from 'src/app/components/watermanagement/watermanagement.component';
+import { WatermanagementComponent, PastSevenDays } from 'src/app/components/watermanagement/watermanagement.component';
 import {Globals} from 'src/app/extra/globals';
 import { from } from 'rxjs';
 
@@ -42,7 +42,15 @@ import { MatDialogRef } from '@angular/material';
 import { GaugeStatsComponent } from './components/gauge-stats/gauge-stats.component';
 import {MoistsoilService} from "./service/moistsoil.service"
 
-
+var config = {
+  apiKey: "AIzaSyChqXN2Wz2FRywEUwfEkfoxJJtc3hvr0CY",
+  authDomain: "waterfowltool.firebaseapp.com",
+  databaseURL: "https://waterfowltool.firebaseio.com",
+  projectId: "waterfowltool",
+  storageBucket: "waterfowltool.appspot.com",
+  messagingSenderId: "559890301050",
+  appId: "1:559890301050:web:8aca959fb66bcdd3"
+}; 
 
 firebase.initializeApp(config);
 
@@ -71,6 +79,7 @@ firebase.firestore().enablePersistence()
     BiweeklyWaterFoodComponent,
     FoodAvailComponent,
     BottomSheetOverviewExampleSheet,
+    PastSevenDays,
     ConnectionStatusDialog,
     LoginDialog,
     DataWrittenDialog,
@@ -91,7 +100,7 @@ firebase.firestore().enablePersistence()
     ChartsModule,
     MatExpansionModule,
   ],
-  entryComponents: [BiweeklyWaterFoodComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,DataWrittenDialog],
+  entryComponents: [BiweeklyWaterFoodComponent, PastSevenDays, WatermanagementComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,DataWrittenDialog],
   providers: [Globals,LocalWaterManagementService,WatermanagementComponent,FoodAvailComponent,AppComponent,MoistsoilService],
   bootstrap: [AppComponent]
 })

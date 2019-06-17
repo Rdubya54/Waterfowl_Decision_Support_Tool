@@ -1,10 +1,12 @@
 export class IFoodAvail {
 
     id?: number;
-    month: string;
-    day: string;
-    year: string;
-    structure: string;
+    CA:string;
+    unit:string;
+    pool:string;
+    structure:string;
+    date:string;
+    sort_time:string
     corn_unharv:string;
     corn_harv:string;
     corn_yield:string;
@@ -46,10 +48,12 @@ export class IFoodAvail {
 
 export class FoodAvail implements IFoodAvail {
     id?: 0;
-    month: "";
-    day: "";
-    year: "";
+    CA:"";
+    unit:"";
+    pool:"";
     structure: "";
+    date:"";
+    sort_time:"";
     corn_unharv:"";
     corn_harv:"";
     corn_yield:"";

@@ -34,7 +34,7 @@
           </div>
           <div fxFlex="1%"> 
               <mat-form-field>
-                  <mat-select placeholder="Pools" [(ngModel)]="selected_Pool" (ngModelChange)="getWCS(selected_CA,selected_unit,$event)">
+                  <mat-select placeholder="Pool" [(ngModel)]="selected_Pool" (ngModelChange)="getWCS(selected_CA,selected_unit,$event)">
                     <mat-option *ngFor="let x of Pool_list" [value]="x">
                       {{x}}
                     </mat-option>
@@ -109,6 +109,9 @@
           <div fxFlex="50%"> 
                 <h3>Acres of Flooded Crop</h3>
           </div>
+      </div>
+      <div>
+        {{cropstatus}}
       </div>
       <div *ngFor="let x of objectKeys(crop_master_list)">
           <h4>{{x}}</h4>

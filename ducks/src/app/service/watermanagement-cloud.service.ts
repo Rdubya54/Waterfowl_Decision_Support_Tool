@@ -12,13 +12,16 @@ export class WatermanagementCloudService {
 
 
    //this function pushes a water management record to the cloud
-   addWaterManagement(watermanagement:IWatermanagement,CA,unit,pool,wcs,date,time) {
-
-    console.log("inside of add is "+date)
-    
-    return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units")
-    .doc(unit).collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Water Management")
-    .doc(date).set({
+   addWaterManagement(watermanagement:IWatermanagement) {
+  
+    return this.firestore.collection('Conservation_Areas').doc(watermanagement.CA).collection("Units")
+    .doc(watermanagement.Unit).collection("Pools").doc(watermanagement.Pool).collection("WCS").doc(watermanagement.Structure)
+    .collection("Water Management")
+    .doc(watermanagement.Date).set({
+      CA:watermanagement.CA,
+      Unit:watermanagement.Unit,
+      Pool:watermanagement.Pool,
+      WCS:watermanagement.Structure,
       Date:watermanagement.Date,
       Elevation: watermanagement.Elevation,
       Gate_manipulation: watermanagement.Gate_manipulation,
@@ -32,7 +35,7 @@ export class WatermanagementCloudService {
       Fiscal_year:"dummy_fiscal",
       Notes:watermanagement.Notes,
       Reasons:watermanagement.Reasons,
-      Sort_time:time
+      Sort_time:watermanagement.Sort_time
     });
   }
 
@@ -43,7 +46,7 @@ export class WatermanagementCloudService {
 
     //WHEN you need the last two for the pump at a specific time (used when viewing old records)
     if (sort_time){
-      return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).
+      return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).
       collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Water Management", 
       ref=>ref.orderBy('Sort_time', 'desc').where('Sort_time',"<",sort_time).limit(2)).get();  
  
@@ -51,16 +54,15 @@ export class WatermanagementCloudService {
 
     //when you just need the last two for the pump
     else{
-      return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).
+      return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).
       collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Water Management", 
       ref=>ref.orderBy('Sort_time', 'desc').limit(2)).get();
     }
-    
   }
 
   //gets watermanagement fields for an individual record
   getWaterManagement(CA,unit,pool,wcs,record){
-    return this.firestore.collection('Gauge_Stats').doc(CA).collection("Units").doc(unit).collection("Pools")
+    return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection("Pools")
     .doc(pool).collection("WCS").doc(wcs).collection("Water Management").doc(record).get();
   }
 
