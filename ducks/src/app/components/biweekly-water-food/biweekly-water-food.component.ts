@@ -24,7 +24,7 @@ import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/st
 export class BiweeklyWaterFoodComponent implements OnInit {
 
   breakpoint:number;
-  breakpoint_top:number;
+  breakpoint_params:number;
 
   public CA_list: string[]=[];
   public selected_CA;
@@ -57,7 +57,7 @@ export class BiweeklyWaterFoodComponent implements OnInit {
 
   ngOnInit() {
     this.breakpoint = (window.innerWidth <= 768) ? 1 : 4;
-    this.breakpoint_top = (window.innerWidth <= 768) ? 1 : 1;
+    this.breakpoint_params = (window.innerWidth <= 768) ? 1 : 1;
 
     this.CA_list=[];
     this.unit_list=[];
@@ -562,6 +562,10 @@ getdatesfordb(){
 //used to reformat page when screen is resized
 onResize(event) {
   this.breakpoint = (event.target.innerWidth <= 768) ? 1 : 4;
+}
+
+onResizeparams(event){
+  this.breakpoint_params = (event.target.innerWidth <= 768) ? 1 : 1;
 }
 
 //clears all fields

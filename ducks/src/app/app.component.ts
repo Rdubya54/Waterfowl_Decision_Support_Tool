@@ -2,6 +2,7 @@ import { Component, ModuleWithComponentFactories,Inject } from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
 import { ConnectionService } from 'ng-connection-service';
 import { stripSummaryForJitFileSuffix } from '@angular/compiler/src/aot/util';
+
 import {Globals} from 'src/app/extra/globals';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {AuthService} from 'src/app/service/auth.service';
@@ -68,7 +69,7 @@ export class AppComponent {
   //this makes sure updates are properly loaded.
   //needed cause pwas caching can make it hard to seee updates
   constructor(private connectionService:ConnectionService,updates:SwUpdate,public globals:Globals,public dialog: MatDialog,
-    authservice:AuthService,private weatherlocalservice:WeatherLocalService,private weathercloudservice:WeatherCloudService, 
+    private authservice:AuthService,private weatherlocalservice:WeatherLocalService,private weathercloudservice:WeatherCloudService, 
     private foodavailcloudservice:FoodAvailCloudService, private foodavaillocalservice: FoodAvailLocalService, private dbservice: dbService,
     public moistsoilservice:MoistsoilService,private waterfoodcloudservice:BiweeklyWaterFoodService, 
     private waterfoodlocalservice:LocalWaterFood,private watermanagementlocalservice: LocalWaterManagementService, 
@@ -78,6 +79,7 @@ export class AppComponent {
     //this is only run when the connection status changes
     this.connectionService.monitor().subscribe(isConnected => {
       this.isConnected = isConnected;
+      
       if (this.isConnected) {
         this.globals.role = "online";
         this.openConnectionStatusDialog();
@@ -91,12 +93,13 @@ export class AppComponent {
   }
   
   ngOnInit(){
+    this.logout()
     this.initial_onlineCheck();
+    this.openCASelectionDialog();
   } 
 
   initial_onlineCheck() {
       this.online_status = window.navigator.onLine;
-
       if (this.online_status){
         //push all records into cloud
         this.pushtocloudfromlocal()
@@ -300,7 +303,7 @@ pushtocloudfromlocal(){
 
           //delete the record from local
           console.log('deleting:'+record["id"])
-          this.waterfoodlocalservice.deleteWaterFood(record["id"]);
+          this.watermanagementlocalservice.deleteWaterManagement(record["id"]);
         })
 
         this.downloadallprevs('WaterManagement');
@@ -594,6 +597,18 @@ clearNewFoodAvail() {
   this.newFoodAvail = new FoodAvail();
 }
 
+logout(){
+  console.log('success')
+  this.authservice.setLoggedIn(false);
+  console.log(localStorage.getItem('logged out'));
+  this.openLogoutDialog();
+}
+
+openCASelectionDialog(): void {
+  const dialogRef = this.dialog.open(CASelectionDialog, {
+    width: '250px',
+  });
+}
 
 openDataWrittenDialog(): void {
   const dialogRef = this.dialog.open(DataWrittenDialog, {
@@ -626,6 +641,15 @@ openLoginDialog(): void {
   });
 }
 
+openLogoutDialog(): void {
+  const dialogRef = this.dialog.open(LogoutDialog, {
+    width: '250px',
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    console.log('The dialog was closed');
+  });
+}
 }
 
 
@@ -690,6 +714,40 @@ export class LoginDialog {
   }
 
   onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+
+@Component({
+  selector: 'logout-dialog',
+  templateUrl: 'logout-dialog.html',
+})
+export class LogoutDialog {  
+
+  constructor(public dialogRef: MatDialogRef<LogoutDialog>) {}
+
+    onNoClick(): void {
+      this.dialogRef.close();
+    }
+}
+
+
+@Component({
+  selector: 'CAselection',
+  templateUrl: 'CASelection.html',
+  styleUrls:["CASelection.css"]
+})
+export class CASelectionDialog {
+
+  selectedCA: string;
+  CAs: string[] = ['BK Leech', 'Duck Creek', 'Eagle Bluffs', 'Grand Pass'];
+
+  constructor(public dialogRef: MatDialogRef<CASelectionDialog>,public globals:Globals) {}
+  
+
+  onNoClick(): void {
+    this.globals.CA=this.selectedCA;
+    console.log("CA GLBOAR:"+this.globals.CA)
     this.dialogRef.close();
   }
 

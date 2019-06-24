@@ -1,1 +1,32 @@
-<p>content coming soon</p>
+<!-- 
+<mat-form-field class="wmgmt">
+<input type="text" [(ngModel)]="watermanagement.past_7_data_master[0]['Elevation']"  [ngModelOptions]="{standalone:true}" matInput placeholder="Stoplog Level">
+</mat-form-field> -->
+
+<mat-card>
+        <div fxFlex="5%" *ngIf="this.dates; then this.makeChart()">
+                <div *ngIf="chart">
+                  <p>Stoplog Change</p>
+                  <canvas #canvas id="canvas" >{{ chart }}</canvas>
+                </div>
+        </div>
+
+<!--     <div fxLayout="column" fxLayoutGap="0.5%">
+        <div fxFlex="5%" *ngIf="this.dates; then this.makeChart()">
+        <div *ngIf="chart">
+          <p>Water Elevation</p>
+          <canvas id="canvas_elevation" >{{ this.chart }}</canvas>
+        </div>
+        </div> -->
+
+<!--     <div fxFlex="5%" *ngIf="chart">
+            <p>Gate Level</p>
+            <canvas id="canvas_gate_level" >{{ chart }}</canvas>
+      </div>
+
+      <div fxFlex="5%" *ngIf="chart">
+            <p>Number of Ducks and Geese</p>
+            <canvas id="canvas_birds" >{{ chart }}</canvas>
+      </div> -->
+
+</mat-card>

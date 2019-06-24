@@ -1,10 +1,10 @@
 <h1>Biweekly Water Status And Food Availability</h1>
-<mat-grid-list [cols]="breakpoint_top" rowHeight="200px" (window:resize)="onResize($event)">
+<mat-grid-list [cols]="breakpoint_params" rowHeight="325px" (window:resize)="onResizeparams($event)">
         <mat-grid-tile>
-            <mat-card class="example-container">
+            <mat-card class="params">
                 <h3>Parameters</h3>
-                <div fxLayout="row"  fxLayoutGap="30%">
-                    <div fxFlex="1%"> 
+                    
+                    <div> 
                         <mat-form-field>
                             <mat-select placeholder="Conservation Area" [(ngModel)]="selected_CA" (ngModelChange)="getUnits($event)">
                             <mat-option *ngFor="let x of CA_list" [value]="x">
@@ -13,7 +13,7 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div fxFlex="1%"> 
+                    <div> 
                         <mat-form-field>
                             <mat-select placeholder="Pool Unit" [(ngModel)]="selected_unit" (ngModelChange)="getPools(selected_CA,$event)">
                             <mat-option *ngFor="let x of unit_list" [value]="x">
@@ -22,7 +22,32 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div fxFlex="1%"> 
+                    <div> 
+                            <mat-form-field>
+                                <mat-select placeholder="Pool" [(ngModel)]="selected_Pool" (ngModelChange)="getprevWaterFood(selected_CA,selected_unit,$event,'')">
+                                <mat-option *ngFor="let x of Pool_list" [value]="x">
+                                    {{x}}
+                                </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div> 
+                        <div> 
+                            <mat-form-field>
+                                <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="updateWaterFood(selected_CA,selected_unit,selected_Pool,$event)">
+                                <mat-option *ngFor="let x of date_list" [value]="x">
+                                    {{x}}
+                                </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+            </mat-card>
+        </mat-grid-tile>
+<!--         <mat-grid-tile>
+
+            <mat-card class="params">
+                    <div fxLayout="row"  fxLayoutGap="25%">
+
+                    <div> 
                         <mat-form-field>
                             <mat-select placeholder="Pool" [(ngModel)]="selected_Pool" (ngModelChange)="getprevWaterFood(selected_CA,selected_unit,$event,'')">
                             <mat-option *ngFor="let x of Pool_list" [value]="x">
@@ -31,8 +56,7 @@
                             </mat-select>
                         </mat-form-field>
                     </div> 
-                </div>
-                <div fxFlex="1%"> 
+                    <div> 
                         <mat-form-field>
                             <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="updateWaterFood(selected_CA,selected_unit,selected_Pool,$event)">
                             <mat-option *ngFor="let x of date_list" [value]="x">
@@ -40,9 +64,11 @@
                             </mat-option>
                             </mat-select>
                         </mat-form-field>
-                </div>
-                </mat-card>
-        </mat-grid-tile>
+                    </div>
+                </div> 
+
+            </mat-card> 
+        </mat-grid-tile> -->
 </mat-grid-list>
 
 

@@ -1,0 +1,13 @@
+<label id="example-radio-group-label">Select a Conservation Area</label>
+<mat-radio-group
+  aria-labelledby="example-radio-group-label"
+  class="example-radio-group"
+  [(ngModel)]="selectedCA">
+  <mat-radio-button class="example-radio-button" *ngFor="let CA of CAs" [value]="CA">
+    {{CA}}
+  </mat-radio-button>
+</mat-radio-group>
+
+<div mat-dialog-actions>
+        <button mat-button (click)="onNoClick()">OK</button>
+</div>

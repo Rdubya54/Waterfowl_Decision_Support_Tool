@@ -9,7 +9,6 @@ export class ChartService {
 
 	public setSidenav(sidenav: MatSidenav) {
     this.sidenav = sidenav;
-    console.log("4 it is"+this.sidenav)
 	}
 
 	public open() {
@@ -22,7 +21,6 @@ export class ChartService {
 	}
 
 	public toggle(): void {
-    console.log("3 it is"+this.sidenav)
 		this.sidenav.toggle();
 	}
 }

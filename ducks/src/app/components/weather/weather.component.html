@@ -1,11 +1,15 @@
 <h1>Daily Weather Observations</h1>
 
-<mat-grid-list [cols]="breakpoint_top" rowHeight="200px" (window:resize)="onResize($event)">
+<mat-grid-list [cols]="breakpoint_top" rowHeight="250px" (window:resize)="onResize($event)">
     <mat-grid-tile>
     <mat-card class="example-container">
             <h3>Parameters</h3>
-            <div fxLayout="row"  fxLayoutGap="30%">
-                    <div fxFlex="1%"> 
+            <div>
+                <mat-form-field>
+                  <input type="text" [(ngModel)]="this.globals.CA" [ngModelOptions]="{standalone:true}" matInput placeholder="Conservation Area">
+                </mat-form-field>
+              </div>
+                    <div> 
                         <mat-form-field>
                             <mat-select placeholder="Conservation Area" [(ngModel)]="selected_CA" (ngModelChange)="getDates($event)">
                             <mat-option *ngFor="let x of CA_list" [value]="x">
@@ -14,7 +18,7 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div fxFlex="1%"> 
+                    <div> 
                             <mat-form-field>
                                 <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="getWeather(selected_CA,$event)">
                                 <mat-option *ngFor="let x of date_list" [value]="x">
@@ -23,7 +27,6 @@
                                 </mat-select>
                             </mat-form-field>
                     </div>
-                </div>
     </mat-card>  
     </mat-grid-tile>
 </mat-grid-list>
@@ -31,61 +34,44 @@
 <mat-grid-list [cols]="breakpoint_top" rowHeight="800px" (window:resize)="onResize($event)">   
     <mat-grid-tile>
         <mat-card>
-        <div fxLayout="row"  fxLayoutGap="30%">
-            <div fxFlex="1%">
-            </div>
-            <div fxFlex="1%">
-              <button mat-raised-button color="primary">Fetch Data from API</button>
-            </div>
-        </div>
-        <div fxLayout="row"  fxLayoutGap="30%">
-          <div fxFlex="1%">
+
+          <div>
             <mat-form-field>
               <input type="text" [(ngModel)]="newWeather.area_ice" [ngModelOptions]="{standalone:true}" matInput placeholder="Percent Area Covered in Ice">
             </mat-form-field>
           </div>
-          <div fxFlex="1%">
+          <div>
             <mat-form-field>
                 <input type="text" [(ngModel)]="newWeather.ice_thick" [ngModelOptions]="{standalone:true}" matInput placeholder="Thickness of Ice">
             </mat-form-field>
           </div>
-        </div>
 
-        <div fxLayout="row"  fxLayoutGap="30%">
-            <div fxFlex="1%">
+            <div>
               <mat-form-field>
                 <input type="text" [(ngModel)]="newWeather.low_temp" [ngModelOptions]="{standalone:true}" matInput placeholder="Low Temperture">
               </mat-form-field>
             </div>
-            <div fxFlex="1%">
+            <div>
               <mat-form-field>
                   <input type="text" [(ngModel)]="newWeather.wind_dir" [ngModelOptions]="{standalone:true}" matInput placeholder="Wind Direction">
               </mat-form-field>
             </div>
-        </div>
 
-        <div fxLayout="row"  fxLayoutGap="30%">
-            <div fxFlex="1%">
+            <div>
               <mat-form-field>
-                <input type="text" [(ngModel)]="newWeather.wind_speed" [ngModelOptions]="{standalone:true}" matInput placeholder="Wind Speed">
+                <input type="text" [(ngModel)]="newWeather.wind_speed" [ngModelOptions]="{standalone:true}" matInput placeholder="Wind Speed (mph)">
               </mat-form-field>
             </div>
-            <div fxFlex="1%">
+            <div>
               <mat-form-field>
                   <input type="text" [(ngModel)]="newWeather.river_stage" [ngModelOptions]="{standalone:true}" matInput placeholder="River Stage">
               </mat-form-field>
             </div>
-        </div>
-
-        <div fxLayout="row"  fxLayoutGap="30%">
-            <div fxFlex="1%">
+            <div>
               <mat-form-field>
                 <input type="text" [(ngModel)]="newWeather.other_observations" [ngModelOptions]="{standalone:true}" matInput placeholder="Other Weather Observations">
               </mat-form-field>
             </div>
-            <div fxFlex="1%">
-            </div>
-        </div>
         <button *ngIf="this.globals.role === 'online';"  mat-raised-button color="primary" (click)="addWeather(selected_CA,selected_date)">Push to Cloud</button>
         <button *ngIf="this.globals.role === 'offline';" mat-raised-button color="primary" (click)="addWeather(selected_CA,selected_date)">Push to Local</button>
         <button mat-raised-button color="primary" (click)="clearNewWeather()">Clear Fields</button> 

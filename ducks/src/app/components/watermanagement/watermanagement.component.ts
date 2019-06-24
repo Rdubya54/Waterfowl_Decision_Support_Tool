@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild,VERSION } from '@angular/core';
+import { Component, OnInit, ViewChild,VERSION, Input, AfterViewInit,ElementRef } from '@angular/core';
 import { LocalWaterManagementService } from 'src/app/service/watermanagement-local.service';
 import {Globals} from 'src/app/extra/globals';
 import { AngularFireDatabase } from 'angularfire2/database';
@@ -70,14 +70,50 @@ export class WatermanagementComponent implements OnInit {
   public prev_data_2:string[]=[];
   public doc_array=[];
 
+  public past_7_data_master=[];
+  public past_7_data:string[]=[]
+  public stored_size;
+
   public data_length=this.prev_data_master.length;
    constructor(private comp:AppComponent, private localService: LocalWaterManagementService, private cloudservice: WatermanagementCloudService, public globals:Globals,
      private dbservice_cloud:dbService, private sidenavService:ChartService,private bottomSheet: MatBottomSheet) {
   }
 
   //opens past seven day page
-  openBottomSheet(): void {
-    this.bottomSheet.open(PastSevenDays);
+  async openBottomSheet(){
+    await this.cloudservice.getpast7WaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs)
+
+    this.bottomSheet.open(PastSevenDays)
+/*     this.cloudservice.getpast7WaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs).
+    subscribe(data => {
+
+      this.past_7_data_master.length=0;
+
+      data.forEach(doc => {
+        console.log('date is '+data.size)
+        this.stored_size=data.size
+      this.cloudservice.getWaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs,doc.id).
+      subscribe(data=>{
+        console.log('the data looks like this '+data.get('Elevation'))
+        this.past_7_data.length=0;
+        this.past_7_data['Date']=data.get('Date');
+        this.past_7_data['Elevation']=data.get('Elevation');
+        this.past_7_data['Gate_manipulation']=data.get('Gate_manipulation');
+        console.log('mini past 7 day:'+this.past_7_data['Elevation'])
+        this.past_7_data_master.push(this.past_7_data)
+
+
+        console.log("stored size:"+this.stored_size)
+        console.log("master length:"+this.past_7_data_master.length)
+        console.log('past 7 day:'+this.past_7_data_master[0]['Elevation'])
+        if (this.past_7_data_master.length === this.stored_size){
+          this.bottomSheet.open(PastSevenDays);
+          
+        }
+        
+      });
+      });
+    }); */
   }
 
   ngOnInit() : void {
@@ -92,7 +128,6 @@ export class WatermanagementComponent implements OnInit {
   this.unit_list=[];
   this.Pool_list=[];
   this.wcs_list=[];
-
 
   //if app is online push any locally cached data to the cloud
   if (this.globals.role==="online"){
@@ -220,66 +255,6 @@ getDates(CA,unit,pool,wcs,location){
   }
 }
 
-// get last two records for EVERY water control structure
-/* downloadallprevs(){
-  this.dbservice_cloud.getCAs().subscribe(data => {
-    data.forEach(doc => {
-      console.log("CA is"+doc.id)
-      var CA=doc.id
-      this.dbservice_cloud.getUnits(CA).subscribe(data => {
-        data.forEach(doc => {
-          console.log("CA is"+doc.id)
-          var Unit=doc.id;
-          this.dbservice_cloud.getPools(CA,Unit).subscribe(data => {
-            data.forEach(doc => {
-              console.log("CA is"+doc.id)
-              var Pool=doc.id;
-              this.dbservice_cloud.getWCS(CA,Unit,Pool).subscribe(data => {
-                data.forEach(doc => {
-                  console.log("CA is"+doc.id)
-                  var wcs=doc.id;
-                  this.cloudservice.getprevWaterManagement(CA,Unit,Pool,wcs,"").subscribe(data => {
-                    data.forEach(doc => {
-                    console.log(doc.id)
-                      var date=doc.id;
-                      this.getindividualrecord(CA,Unit,Pool,wcs,date)
-                    });
-                  });
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  });
-} */
-
-// retrives an indivudal watermangement record from the cloud
-/* getindividualrecord(CA,unit,pool,wcs,date){
-  this.cloudservice.getWaterManagement(CA,unit,pool,wcs,date).
-  subscribe(data=>{
-    this.newWaterManagement.CA=CA;
-    this.newWaterManagement.Unit=unit;
-    this.newWaterManagement.Pool=pool;
-    this.newWaterManagement.Structure=wcs;
-    this.newWaterManagement.Date=data.get('Date');
-    this.newWaterManagement.Elevation=data.get('Elevation');
-    this.newWaterManagement.Gate_manipulation=data.get('Gate_manipulation');
-    this.newWaterManagement.Gate_level=data.get('Gate_level');
-    this.newWaterManagement.Stoplog_change=data.get('Stoplog_change');
-    this.newWaterManagement.Stoplog_level=data.get('Stoplog_level');
-    this.newWaterManagement.Duck_numbers=data.get('Duck_numbers')
-    this.newWaterManagement.Goose_numbers=data.get('Goose_numbers');
-    this.newWaterManagement.Notes=data.get('Notes');
-    this.newWaterManagement.Reasons=data.get('Reasons')
-    this.newWaterManagement.Sort_time=data.get('Sort_time')
-
-    this.localaddWatermanagement("from_cloud");
-
-  })
-} */
-
 // get the previous records for the target wcs
 // from local storage
 getprevfromlocal(selected_CA,selected_unit,selected_Pool,selected_wcs,selected_date){
@@ -386,51 +361,7 @@ localaddWatermanagement(location){
     });
 }
 
-//this function handles pushing data that is stored in local to the cloud
-//once the app gets back online
-/* pushtocloudfromlocal(){
-  this.localService.getWaterManagment().
-    then(data => {
-        this.watermanagements = data;
 
-        this.watermanagements.forEach(record =>{
-          this.newWaterManagement.CA=record["CA"],
-          this.newWaterManagement.Unit=record["Unit"],
-          this.newWaterManagement.Pool=record["Pool"],
-          this.newWaterManagement.Structure=record["Structure"],
-          this.newWaterManagement.Date=record["Date"],
-          this.newWaterManagement.Elevation=record["Elevation"],
-          this.newWaterManagement.Gate_manipulation=record["Gate_manipulation"],
-          this.newWaterManagement.Gate_level=record["Gate_level"],
-          this.newWaterManagement.Stoplog_change=record["Stoplog_change"],
-          this.newWaterManagement.Stoplog_level=record["Stoplog_level"],
-          this.newWaterManagement.Duck_numbers=record["Duck_numbers"],
-          this.newWaterManagement.Goose_numbers=record["Goose_numbers"],
-          this.newWaterManagement.Year=record["Year"],
-          this.newWaterManagement.Time=record["Time"],
-          this.newWaterManagement.Fiscal_year=record["Fiscal_year"],
-          this.newWaterManagement.Notes=record["Notes"],
-          this.newWaterManagement.Reasons=record["Reasons"],
-          this.newWaterManagement.Sort_time=record["Sort_time"]
-
-          //add the locally stored Watermanagement to Cloud (if the record was already there it is being updated
-          //but since everything is the same it is basically doing nothing)
-          this.cloudservice.addWaterManagement(this.newWaterManagement)
-
-          //delete the record from local
-          this.localService.deleteWaterManagement(record["id"]);
-        })
-
-        //now redownload database from cloud now that it has been updated with
-        //the local data that was pushed
-        // this.downloadallprevs()
-
-      }).catch(error => {
-          console.error(error);
-          alert(error.message);
-  });
-}
- */
 //this function is for updating records in the cloud
 updateWatermanagement(CA,unit,pool,wcs,date){
     this.cloudservice.getWaterManagement(CA,unit,pool,wcs,date).
@@ -746,7 +677,8 @@ addWaterManagement(CA,unit,pool,wcs,date) {
           yAxes: [{
             display: true
           }]
-        }
+        },
+        responive:true
       }
     })
 
@@ -775,7 +707,8 @@ addWaterManagement(CA,unit,pool,wcs,date) {
           yAxes: [{
             display: true
           }]
-        }
+        },
+        responive:true
       }
     })
 
@@ -811,7 +744,8 @@ addWaterManagement(CA,unit,pool,wcs,date) {
           yAxes: [{
             display: true
           }]
-        }
+        },
+        responive:true
       }
     })
     return "done";
@@ -864,7 +798,8 @@ addWaterManagement(CA,unit,pool,wcs,date) {
           yAxes: [{
             display: true
           }]
-        }
+        },
+        responive:true
       }
     })
   }
@@ -903,7 +838,8 @@ addWaterManagement(CA,unit,pool,wcs,date) {
               display: true
             }]
           }
-        }
+        },
+        responive:true
       })
     }
 
@@ -939,7 +875,8 @@ addWaterManagement(CA,unit,pool,wcs,date) {
               display: true
             }]
           }
-        }
+        },
+        responive:true
       })
     }
     }
@@ -952,8 +889,73 @@ addWaterManagement(CA,unit,pool,wcs,date) {
   templateUrl: 'past-seven-days.html',
   styleUrls: ['past-seven-days.css']
 })
-export class PastSevenDays {
+export class PastSevenDays implements OnInit, AfterViewInit{
 
-  constructor(private bottomSheetRef: MatBottomSheetRef<PastSevenDays>) {}
+  @ViewChild('canvas') canvas: ElementRef;
 
+  constructor(private bottomSheetRef: MatBottomSheetRef<PastSevenDays>,private watermanagement: WatermanagementCloudService,private sidenavService:ChartService) {}
+
+  chart_loaded=false;
+
+  chart = [];
+  dates = [];
+  elevation_data=[];
+  gate_level_data=[];
+  ducks_num_data=[];
+  geese_num_data=[];
+
+
+  ngOnInit(){         
+    
+  }
+
+  ngAfterViewInit(){
+    //this.makeChart()
+  }
+
+
+
+   //creates initial chart
+   makeChart(){
+    
+    this.dates=[this.watermanagement.past_7_data_master[1]['Date'],this.watermanagement.past_7_data_master[0]['Date']];
+    this.elevation_data=[this.watermanagement.past_7_data_master[1]['Elevation'],this.watermanagement.past_7_data_master[0]['Elevation']]; 
+
+/*     this.dates=["1","2"]
+    this.elevation_data=["4","5"] */
+
+    console.log('dates:'+this.dates)
+    console.log('elevation: '+this.elevation_data)
+    
+
+     this.chart = new Chart(this.canvas.nativeElement.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: this.dates,
+        datasets: [
+          {
+            data: this.elevation_data,
+            borderColor: '#3cba9f',
+            fill: false
+          },
+        ]
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        scales: {
+          xAxes: [{
+            display: true
+          }],
+          yAxes: [{
+            display: true
+          }]
+        }
+      },
+      responive:true
+    })
+
+    console.log('chart is '+this.chart)
+  }
 }

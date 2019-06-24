@@ -3,13 +3,11 @@ import { NgModule } from '@angular/core';
 
 
 import 'firebase/firestore';
-
-import { environment } from '../environments/environment';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { FormsModule }   from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent, DataWrittenDialog } from './app.component';
+import { AppComponent, DataWrittenDialog, LogoutDialog } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { MaterialModule } from './material.module';
@@ -21,6 +19,8 @@ import {Globals} from 'src/app/extra/globals';
 import { from } from 'rxjs';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
+
+import { MatRadioModule } from '@angular/material';
 
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 
@@ -38,9 +38,11 @@ import { FoodAvailComponent, BottomSheetOverviewExampleSheet} from './components
 
 import {ConnectionStatusDialog} from 'src/app/app.component';
 import {LoginDialog} from 'src/app/app.component';
+import {CASelectionDialog} from 'src/app/app.component';
 import { MatDialogRef } from '@angular/material';
 import { GaugeStatsComponent } from './components/gauge-stats/gauge-stats.component';
 import {MoistsoilService} from "./service/moistsoil.service"
+import { ChartService } from './service/chart.service';
 
 var config = {
   apiKey: "AIzaSyChqXN2Wz2FRywEUwfEkfoxJJtc3hvr0CY",
@@ -82,12 +84,14 @@ firebase.firestore().enablePersistence()
     PastSevenDays,
     ConnectionStatusDialog,
     LoginDialog,
+    LogoutDialog,
     DataWrittenDialog,
+    CASelectionDialog,
     GaugeStatsComponent,
   ],
   imports: [
     BrowserModule,
-    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireModule.initializeApp(config),
     AngularFireDatabaseModule,
     AngularFirestoreModule.enablePersistence(),
     AppRoutingModule,
@@ -95,13 +99,14 @@ firebase.firestore().enablePersistence()
     MaterialModule,
     BrowserAnimationsModule,
     FormsModule,
+    MatRadioModule,
     FlexLayoutModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: true }),
     ChartsModule,
     MatExpansionModule,
   ],
-  entryComponents: [BiweeklyWaterFoodComponent, PastSevenDays, WatermanagementComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,DataWrittenDialog],
-  providers: [Globals,LocalWaterManagementService,WatermanagementComponent,FoodAvailComponent,AppComponent,MoistsoilService],
+  entryComponents: [BiweeklyWaterFoodComponent, PastSevenDays, WatermanagementComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,LogoutDialog,DataWrittenDialog,CASelectionDialog],
+  providers: [Globals,LocalWaterManagementService,WatermanagementComponent,FoodAvailComponent,AppComponent,MoistsoilService,ChartService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,10 +1,9 @@
-<h1>Water Management</h1>
-<mat-grid-list [cols]="breakpoint_top" rowHeight="200px" (window:resize)="onResize($event)">
+<h1>Daily Water Management</h1>
+<mat-grid-list [cols]="breakpoint_top" rowHeight="700px" (window:resize)="onResize($event)">
 <mat-grid-tile>
     <mat-card class="example-container">
         <h3>Parameters</h3>
-        <div fxLayout="row"  fxLayoutGap="30%">
-            <div fxFlex="1%"> 
+            <div> 
                 <mat-form-field>
                     <mat-select placeholder="Conservation Area" [(ngModel)]="selected_CA" (ngModelChange)="getUnits($event)">
                     <mat-option *ngFor="let x of CA_list" [value]="x">
@@ -13,7 +12,7 @@
                     </mat-select>
                 </mat-form-field>
             </div>
-            <div fxFlex="1%"> 
+            <div> 
                 <mat-form-field>
                     <mat-select placeholder="Pool Unit" [(ngModel)]="selected_unit" (ngModelChange)="getPools(selected_CA,$event)">
                     <mat-option *ngFor="let x of unit_list" [value]="x">
@@ -22,7 +21,7 @@
                     </mat-select>
                 </mat-form-field>
             </div>
-            <div fxFlex="1%"> 
+            <div> 
                 <mat-form-field>
                     <mat-select placeholder="Pools" [(ngModel)]="selected_Pool" (ngModelChange)="getWCS(selected_CA,selected_unit,$event)">
                     <mat-option *ngFor="let x of Pool_list" [value]="x">
@@ -31,9 +30,7 @@
                     </mat-select>
                 </mat-form-field>
             </div> 
-        </div>
-        <div fxLayout="row"  fxLayoutGap="30%">
-            <div fxFlex="1%"> 
+            <div> 
                 <mat-form-field>
                     <mat-select placeholder="Water Control Structure" [(ngModel)]="selected_wcs" (ngModelChange)="getWatermanagement(selected_CA,selected_unit,selected_Pool,$event,'none')">
                     <mat-option *ngFor="let x of wcs_list" [value]="x">
@@ -42,7 +39,7 @@
                     </mat-select>
                 </mat-form-field>
             </div> 
-            <div fxFlex="1%"> 
+            <div> 
                 <mat-form-field>
                     <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="getWatermanagement(selected_CA,selected_unit,selected_Pool,selected_wcs,$event)">
                     <mat-option *ngFor="let x of date_list" [value]="x">
@@ -51,16 +48,15 @@
                     </mat-select>
                 </mat-form-field>
             </div>
-            <div fxFlex="1%"> 
+            <div> 
                 <button mat-raised-button color="primary" (click)="openBottomSheet()">Past Seven Records</button>
             </div>
-        </div>
         </mat-card>
     </mat-grid-tile>
 </mat-grid-list>
 
 
-  <mat-grid-list [cols]="breakpoint" rowHeight="900px" (window:resize)="onResize($event)">
+  <mat-grid-list [cols]="breakpoint" rowHeight="700px" (window:resize)="onResize($event)">
   <mat-grid-tile>
   <mat-card class="example-container">
   <div fxLayout="row"  fxLayoutGap="5%">

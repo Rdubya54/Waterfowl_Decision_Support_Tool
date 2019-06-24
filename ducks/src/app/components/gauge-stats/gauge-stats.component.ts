@@ -53,6 +53,12 @@ export class GaugeStatsComponent implements OnInit {
   public eighteeninch=0;
   public eighteenplus=0;
 
+  public dry_per=0;
+  public sixinch_per=0;
+  public tweleveinch_per=0;
+  public eighteeninch_per=0;
+  public eighteenplus_per=0;
+
   public image_url;
   public symbo_url;
 
@@ -135,6 +141,12 @@ export class GaugeStatsComponent implements OnInit {
         this.eighteeninch=data.get('Shallowly_Flooded_12_18in')
         this.eighteenplus=data.get('Full_Flooded_18in')
 
+        this.dry_per=(this.dry/this.total_acres)*100
+        this.sixinch_per=(this.sixinch/this.total_acres)*100
+        this.tweleveinch_per=(this.twelveinch/this.total_acres)*100
+        this.eighteeninch_per=(this.eighteeninch/this.total_acres)*100
+        this.eighteenplus_per=(this.eighteenplus/this.total_acres)*100
+
         this.cropstatus='No Crop Data Available For Pool';
         this.crop_master_list=[]
 
@@ -152,11 +164,17 @@ export class GaugeStatsComponent implements OnInit {
                 crop_list['Total Acres']=data.get('Total Acres');
                 crop_list['Dry_not_flooded']=data.get('Dry_not_flooded');
                 crop_list['Shallowly_Flooded_0_6in']=data.get('Shallowly_Flooded_0_6in');
-                crop_list['Shallowly_Flooded_6-12in']=data.get('Shallowly_Flooded_6-12in');
+                crop_list['Shallowly_Flooded_6-12in']=data.get('Shallowly_Flooded_6_12in');
                 crop_list['Shallowly_Flooded_12_18in']=data.get('Shallowly_Flooded_12_18in');
                 crop_list['Full_Flooded_18in']=data.get('Full_Flooded_18in');
                 this.crop_master_list[crop]=crop_list;
                 this.crop_keys=Object.keys(this.crop_master_list)
+
+                crop_list['Dry_not_flooded %']=(crop_list['Dry_not_flooded']/crop_list['Total Acres'])*100
+                crop_list['Shallowly_Flooded_0_6in %']=(crop_list['Shallowly_Flooded_0_6in']/crop_list['Total Acres'])*100
+                crop_list['Shallowly_Flooded_6-12in %']=(crop_list['Shallowly_Flooded_6-12in']/crop_list['Total Acres'])*100
+                crop_list['Shallowly_Flooded_12_18in %']=(crop_list['Shallowly_Flooded_12_18in']/crop_list['Total Acres'])*100
+                crop_list['Full_Flooded_18in %']=(crop_list['Full_Flooded_18in']/crop_list['Total Acres'])*100
                 //this.crop_values=Object.values(this.crop_master_list)
                 console.log(this.crop_master_list)
                 console.log(this.crop_values)

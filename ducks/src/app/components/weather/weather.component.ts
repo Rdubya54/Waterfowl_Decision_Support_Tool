@@ -3,7 +3,6 @@ import { WeatherLocalService } from 'src/app/service/weather-local.service';
 import {Globals} from 'src/app/extra/globals';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { WeatherCloudService } from 'src/app/service/weather-cloud.service';
-import {WeatherApiServiceService} from 'src/app/service/weather-api-service.service'
 import { HttpClient } from '@angular/common/http';
 import {AppComponent} from 'src/app/app.component';
 import {dbService} from 'src/app/service/db.service';
@@ -37,7 +36,7 @@ export class WeatherComponent implements OnInit {
   public placeholderid;
 
 
-  constructor(private comp:AppComponent,private http: HttpClient,private apiservice:WeatherApiServiceService, private localService: WeatherLocalService, private cloudService:WeatherCloudService,
+  constructor(private comp:AppComponent,private http: HttpClient,private localService: WeatherLocalService, private cloudService:WeatherCloudService,
      public globals:Globals,private dbservice: dbService,private firebase: AngularFireDatabase) {
       this.localservice = localService;
       this.cloudservice= cloudService;
@@ -49,6 +48,13 @@ export class WeatherComponent implements OnInit {
 
     this.CA_list=[];
     this.date_list=[];
+
+    
+
+    //attempt to get coordinates of user, if it succeds, get weather data from api
+    navigator.geolocation.getCurrentPosition((position) =>
+      this.getlocation(position)
+    );
  
     //if app is online push any locally cached data to the cloud
     if (this.globals.role==="online"){
@@ -96,12 +102,6 @@ export class WeatherComponent implements OnInit {
     }
   }
 
-  //this was function we were using, only commented out so app would build
-/*   getWeatherapi(){
-    this.apiservice.getweather().subscribe(res =>{
-      console.log(res);
-    });
-  } */
 
 //read weather
 getWeather(CA,date){
@@ -198,6 +198,28 @@ getdatesfordb(){
 
 clearNewWeather() {
   this.newWeather = new Weather();
+}
+
+
+async getlocation(position){
+    
+  const res = await fetch("http://api.openweathermap.org/data/2.5/weather?lat="+position.coords.latitude+"&lon="+position.coords.longitude+'&units=imperial&appid=80dc87045d3dae46154b1dc9f2455de1')
+  const data = await res.json();
+
+  console.log(data)
+
+  this.newWeather.wind_dir=data.wind.deg;
+  this.newWeather.wind_dir=this.degToCompass(data.wind.deg)
+  this.newWeather.wind_speed=data.wind.speed;
+  this.newWeather.low_temp=data.main.temp_min;
+
+  return data
+}
+
+degToCompass(num) {
+  var val = Math.floor((num / 22.5) + 0.5);
+  var arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+  return arr[(val % 16)];
 }
 
 onResize(event) {

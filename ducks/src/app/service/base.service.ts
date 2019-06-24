@@ -21,10 +21,8 @@ import { IFoodAvail } from '../model/food-avail';
  initJsStore() {
    this.connection.isDbExist(this.dbname).then(isExist => {
     if (isExist) {
-      console.log("in here")
      this.connection.openDb(this.dbname);
     } else {
-      console.log("in there")
      const dataBase = this.getDatabase();
      this.connection.createDb(dataBase);
     }

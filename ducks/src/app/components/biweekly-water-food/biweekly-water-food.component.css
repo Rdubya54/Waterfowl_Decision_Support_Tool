@@ -19,6 +19,16 @@ mat-card {
   height: calc(100% - 40px);
 }
 
+.params {
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+}
+
 .previous{
   font-size: 10px;
+}
+
+@media (min-width: 768px){
+  
+
 }
