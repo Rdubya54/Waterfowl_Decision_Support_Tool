@@ -1,5 +1,5 @@
 <h1>Daily Water Management</h1>
-<mat-grid-list [cols]="breakpoint_top" rowHeight="700px" (window:resize)="onResize($event)">
+<mat-grid-list [cols]="breakpoint_top" rowHeight="450px" (window:resize)="onResize($event)">
 <mat-grid-tile>
     <mat-card class="example-container">
         <h3>Parameters</h3>
@@ -48,9 +48,7 @@
                     </mat-select>
                 </mat-form-field>
             </div>
-            <div> 
-                <button mat-raised-button color="primary" (click)="openBottomSheet()">Past Seven Records</button>
-            </div>
+
         </mat-card>
     </mat-grid-tile>
 </mat-grid-list>
@@ -187,7 +185,21 @@
 
 <mat-grid-tile>
 <mat-card>
+
+        <div fxLayout="row" fxLayoutGap="0.5%">
+            <div fxFlex=75%>
+            </div>
+            <div fxFleX="25%">  
+                <div>
+                    <button mat-raised-button color="primary" (click)="openBottomSheet()">Activity Last 7 Days</button>
+                </div>
+            </div>
+        </div>
+
+
         <div fxLayout="column" fxLayoutGap="0.5%">
+
+
             <div fxFlex="5%" *ngIf="chart">
               <p>Water Elevation</p>
               <canvas id="canvas_elevation" >{{ chart }}</canvas>

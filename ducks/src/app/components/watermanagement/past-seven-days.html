@@ -4,29 +4,18 @@
 </mat-form-field> -->
 
 <mat-card>
-        <div fxFlex="5%" *ngIf="this.dates; then this.makeChart()">
-                <div *ngIf="chart">
-                  <p>Stoplog Change</p>
-                  <canvas #canvas id="canvas" >{{ chart }}</canvas>
+
+                <div *ngIf="gate_chart">
+                        <p>Gate Level</p>
+                        <div>
+                        <canvas #gate_level id="gate_level" >{{ gate_chart }}</canvas>
+                        </div>
                 </div>
-        </div>
-
-<!--     <div fxLayout="column" fxLayoutGap="0.5%">
-        <div fxFlex="5%" *ngIf="this.dates; then this.makeChart()">
-        <div *ngIf="chart">
-          <p>Water Elevation</p>
-          <canvas id="canvas_elevation" >{{ this.chart }}</canvas>
-        </div>
-        </div> -->
-
-<!--     <div fxFlex="5%" *ngIf="chart">
-            <p>Gate Level</p>
-            <canvas id="canvas_gate_level" >{{ chart }}</canvas>
-      </div>
-
-      <div fxFlex="5%" *ngIf="chart">
-            <p>Number of Ducks and Geese</p>
-            <canvas id="canvas_birds" >{{ chart }}</canvas>
-      </div> -->
+                <div *ngIf="stoplog_chart">
+                        <p>Stoplog Level</p>
+                        <div>
+                        <canvas #stoplog_level id="stoplog_level" >{{ stoplog_chart }}</canvas>
+                        </div>
+                </div>
 
 </mat-card>

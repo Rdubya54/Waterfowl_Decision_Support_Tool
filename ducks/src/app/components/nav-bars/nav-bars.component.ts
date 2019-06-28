@@ -28,4 +28,8 @@ export class NavBarsComponent implements OnInit {
   ngOnInit() {
   }
 
+  reload_app(){
+    location.reload()
+  }
+
 }

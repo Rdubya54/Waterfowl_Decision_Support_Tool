@@ -11,6 +11,7 @@ import {
   Weather,
   IWeather
 } from 'src/app/model/weather';
+import { shiftInitState } from '@angular/core/src/view';
 
 @Component({
   selector: 'app-weather',
@@ -33,13 +34,15 @@ export class WeatherComponent implements OnInit {
   public date_list: string[]=["Create New Record"];
   public selected_date;
 
+  public status;
+
   public placeholderid;
 
 
   constructor(private comp:AppComponent,private http: HttpClient,private localService: WeatherLocalService, private cloudService:WeatherCloudService,
      public globals:Globals,private dbservice: dbService,private firebase: AngularFireDatabase) {
-      this.localservice = localService;
-      this.cloudservice= cloudService;
+      this.localservice=localService;
+      this.cloudservice=cloudService;
   }
 
   ngOnInit() {
@@ -49,32 +52,39 @@ export class WeatherComponent implements OnInit {
     this.CA_list=[];
     this.date_list=[];
 
-    
+    console.log(localStorage.getItem("CA"))
+
+    this.selected_CA=localStorage.getItem("CA")
+
+    this.status=localStorage.getItem('Status')
 
     //attempt to get coordinates of user, if it succeds, get weather data from api
     navigator.geolocation.getCurrentPosition((position) =>
       this.getlocation(position)
     );
+
+    console.log("roles is "+this.globals.role)
  
     //if app is online push any locally cached data to the cloud
-    if (this.globals.role==="online"){
+    if (this.status==="online"){
       //this.pushtocloudfromlocal();
 
-      //get available CA's from dropdown menu
-      this.dbservice.getCAs().subscribe(data => {
+      //get available date's from dropdown menu
+      console.log("selecteed CA IS "+this.selected_CA)
+      this.dbservice.getDates_weather(this.selected_CA).subscribe(data => {
         data.forEach(doc => {
-          this.CA_list.push(doc.id)
+          this.date_list.push(doc.id)
         });
       });
     }
 
-    else if (this.globals.role==="offline"){
-      this.localService.getCAs().then(data => {
+    else if (this.status==="offline"){
+      this.localService.getDates(this.selected_CA).then(data => {
         this.weathers = data;
 
         this.weathers.forEach(record =>{
-            var CA=record["CA"]
-            this.CA_list.push(CA)
+            var date=record["date"]
+            this.date_list.push(date)
         });
       });
     }

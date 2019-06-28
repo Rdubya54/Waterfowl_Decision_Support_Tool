@@ -3,6 +3,7 @@ import { LocalWaterManagementService } from 'src/app/service/watermanagement-loc
 import {Globals} from 'src/app/extra/globals';
 import { AngularFireDatabase } from 'angularfire2/database';
 import {WatermanagementCloudService} from 'src/app/service/watermanagement-cloud.service';
+import {SevendayService} from 'src/app/service/sevenday.service';
 import {MediaMatcher} from '@angular/cdk/layout';
 import {ChangeDetectorRef, OnDestroy} from '@angular/core';
 import {ChartService} from 'src/app/service/chart.service';
@@ -70,50 +71,55 @@ export class WatermanagementComponent implements OnInit {
   public prev_data_2:string[]=[];
   public doc_array=[];
 
-  public past_7_data_master=[];
-  public past_7_data:string[]=[]
   public stored_size;
 
   public data_length=this.prev_data_master.length;
    constructor(private comp:AppComponent, private localService: LocalWaterManagementService, private cloudservice: WatermanagementCloudService, public globals:Globals,
-     private dbservice_cloud:dbService, private sidenavService:ChartService,private bottomSheet: MatBottomSheet) {
+     private dbservice_cloud:dbService, private sidenavService:ChartService,private bottomSheet: MatBottomSheet, 
+     private sevendayservice: SevendayService) {
   }
 
   //opens past seven day page
   async openBottomSheet(){
-    await this.cloudservice.getpast7WaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs)
+/*     this.cloudservice.getpast7WaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs)
 
-    this.bottomSheet.open(PastSevenDays)
-/*     this.cloudservice.getpast7WaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs).
+    this.bottomSheet.open(PastSevenDays) */
+
+    this.cloudservice.getpast7WaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs).
     subscribe(data => {
 
-      this.past_7_data_master.length=0;
+      this.sevendayservice.past_7_data_master.length=0;
 
       data.forEach(doc => {
         console.log('date is '+data.size)
         this.stored_size=data.size
       this.cloudservice.getWaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs,doc.id).
       subscribe(data=>{
-        console.log('the data looks like this '+data.get('Elevation'))
-        this.past_7_data.length=0;
-        this.past_7_data['Date']=data.get('Date');
-        this.past_7_data['Elevation']=data.get('Elevation');
-        this.past_7_data['Gate_manipulation']=data.get('Gate_manipulation');
-        console.log('mini past 7 day:'+this.past_7_data['Elevation'])
-        this.past_7_data_master.push(this.past_7_data)
 
+        console.log("pushing date:"+data.get('Date'))
 
-        console.log("stored size:"+this.stored_size)
-        console.log("master length:"+this.past_7_data_master.length)
-        console.log('past 7 day:'+this.past_7_data_master[0]['Elevation'])
-        if (this.past_7_data_master.length === this.stored_size){
+        this.sevendayservice.sevendaydata.Date=data.get('Date')
+        this.sevendayservice.sevendaydata.Gate_level=data.get('Gate_level')
+        this.sevendayservice.sevendaydata.Stoplog_level=data.get('Stoplog_level')
+
+        this.sevendayservice.past_7_data_master.push(this.sevendayservice.sevendaydata);
+
+        //this.sevendayservice.past_7_data_master.shift();
+
+        this.sevendayservice.past_7_data_master = JSON.parse(JSON.stringify(this.sevendayservice.past_7_data_master));
+
+        console.log(this.sevendayservice.past_7_data_master)
+
+        this.sevendayservice.sevendaydata=new Watermanagement();
+
+        if (this.sevendayservice.past_7_data_master.length === this.stored_size){
+          console.log("Master list is "+this.sevendayservice.past_7_data_master)
           this.bottomSheet.open(PastSevenDays);
-          
         }
         
       });
       });
-    }); */
+    });
   }
 
   ngOnInit() : void {
@@ -891,50 +897,70 @@ addWaterManagement(CA,unit,pool,wcs,date) {
 })
 export class PastSevenDays implements OnInit, AfterViewInit{
 
-  @ViewChild('canvas') canvas: ElementRef;
+  @ViewChild('canvas') canvasRef: ElementRef;
 
-  constructor(private bottomSheetRef: MatBottomSheetRef<PastSevenDays>,private watermanagement: WatermanagementCloudService,private sidenavService:ChartService) {}
+  constructor(private bottomSheetRef: MatBottomSheetRef<PastSevenDays>,
+    private watermanagement: WatermanagementComponent,private sidenavService:ChartService,private elementref:ElementRef,
+    private sevendayservice:SevendayService) {}
 
   chart_loaded=false;
 
-  chart = [];
+  gate_chart = [];
+  stoplog_chart=[];
   dates = [];
-  elevation_data=[];
-  gate_level_data=[];
+  stoplog_levels=[];
+  gate_levels=[];
   ducks_num_data=[];
   geese_num_data=[];
 
 
   ngOnInit(){         
+    console.log("sevend day data is "+this.sevendayservice.sevendaydata.Date)
+
     
+/*     console.log("Dates initally are "+this.dates)
+
+    if (this.watermanagement.past_7_data_master[1]){
+      console.log("dates is true")
+    } */
   }
 
   ngAfterViewInit(){
-    //this.makeChart()
+    this.makeChart();
+
   }
 
 
 
    //creates initial chart
    makeChart(){
-    
-    this.dates=[this.watermanagement.past_7_data_master[1]['Date'],this.watermanagement.past_7_data_master[0]['Date']];
-    this.elevation_data=[this.watermanagement.past_7_data_master[1]['Elevation'],this.watermanagement.past_7_data_master[0]['Elevation']]; 
 
-/*     this.dates=["1","2"]
-    this.elevation_data=["4","5"] */
+    console.log('json:'+this.sevendayservice.past_7_data_master)
+
+    this.sevendayservice.past_7_data_master.forEach(doc => {
+
+      console.log('doc:'+doc)
+
+      this.dates.push(doc.Date)
+      this.stoplog_levels.push(doc.Stoplog_level)
+      this.gate_levels.push(doc.Gate_level)
+    });
+
 
     console.log('dates:'+this.dates)
-    console.log('elevation: '+this.elevation_data)
+    console.log('elevation: '+this.gate_levels)
     
 
-     this.chart = new Chart(this.canvas.nativeElement.getContext('2d'), {
+    var canvas = <HTMLCanvasElement> document.getElementById("gate_level");
+    var ctx = canvas.getContext("2d");
+
+     this.gate_chart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: this.dates,
         datasets: [
           {
-            data: this.elevation_data,
+            data: this.gate_levels,
             borderColor: '#3cba9f',
             fill: false
           },
@@ -956,6 +982,36 @@ export class PastSevenDays implements OnInit, AfterViewInit{
       responive:true
     })
 
-    console.log('chart is '+this.chart)
+    var canvas = <HTMLCanvasElement> document.getElementById("stoplog_level");
+    var ctx = canvas.getContext("2d");
+
+     this.stoplog_chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: this.dates,
+        datasets: [
+          {
+            data: this.stoplog_levels,
+            borderColor: '#3cba9f',
+            fill: false
+          },
+        ]
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        scales: {
+          xAxes: [{
+            display: true
+          }],
+          yAxes: [{
+            display: true
+          }]
+        }
+      },
+      responive:true
+    })
+
   }
 }

@@ -2,10 +2,13 @@ import { Component, ModuleWithComponentFactories,Inject } from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
 import { ConnectionService } from 'ng-connection-service';
 import { stripSummaryForJitFileSuffix } from '@angular/compiler/src/aot/util';
+import { Location } from '@angular/common';
+
 
 import {Globals} from 'src/app/extra/globals';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {AuthService} from 'src/app/service/auth.service';
+import {CookieService} from 'src/app/service/cookie.service';
 
 import {dbService} from 'src/app/service/db.service';
 
@@ -64,12 +67,13 @@ export class AppComponent {
   datapeice: any;
   public role:string;
   public logged_in:boolean;
+  public page:string;
   online_status=false;
 
   //this makes sure updates are properly loaded.
   //needed cause pwas caching can make it hard to seee updates
-  constructor(private connectionService:ConnectionService,updates:SwUpdate,public globals:Globals,public dialog: MatDialog,
-    private authservice:AuthService,private weatherlocalservice:WeatherLocalService,private weathercloudservice:WeatherCloudService, 
+  constructor(private connectionService:ConnectionService,updates:SwUpdate,public globals:Globals,public dialog: MatDialog, private location:Location,
+    private authservice:AuthService,private weatherlocalservice:WeatherLocalService,private weathercloudservice:WeatherCloudService, private cookieservice:CookieService,
     private foodavailcloudservice:FoodAvailCloudService, private foodavaillocalservice: FoodAvailLocalService, private dbservice: dbService,
     public moistsoilservice:MoistsoilService,private waterfoodcloudservice:BiweeklyWaterFoodService, 
     private waterfoodlocalservice:LocalWaterFood,private watermanagementlocalservice: LocalWaterManagementService, 
@@ -81,21 +85,26 @@ export class AppComponent {
       this.isConnected = isConnected;
       
       if (this.isConnected) {
-        this.globals.role = "online";
+        this.cookieservice.setStatus("online") 
         this.openConnectionStatusDialog();
         this.pushtocloudfromlocal();
       }
       else {
-        this.globals.role = "offline";
+        this.cookieservice.setStatus("online") 
         this.openConnectionStatusDialog();
       }
     })
   }
   
   ngOnInit(){
-    this.logout()
-    this.initial_onlineCheck();
-    this.openCASelectionDialog();
+    console.log(this.location.path())
+
+    this.page=this.location.path()
+
+    //find out which page you are on 
+    if (this.page===""){
+      this.openCASelectionDialog();
+    }
   } 
 
   initial_onlineCheck() {
@@ -103,11 +112,11 @@ export class AppComponent {
       if (this.online_status){
         //push all records into cloud
         this.pushtocloudfromlocal()
-        this.globals.role="online";  
+        this.cookieservice.setStatus("online") 
       }      
 
       else{
-        this.globals.role="offline";
+        this.cookieservice.setStatus("offline") 
       }
 
       var loginstatus=localStorage.getItem('logged in')
@@ -314,46 +323,40 @@ pushtocloudfromlocal(){
 downloadallprevs(table){
   console.log('downloading all prevs')
   if (table==='Daily Weather Observations'){
-    this.dbservice.getCAs().subscribe(data => {
-      data.forEach(doc => {
-        console.log("CA is"+doc.id)
-        var CA=doc.id
-        this.weathercloudservice.getprevWeather(CA).subscribe(data => {
-          data.forEach(doc => {
-          console.log(doc.id)
-            console.log("THIS is "+doc.id)
-            var date=doc.id;
-            
-            
-            this.weathercloudservice.getWeather(CA,date).
-            subscribe(data=>{
-              this.newWeather.CA=data.get('CA')
-              this.newWeather.date=data.get('date');
-              this.newWeather.area_ice=data.get('area_ice');
-              this.newWeather.ice_thick=data.get('ice_thick');
-              this.newWeather.low_temp=data.get('low_temp')
-              this.newWeather.wind_dir=data.get('wind_dir');
-              this.newWeather.wind_speed=data.get('wind_speed')
-              this.newWeather.river_stage=data.get('river_stage');
-              this.newWeather.other_observations=data.get('other_observations') 
-              this.newWeather.sort_time=data.get('sort_time') 
-
-              this.weatherlocalservice.addWeather(this.newWeather).
-              then((addedWaterManagements: IWeather[]) => {
-              if (addedWaterManagements.length > 0) {
-
+      this.weathercloudservice.getprevWeather(this.globals.CA).subscribe(data => {
+        data.forEach(doc => {
+        console.log(doc.id)
+          console.log("THIS is "+doc.id)
+          var date=doc.id;
           
-                this.weathers.push(addedWaterManagements[0]);
-                this.clearNewWeather();
-              }
-              })
-              console.log('data not yet created')
+          
+          this.weathercloudservice.getWeather(this.globals.CA,date).
+          subscribe(data=>{
+            this.newWeather.CA=data.get('CA')
+            this.newWeather.date=data.get('date');
+            this.newWeather.area_ice=data.get('area_ice');
+            this.newWeather.ice_thick=data.get('ice_thick');
+            this.newWeather.low_temp=data.get('low_temp')
+            this.newWeather.wind_dir=data.get('wind_dir');
+            this.newWeather.wind_speed=data.get('wind_speed')
+            this.newWeather.river_stage=data.get('river_stage');
+            this.newWeather.other_observations=data.get('other_observations') 
+            this.newWeather.sort_time=data.get('sort_time') 
+
+            this.weatherlocalservice.addWeather(this.newWeather).
+            then((addedWaterManagements: IWeather[]) => {
+            if (addedWaterManagements.length > 0) {
+
+        
+              this.weathers.push(addedWaterManagements[0]);
+              this.clearNewWeather();
+            }
             })
-            
-        });
-      }); 
-    });
-  });
+            console.log('data not yet created')
+          })
+          
+      });
+    }); 
   }
 
   if (table==='Fall Food Availability'){
@@ -608,6 +611,12 @@ openCASelectionDialog(): void {
   const dialogRef = this.dialog.open(CASelectionDialog, {
     width: '250px',
   });
+
+  dialogRef.afterClosed().subscribe(result => {
+    console.log('The dialog was closed');
+    
+    this.initial_onlineCheck();
+  });
 }
 
 openDataWrittenDialog(): void {
@@ -740,12 +749,14 @@ export class LogoutDialog {
 export class CASelectionDialog {
 
   selectedCA: string;
-  CAs: string[] = ['BK Leech', 'Duck Creek', 'Eagle Bluffs', 'Grand Pass'];
+  CAs: string[] = ['BK LEECH', 'Duck_Creek', 'Eagle_Bluffs', 'Grand Pass'];
 
-  constructor(public dialogRef: MatDialogRef<CASelectionDialog>,public globals:Globals) {}
+  constructor(public dialogRef: MatDialogRef<CASelectionDialog>,public globals:Globals,
+    private cookieservice:CookieService) {}
   
 
   onNoClick(): void {
+    this.cookieservice.setCA(this.selectedCA);
     this.globals.CA=this.selectedCA;
     console.log("CA GLBOAR:"+this.globals.CA)
     this.dialogRef.close();

@@ -68,10 +68,10 @@ export class WatermanagementCloudService {
     //its not the best form to have all of this code here in the service but it is necessary to be able 
     //to import the data into the pop up without making a seperate service ... maybe do this later
 
-    this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).
+    return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).
       collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Water Management", 
-      ref=>ref.orderBy('Sort_time', 'desc').limit(7)).get().
-      subscribe(data => {
+      ref=>ref.orderBy('Sort_time', 'desc').limit(7)).get()
+/*       subscribe(data => {
   
         this.past_7_data_master.length=0;
   
@@ -99,7 +99,7 @@ export class WatermanagementCloudService {
           
         });
         });
-      }); 
+      });  */
   }
 
   //gets watermanagement fields for an individual record
