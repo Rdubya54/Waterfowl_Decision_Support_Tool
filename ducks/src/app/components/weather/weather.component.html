@@ -8,8 +8,8 @@
                 <mat-form-field>
                   <input type="text" [(ngModel)]="this.selected_CA" [ngModelOptions]="{standalone:true}" [disabled]='true' matInput placeholder="Conservation Area">
                 </mat-form-field>
-              </div>
-              <div> 
+            </div>
+            <div> 
                       <mat-form-field>
                           <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="getWeather(this.globals.CA,$event)">
                           <mat-option *ngFor="let x of date_list" [value]="x">
@@ -17,7 +17,7 @@
                           </mat-option>
                           </mat-select>
                       </mat-form-field>
-              </div>
+            </div>
     </mat-card>  
     </mat-grid-tile>
 </mat-grid-list>

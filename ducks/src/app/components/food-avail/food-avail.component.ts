@@ -34,7 +34,6 @@ export class FoodAvailComponent implements OnInit {
   newFoodAvail: IFoodAvail = new FoodAvail();
   local_records: any[];
 
-  public CA_list: string[]=[];
   public selected_CA;
   public unit_list: string[]=[];
   public selected_unit; 
@@ -49,6 +48,7 @@ export class FoodAvailComponent implements OnInit {
   public previous_records;
   public second_previous_records;
 
+  public status;
   public placeholderid;
 
   public buttonName: any = true;
@@ -71,37 +71,46 @@ export class FoodAvailComponent implements OnInit {
     this.breakpoint_top = (window.innerWidth <= 768) ? 1 : 1;
     this.breakpoint = (window.innerWidth <= 768) ? 1 : 2;
 
-    this.dbservice.getCAs().subscribe(data => {
-      this.CA_list=[];
+    console.log(localStorage.getItem("CA"))
+
+    this.selected_CA=localStorage.getItem("CA")
+
+    this.status=localStorage.getItem('Status')
+
+    //commented this out may need to uncomment
+
+/*     this.dbservice.getUnits(this.selected_CA).subscribe(data => {
       this.unit_list=[];
       this.Pool_list=[];
       this.wcs_list=[];
       data.forEach(doc => {
-        this.CA_list.push(doc.id)
+        this.unit_list.push(doc.id)
       });
-  });
+  }); */
 
   
   //if app is online push any locally cached data to the cloud
-  if (this.globals.role==="online"){
-
-    //get available CA's from dropdown menu
-    this.dbservice.getCAs().subscribe(data => {
+  if (this.status==="online"){
+    this.dbservice.getUnits(this.selected_CA).subscribe(data => {
+      this.unit_list=[];
+      this.Pool_list=[];
+      this.wcs_list=[];
       data.forEach(doc => {
-        this.CA_list.push(doc.id)
+        this.unit_list.push(doc.id)
       });
-    });
+  });
+
   }
 
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     console.log("GETTING CAs")
-    this.localService.getCAs().then(data => {
+    this.localService.getUnits(this.selected_CA).then(data => {
       this.foodavails = data;
 
       this.foodavails.forEach(record =>{
-          var CA=record["CA"]
-          this.CA_list.push(CA)
-          console.log(this.CA_list)
+          var unit=record["unit"]
+          this.unit_list.push(unit)
+          console.log(this.unit_list)
       });
     });
   }
@@ -142,7 +151,7 @@ getUnits(CA){
 getPools(CA,unit){
   this.Pool_list=[];
 
-  if (this.globals.role==="online"){
+  if (this.status==="online"){
   this.dbservice.getPools(CA,unit).subscribe(data => {
     data.forEach(doc => {
       this.Pool_list.push(doc.id)
@@ -150,7 +159,7 @@ getPools(CA,unit){
   });
   }
 
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     this.localService.getPools(CA,unit).then(data => {
       this.foodavails = data;
 
@@ -167,14 +176,14 @@ getPools(CA,unit){
 getWCS(CA,unit,pool){
   this.wcs_list=[];
 
-  if (this.globals.role==="online"){
+  if (this.status==="online"){
   this.dbservice.getWCS(CA,unit,pool).subscribe(data => {
     data.forEach(doc => {
       this.wcs_list.push(doc.id)
     });
   });
   }
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     this.localService.getWCS(CA,unit,pool).then(data => {
       this.foodavails = data;
 
@@ -192,7 +201,7 @@ getDates(CA,unit,pool,wcs){
   this.date_list=["Create New Record"];
   console.log('locatin:'+location)
 
-  if (this.globals.role==="online"){
+  if (this.status==="online"){
   this.dbservice.getDates_foodavail(CA,unit,pool,wcs).subscribe(data => {
     data.forEach(doc => {
       this.date_list.push(doc.id)
@@ -200,7 +209,7 @@ getDates(CA,unit,pool,wcs){
   });
   }
 
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
   this.localService.getDates(CA,unit,pool,wcs).then(data => {
     data.forEach(doc => {
       console.log(doc['date'])
@@ -217,7 +226,7 @@ getFoodAvail(CA,Unit,Pool,WCS,date){
   if (this.selected_date!=='Create New Record'){
 
     //populate page with old record
-    if (this.globals.role==="online"){
+    if (this.status==="online"){
       console.log('fetching cloud')
       this.cloudservice.getFoodAvail(CA,Unit,Pool,WCS,date).
       subscribe(data=>{
@@ -288,7 +297,7 @@ getFoodAvail(CA,Unit,Pool,WCS,date){
     }
 
       //populate page with old record
-     else if (this.globals.role==="offline"){
+     else if (this.status==="offline"){
       this.localservice.getFoodAvail_selected(CA,Unit,Pool,WCS,date).
         then(data => {
             this.foodavails = data;

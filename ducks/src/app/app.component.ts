@@ -85,12 +85,14 @@ export class AppComponent {
       this.isConnected = isConnected;
       
       if (this.isConnected) {
+        this.globals.role="online"
         this.cookieservice.setStatus("online") 
         this.openConnectionStatusDialog();
         this.pushtocloudfromlocal();
       }
       else {
-        this.cookieservice.setStatus("online") 
+        this.globals.role="offline"
+        this.cookieservice.setStatus("offline") 
         this.openConnectionStatusDialog();
       }
     })
@@ -112,10 +114,12 @@ export class AppComponent {
       if (this.online_status){
         //push all records into cloud
         this.pushtocloudfromlocal()
+        this.globals.role="online"
         this.cookieservice.setStatus("online") 
       }      
 
       else{
+        this.globals.role="offline"
         this.cookieservice.setStatus("offline") 
       }
 

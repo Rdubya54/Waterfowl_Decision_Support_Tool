@@ -44,6 +44,8 @@ export class BiweeklyWaterFoodComponent implements OnInit {
   public previous_records;
   public second_previous_records;
 
+  public status;
+
   public buttonName: any = true;
   toggleActive:boolean = false;
 
@@ -64,25 +66,31 @@ export class BiweeklyWaterFoodComponent implements OnInit {
     this.Pool_list=[];
     this.date_list=["Create New Record"];
 
+    console.log(localStorage.getItem("CA"))
+
+    this.selected_CA=localStorage.getItem("CA")
+
+    this.status=localStorage.getItem('Status')
+
     //if app is online push any locally cached data to the cloud
-    if (this.globals.role==="online"){
+    if (this.status==="online"){
       /* this.pushtocloudfromlocal(); */
 
-      this.dbservice_cloud.getCAs().subscribe(data => {
+      this.dbservice_cloud.getUnits(this.selected_CA).subscribe(data => {
         data.forEach(doc => {
-          this.CA_list.push(doc.id)
+          this.unit_list.push(doc.id)
         });
       });
     }
 
-    if (this.globals.role=="offline"){
-       this.dbservice_local.getCAs().then(data => {
+    if (this.status=="offline"){
+       this.dbservice_local.getUnits(this.selected_CA).then(data => {
         this.waterfoods = data;
 
         this.waterfoods.forEach(record =>{
-            var CA=record["CA"]
-            this.CA_list.push(CA)
-            console.log(this.CA_list)
+            var unit=record["unit"]
+            this.unit_list.push(unit)
+            console.log(this.unit_list)
         });
       });
     }
@@ -93,7 +101,7 @@ getUnits(CA){
   this.unit_list=[];
   this.Pool_list=[];
 
-  if (this.globals.role==="online"){
+  if (this.status==="online"){
   this.dbservice_cloud.getUnits(CA).subscribe(data => {
     data.forEach(doc => {
       console.log("unit is "+doc.id)
@@ -102,7 +110,7 @@ getUnits(CA){
   });
   }
 
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     this.dbservice_local.getUnits(CA).then(data => {
       this.waterfoods = data;
 
@@ -119,7 +127,7 @@ getUnits(CA){
 getPools(CA,unit){
   this.Pool_list=[];
 
-  if (this.globals.role==="online"){
+  if (this.status==="online"){
   this.dbservice_cloud.getPools(CA,unit).subscribe(data => {
     data.forEach(doc => {
       this.Pool_list.push(doc.id)
@@ -127,7 +135,7 @@ getPools(CA,unit){
   });
   }
 
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     this.dbservice_local.getPools(CA,unit).then(data => {
       this.waterfoods = data;
 
@@ -144,7 +152,7 @@ getPools(CA,unit){
 getDates(CA,unit,pool){
   this.date_list=["Create New Record"];
 
-  if (this.globals.role==="online"){
+  if (this.status==="online"){
   this.dbservice_cloud.getDates_waterfood(CA,unit,pool).subscribe(data => {
     data.forEach(doc => {
       this.date_list.push(doc.id)
@@ -152,7 +160,7 @@ getDates(CA,unit,pool){
   });
   }
 
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     this.dbservice_local.getDates(CA,unit,pool).then(data => {
       this.waterfoods = data;
 
@@ -166,40 +174,9 @@ getDates(CA,unit,pool){
 
 }
 
-
-//get last record for EVERY pool from cloud
-/* downloadallprevs(){
-  this.dbservice_cloud.getCAs().subscribe(data => {
-    data.forEach(doc => {
-      console.log("CA is"+doc.id)
-      var CA=doc.id
-      this.dbservice_cloud.getUnits(CA).subscribe(data => {
-        data.forEach(doc => {
-          console.log("CA is"+doc.id)
-          var Unit=doc.id;
-          this.dbservice_cloud.getPools(CA,Unit).subscribe(data => {
-            data.forEach(doc => {
-              console.log("CA is"+doc.id)
-              var Pool=doc.id;
-                this.cloudservice.getprevWaterFood(CA,Unit,Pool,"").subscribe(data => {
-                  data.forEach(doc => {
-                  console.log(doc.id)
-                    console.log("THIS is "+doc.id)
-                    var date=doc.id;
-                    this.getindividualrecord(CA,Unit,Pool,date)
-                });
-              }); 
-            });
-          }); 
-        });
-      }); 
-    });
-  });
-} */
-
 //this function is for updating old records 
 updateWaterFood(CA,unit,pool,date){
-    if (this.globals.role==="online"){
+    if (this.status==="online"){
     this.cloudservice.getWaterFood(CA,unit,pool,date).
     subscribe(data=>{
       this.newWaterFood.CA=data.get('CA');
@@ -242,7 +219,7 @@ updateWaterFood(CA,unit,pool,date){
   });
 
 }
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     console.log("date is "+date)
     this.localservice.loadOldWaterFood(CA,unit,pool,date).then(data=> {
 
@@ -445,7 +422,7 @@ getprevWaterFood(CA,unit,pool,date){
     this.clearNewWaterFood();
   }
 
-  if (this.globals.role==="online"){
+  if (this.status==="online"){
     this.cloudservice.getprevWaterFood(CA,unit,pool,date).subscribe(data => {
       data.forEach(doc => {
         this.cloudservice.getWaterFood(CA,unit,pool,doc.id).
@@ -481,7 +458,7 @@ getprevWaterFood(CA,unit,pool,date){
     });
   }
 
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     console.log("Dateeeee is "+date)
     console.log("CA HERE is "+CA)
     if (date==="" || date==="Create New Record" ){
