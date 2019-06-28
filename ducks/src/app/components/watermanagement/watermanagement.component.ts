@@ -70,6 +70,7 @@ export class WatermanagementComponent implements OnInit {
   public prev_data:string[]=[];
   public prev_data_2:string[]=[];
   public doc_array=[];
+  public status;
 
   public stored_size;
 
@@ -135,27 +136,30 @@ export class WatermanagementComponent implements OnInit {
   this.Pool_list=[];
   this.wcs_list=[];
 
+  console.log(localStorage.getItem("CA"))
+
+  this.selected_CA=localStorage.getItem("CA")
+
+  this.status=localStorage.getItem('Status')
+
   //if app is online push any locally cached data to the cloud
-  if (this.globals.role==="online"){
-/*     this.pushtocloudfromlocal(); */
+  if (this.status==="online"){
 
     //get available CA's from dropdown menu
-    this.dbservice_cloud.getCAs().subscribe(data => {
+    this.dbservice_cloud.getUnits(this.selected_CA).subscribe(data => {
       data.forEach(doc => {
-        this.CA_list.push(doc.id)
+        this.unit_list.push(doc.id)
       });
     });
   }
 
-  else if (this.globals.role==="offline"){
-    console.log("GETTING CAs")
-    this.localService.getCAs().then(data => {
+  else if (this.status==="offline"){
+    this.localService.getUnits(this.selected_CA).then(data => {
       this.watermanagements = data;
 
       this.watermanagements.forEach(record =>{
-          var CA=record["CA"]
-          this.CA_list.push(CA)
-          console.log(this.CA_list)
+          var Unit=record["Unit"]
+          this.unit_list.push(Unit)
       });
     });
   }
@@ -167,7 +171,7 @@ getUnits(CA){
   this.unit_list=[];
   this.Pool_list=[];
 
-  if (this.globals.role==="online"){
+  if (this.status==="online"){
   this.dbservice_cloud.getUnits(CA).subscribe(data => {
     data.forEach(doc => {
       console.log("unit is "+doc.id)
@@ -176,7 +180,7 @@ getUnits(CA){
   });
   }
 
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     this.localService.getUnits(CA).then(data => {
       this.watermanagements = data;
 
@@ -193,7 +197,7 @@ getUnits(CA){
 getPools(CA,unit){
   this.Pool_list=[];
 
-  if (this.globals.role==="online"){
+  if (this.status==="online"){
   this.dbservice_cloud.getPools(CA,unit).subscribe(data => {
     data.forEach(doc => {
       this.Pool_list.push(doc.id)
@@ -201,7 +205,7 @@ getPools(CA,unit){
   });
   }
 
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     this.localService.getPools(CA,unit).then(data => {
       this.watermanagements = data;
 
@@ -219,14 +223,14 @@ getPools(CA,unit){
 getWCS(CA,unit,pool){
   this.wcs_list=[];
 
-  if (this.globals.role==="online"){
+  if (this.status==="online"){
   this.dbservice_cloud.getWCS(CA,unit,pool).subscribe(data => {
     data.forEach(doc => {
       this.wcs_list.push(doc.id)
     });
   });
   }
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     this.localService.getWCS(CA,unit,pool).then(data => {
       this.watermanagements = data;
 
@@ -498,7 +502,7 @@ updateChartdata(CA,unit,pool,wcs){
 //this function is for fetching previous records
 getWatermanagement(CA,unit,pool,wcs,date) {
 
-  if (this.globals.role==="online"){
+  if (this.status==="online"){
 
     this.getDates(CA,unit,pool,wcs,"cloud")
 
@@ -589,7 +593,7 @@ getWatermanagement(CA,unit,pool,wcs,date) {
     }
   }
 
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     this.getprevfromlocal(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs,this.selected_date)
   }
 }

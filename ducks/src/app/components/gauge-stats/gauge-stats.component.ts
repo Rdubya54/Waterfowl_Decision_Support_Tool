@@ -62,6 +62,8 @@ export class GaugeStatsComponent implements OnInit {
   public image_url;
   public symbo_url;
 
+  public status;
+
   public cropstatus;
 
   constructor(private gaugeservice:GaugedataService,private firestore:AngularFirestore) {
@@ -71,14 +73,20 @@ export class GaugeStatsComponent implements OnInit {
   ngOnInit() {
     this.breakpoint = (window.innerWidth <= 768) ? 1 : 2;
 
-    this.gaugeservice.getCAs().subscribe(data => {
+    console.log(localStorage.getItem("CA"))
+
+    this.selected_CA=localStorage.getItem("CA")
+
+    this.status=localStorage.getItem('Status')
+
+    this.gaugeservice.getUnits(this.selected_CA).subscribe(data => {
         this.CA_list=[];
         this.unit_list=[];
         this.Pool_list=[];
         this.wcs_list=[];
         this.gauge_list=[];
         data.forEach(doc => {
-          this.CA_list.push(doc.id)
+          this.unit_list.push(doc.id)
         });
     });
   }

@@ -88,7 +88,7 @@ export class BiweeklyWaterFoodComponent implements OnInit {
         this.waterfoods = data;
 
         this.waterfoods.forEach(record =>{
-            var unit=record["unit"]
+            var unit=record["Unit"]
             this.unit_list.push(unit)
             console.log(this.unit_list)
         });

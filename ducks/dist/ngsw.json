@@ -1,18 +1,18 @@
 {
   "configVersion": 1,
-  "index": "/applications/wetlandwaterfowlmanagement/index.html",
+  "index": "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/index.html",
   "assetGroups": [
     {
       "name": "app",
       "installMode": "prefetch",
       "updateMode": "prefetch",
       "urls": [
-        "/applications/wetlandwaterfowlmanagement/index.html",
-        "/applications/wetlandwaterfowlmanagement/main.32d9e9e3fb5c0098d7b9.js",
-        "/applications/wetlandwaterfowlmanagement/polyfills.b2f20746b5a5eaef7940.js",
-        "/applications/wetlandwaterfowlmanagement/runtime.ec2944dd8b20ec099bf3.js",
-        "/applications/wetlandwaterfowlmanagement/service-worker.js",
-        "/applications/wetlandwaterfowlmanagement/styles.2f7c3b1298e8c2399e04.css"
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/index.html",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/main.4d6ef04771867db2e010.js",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/polyfills.b2f20746b5a5eaef7940.js",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/runtime.ec2944dd8b20ec099bf3.js",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/service-worker.js",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/styles.2f7c3b1298e8c2399e04.css"
       ],
       "patterns": [
         "https:\\/\\/fonts\\.googleapis\\.com\\/.*",
@@ -25,15 +25,15 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "urls": [
-        "/applications/wetlandwaterfowlmanagement/assets/icons/icon-128x128.png",
-        "/applications/wetlandwaterfowlmanagement/assets/icons/icon-144x144.png",
-        "/applications/wetlandwaterfowlmanagement/assets/icons/icon-152x152.png",
-        "/applications/wetlandwaterfowlmanagement/assets/icons/icon-192x192.png",
-        "/applications/wetlandwaterfowlmanagement/assets/icons/icon-384x384.png",
-        "/applications/wetlandwaterfowlmanagement/assets/icons/icon-512x512.png",
-        "/applications/wetlandwaterfowlmanagement/assets/icons/icon-72x72.png",
-        "/applications/wetlandwaterfowlmanagement/assets/icons/icon-96x96.png",
-        "/applications/wetlandwaterfowlmanagement/assets/icons/mdc_original_6.png"
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-128x128.png",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-144x144.png",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-152x152.png",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-192x192.png",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-384x384.png",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-512x512.png",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-72x72.png",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-96x96.png",
+        "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/mdc_original_6.png"
       ],
       "patterns": []
     }
@@ -52,21 +52,21 @@
     }
   ],
   "hashTable": {
-    "/applications/wetlandwaterfowlmanagement/assets/icons/icon-128x128.png": "dae3b6ed49bdaf4327b92531d4b5b4a5d30c7532",
-    "/applications/wetlandwaterfowlmanagement/assets/icons/icon-144x144.png": "b0bd89982e08f9bd2b642928f5391915b74799a7",
-    "/applications/wetlandwaterfowlmanagement/assets/icons/icon-152x152.png": "7479a9477815dfd9668d60f8b3b2fba709b91310",
-    "/applications/wetlandwaterfowlmanagement/assets/icons/icon-192x192.png": "1abd80d431a237a853ce38147d8c63752f10933b",
-    "/applications/wetlandwaterfowlmanagement/assets/icons/icon-384x384.png": "329749cd6393768d3131ed6304c136b1ca05f2fd",
-    "/applications/wetlandwaterfowlmanagement/assets/icons/icon-512x512.png": "559d9c4318b45a1f2b10596bbb4c960fe521dbcc",
-    "/applications/wetlandwaterfowlmanagement/assets/icons/icon-72x72.png": "c457e56089a36952cd67156f9996bc4ce54a5ed9",
-    "/applications/wetlandwaterfowlmanagement/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
-    "/applications/wetlandwaterfowlmanagement/assets/icons/mdc_original_6.png": "1da12d603e3ee964fee2f9ecd5f02db09ed2d885",
-    "/applications/wetlandwaterfowlmanagement/index.html": "33fe98184cf3f56de1e246bcde9a50a614586fff",
-    "/applications/wetlandwaterfowlmanagement/main.32d9e9e3fb5c0098d7b9.js": "587668467fa171a7645325304caed2b82fdc5644",
-    "/applications/wetlandwaterfowlmanagement/polyfills.b2f20746b5a5eaef7940.js": "269c9a7fb1b594b1769692615b6142cc4af14efb",
-    "/applications/wetlandwaterfowlmanagement/runtime.ec2944dd8b20ec099bf3.js": "85de9363951a1d033a479e1e3b0d2259a9ea2b1f",
-    "/applications/wetlandwaterfowlmanagement/service-worker.js": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
-    "/applications/wetlandwaterfowlmanagement/styles.2f7c3b1298e8c2399e04.css": "90ec913d1e03fd68bee4991e27a088e20bc7185a"
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-128x128.png": "dae3b6ed49bdaf4327b92531d4b5b4a5d30c7532",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-144x144.png": "b0bd89982e08f9bd2b642928f5391915b74799a7",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-152x152.png": "7479a9477815dfd9668d60f8b3b2fba709b91310",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-192x192.png": "1abd80d431a237a853ce38147d8c63752f10933b",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-384x384.png": "329749cd6393768d3131ed6304c136b1ca05f2fd",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-512x512.png": "559d9c4318b45a1f2b10596bbb4c960fe521dbcc",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-72x72.png": "c457e56089a36952cd67156f9996bc4ce54a5ed9",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/assets/icons/mdc_original_6.png": "1da12d603e3ee964fee2f9ecd5f02db09ed2d885",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/index.html": "b0da3acc7761db953c784e572ff4d8eea234d0df",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/main.4d6ef04771867db2e010.js": "d6bc1c32c050cce356d2ee8a87bf6a74de40bf34",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/polyfills.b2f20746b5a5eaef7940.js": "269c9a7fb1b594b1769692615b6142cc4af14efb",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/runtime.ec2944dd8b20ec099bf3.js": "85de9363951a1d033a479e1e3b0d2259a9ea2b1f",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/service-worker.js": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    "C:/Program Files/Git/applications/wetlandwaterfowlmanagement/styles.2f7c3b1298e8c2399e04.css": "90ec913d1e03fd68bee4991e27a088e20bc7185a"
   },
   "navigationUrls": [
     {

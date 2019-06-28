@@ -3,13 +3,9 @@
 <mat-grid-tile>
     <mat-card class="example-container">
         <h3>Parameters</h3>
-            <div> 
+            <div>
                 <mat-form-field>
-                    <mat-select placeholder="Conservation Area" [(ngModel)]="selected_CA" (ngModelChange)="getUnits($event)">
-                    <mat-option *ngFor="let x of CA_list" [value]="x">
-                        {{x}}
-                    </mat-option>
-                    </mat-select>
+                  <input type="text" [(ngModel)]="this.selected_CA" [ngModelOptions]="{standalone:true}" [disabled]='true' matInput placeholder="Conservation Area">
                 </mat-form-field>
             </div>
             <div> 
@@ -236,8 +232,8 @@
                     </mat-form-field>
                   </div> 
               </div>
-              <button *ngIf="globals.role === 'online';"  mat-raised-button color="primary" (click)="addWaterManagement(selected_CA,selected_unit,selected_Pool,selected_wcs,selected_date)">Push to Cloud</button>
-              <button *ngIf="globals.role === 'offline';" mat-raised-button color="primary" (click)="localaddWatermanagement('new')">Push to Local</button>
+              <button *ngIf="this.status === 'online';"  mat-raised-button color="primary" (click)="addWaterManagement(selected_CA,selected_unit,selected_Pool,selected_wcs,selected_date)">Push to Cloud</button>
+              <button *ngIf="this.status === 'offline';" mat-raised-button color="primary" (click)="localaddWatermanagement('new')">Push to Local</button>
               <button mat-raised-button color="primary" (click)="clearNewWaterManagement()">Clear Fields</button>
         </mat-card>
 </mat-grid-tile>       
