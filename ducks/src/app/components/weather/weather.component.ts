@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { WeatherLocalService } from 'src/app/service/weather-local.service';
-import {Globals} from 'src/app/extra/globals';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { WeatherCloudService } from 'src/app/service/weather-cloud.service';
 import { HttpClient } from '@angular/common/http';
@@ -40,7 +39,7 @@ export class WeatherComponent implements OnInit {
 
 
   constructor(private comp:AppComponent,private http: HttpClient,private localService: WeatherLocalService, private cloudService:WeatherCloudService,
-     public globals:Globals,private dbservice: dbService,private firebase: AngularFireDatabase) {
+      private dbservice: dbService,private firebase: AngularFireDatabase) {
       this.localservice=localService;
       this.cloudservice=cloudService;
   }
@@ -62,8 +61,6 @@ export class WeatherComponent implements OnInit {
     navigator.geolocation.getCurrentPosition((position) =>
       this.getlocation(position)
     );
-
-    console.log("roles is "+this.globals.role)
  
     //if app is online push any locally cached data to the cloud
     if (this.status==="online"){
@@ -94,8 +91,7 @@ export class WeatherComponent implements OnInit {
   getDates(CA){
     this.date_list=["Create New Record"];
 
-    if (this.globals.role==="online"){
-    console.log('fetching cloud')
+    if (this.status==="online"){
     this.dbservice.getDates_weather(CA).subscribe(data => {
       data.forEach(doc => {
         this.date_list.push(doc.id)
@@ -103,7 +99,7 @@ export class WeatherComponent implements OnInit {
     });
     }
 
-    else if (this.globals.role==="offline"){
+    else if (this.status==="offline"){
     this.localService.getDates(CA).then(data => {
       data.forEach(doc => {
         this.date_list.push(doc['date'])
@@ -119,7 +115,7 @@ getWeather(CA,date){
   //when you are only getting old data
   if (this.selected_date!=='Create New Record'){
 
-    if (this.globals.role==="online"){
+    if (this.status==="online"){
       console.log('fetching cloud')
       this.cloudService.getWeather(CA,date).
       subscribe(data=>{
@@ -136,7 +132,7 @@ getWeather(CA,date){
       })
     }
 
-    else if (this.globals.role==="offline"){
+    else if (this.status==="offline"){
       this.localservice.getWeather(CA,date).
         then(data => {
             this.weathers = data;
@@ -165,7 +161,7 @@ addWeather(){
   this.getdatesfordb();
 
   //if app is offline, write to indexdb
-  if (this.globals.role=="offline"){
+  if (this.status=="offline"){
     this.localservice.addWeather(this.newWeather).
     then((addedWaterManagements: IWeather[]) => {
     if (addedWaterManagements.length > 0) {

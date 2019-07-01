@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Important!</h1>
 <div mat-dialog-content>
-  <p *ngIf="this.globals.role==='offline'">{{this.offline_message}}</p>
-  <p *ngIf="this.globals.role==='online'">{{this.online_message}}</p>
+  <p *ngIf="this.status==='offline'">{{this.offline_message}}</p>
+  <p *ngIf="this.status==='online'">{{this.online_message}}</p>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">OK</button>

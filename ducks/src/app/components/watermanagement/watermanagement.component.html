@@ -231,7 +231,7 @@
                       <textarea [(ngModel)]="newWaterManagement.Reasons"  [ngModelOptions]="{standalone:true}" matInput placeholder="Reason for Mangement Action" rows=10></textarea>
                     </mat-form-field>
                   </div> 
-              </div>
+            </div>
               <button *ngIf="this.status === 'online';"  mat-raised-button color="primary" (click)="addWaterManagement(selected_CA,selected_unit,selected_Pool,selected_wcs,selected_date)">Push to Cloud</button>
               <button *ngIf="this.status === 'offline';" mat-raised-button color="primary" (click)="localaddWatermanagement('new')">Push to Local</button>
               <button mat-raised-button color="primary" (click)="clearNewWaterManagement()">Clear Fields</button>

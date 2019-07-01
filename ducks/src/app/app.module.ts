@@ -15,7 +15,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { WatermanagementComponent, PastSevenDays } from 'src/app/components/watermanagement/watermanagement.component';
-import {Globals} from 'src/app/extra/globals';
 import { from } from 'rxjs';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -106,7 +105,7 @@ firebase.firestore().enablePersistence()
     MatExpansionModule,
   ],
   entryComponents: [BiweeklyWaterFoodComponent, PastSevenDays, WatermanagementComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,LogoutDialog,DataWrittenDialog,CASelectionDialog],
-  providers: [Globals,LocalWaterManagementService,WatermanagementComponent,FoodAvailComponent,AppComponent,MoistsoilService,ChartService],
+  providers: [LocalWaterManagementService,WatermanagementComponent,FoodAvailComponent,AppComponent,MoistsoilService,ChartService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

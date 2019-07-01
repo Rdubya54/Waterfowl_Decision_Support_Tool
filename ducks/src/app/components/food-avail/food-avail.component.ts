@@ -3,7 +3,6 @@ import { FoodAvailLocalService } from 'src/app/service/food-avail-local.service'
 import { AngularFireDatabase } from 'angularfire2/database';
 import {MediaMatcher} from '@angular/cdk/layout';
 import {ChangeDetectorRef, OnDestroy} from '@angular/core';
-import {Globals} from 'src/app/extra/globals';
 import {MatBottomSheet, MatBottomSheetRef} from '@angular/material';
 import {AppComponent} from 'src/app/app.component';
 
@@ -54,7 +53,7 @@ export class FoodAvailComponent implements OnInit {
   public buttonName: any = true;
   toggleActive:boolean = false;
 
-  constructor(private comp:AppComponent,private localService: FoodAvailLocalService,  public globals:Globals,
+  constructor(private comp:AppComponent,private localService: FoodAvailLocalService,
     private cloudservice: FoodAvailCloudService, private dbservice:dbService,private dbservice_local:LocalDbService,private firebase: AngularFireDatabase,
     private bottomSheet: MatBottomSheet,public moistsoilservice:MoistsoilService) {
       this.localservice = localService;
@@ -119,11 +118,10 @@ export class FoodAvailComponent implements OnInit {
 
 // fetches list of availabe units in CA for dropdown
 getUnits(CA){
-  console.log("GETTING UNITS:"+this.globals.role)
   this.unit_list=[];
   this.Pool_list=[];
 
-  if (this.globals.role==="online"){
+  if (this.status==="online"){
   console.log("getting from oneline")
   this.dbservice.getUnits(CA).subscribe(data => {
     data.forEach(doc => {
@@ -133,7 +131,7 @@ getUnits(CA){
   });
   }
 
-  else if (this.globals.role==="offline"){
+  else if (this.status==="offline"){
     console.log("getting from offline")
     this.localService.getUnits(CA).then(data => {
       this.foodavails = data;
@@ -389,7 +387,7 @@ addData(selected_date){
     }
 
     //if app is offline, write to indexdb
-    if (this.globals.role=="offline"){
+    if (this.status=="offline"){
     this.localservice.addFoodAvail(this.newFoodAvail).
     then((addedFoodAvails: IFoodAvail[]) => {
     if (addedFoodAvails.length > 0) {

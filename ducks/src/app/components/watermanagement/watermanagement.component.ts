@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild,VERSION, Input, AfterViewInit,ElementRef } from '@angular/core';
 import { LocalWaterManagementService } from 'src/app/service/watermanagement-local.service';
-import {Globals} from 'src/app/extra/globals';
 import { AngularFireDatabase } from 'angularfire2/database';
 import {WatermanagementCloudService} from 'src/app/service/watermanagement-cloud.service';
 import {SevendayService} from 'src/app/service/sevenday.service';
@@ -75,8 +74,9 @@ export class WatermanagementComponent implements OnInit {
   public stored_size;
 
   public data_length=this.prev_data_master.length;
-   constructor(private comp:AppComponent, private localService: LocalWaterManagementService, private cloudservice: WatermanagementCloudService, public globals:Globals,
-     private dbservice_cloud:dbService, private sidenavService:ChartService,private bottomSheet: MatBottomSheet, 
+   constructor(private comp:AppComponent, private localService: LocalWaterManagementService, 
+    private cloudservice: WatermanagementCloudService,private dbservice_cloud:dbService, 
+    private sidenavService:ChartService,private bottomSheet: MatBottomSheet, 
      private sevendayservice: SevendayService) {
   }
 

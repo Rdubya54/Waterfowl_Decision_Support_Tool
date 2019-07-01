@@ -3,7 +3,6 @@ import { LocalWaterFood } from 'src/app/service/waterfood-local.service';
 import { AngularFireDatabase } from 'angularfire2/database';
 import {MediaMatcher} from '@angular/cdk/layout';
 import {ChangeDetectorRef, OnDestroy} from '@angular/core';
-import {Globals} from 'src/app/extra/globals';
 import {AppComponent} from 'src/app/app.component';
 
 import {dbService} from 'src/app/service/db.service';
@@ -49,7 +48,7 @@ export class BiweeklyWaterFoodComponent implements OnInit {
   public buttonName: any = true;
   toggleActive:boolean = false;
 
-  constructor(private comp:AppComponent,private localService: LocalWaterFood,  public globals:Globals,
+  constructor(private comp:AppComponent,private localService: LocalWaterFood,
     private dbservice_cloud:dbService, private dbservice_local:LocalDbService,private cloudservice:BiweeklyWaterFoodService) {
       this.localservice = localService;
       this.dbservice_cloud=dbservice_cloud;

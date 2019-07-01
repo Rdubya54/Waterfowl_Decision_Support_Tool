@@ -11,7 +11,7 @@
             </div>
             <div> 
                       <mat-form-field>
-                          <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="getWeather(this.globals.CA,$event)">
+                          <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="getWeather(this.selected_CA,$event)">
                           <mat-option *ngFor="let x of date_list" [value]="x">
                               {{x}}
                           </mat-option>
