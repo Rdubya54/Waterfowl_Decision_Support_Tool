@@ -679,6 +679,8 @@ firebase/database
 
 @angular/material/table
 
+@angular/material/progress-spinner
+
 @angular/material/bottom-sheet
 
 @angular/material/dialog
@@ -696,8 +698,6 @@ MIT
 MIT
 
 @angular/material/radio
-
-@angular/material/progress-spinner
 
 zone.js
 MIT

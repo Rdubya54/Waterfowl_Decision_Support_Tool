@@ -59,7 +59,8 @@
 <mat-grid-tile>
   <mat-card>
       <ng-container>
-          <img src={{image_url}}>
+          <mat-spinner *ngIf="this.isLoading"></mat-spinner>
+          <div *ngIf="!this.isLoading"><img src={{image_url}}></div>
           <img src={{symbo_url}}>
         </ng-container>
   </mat-card>
@@ -115,6 +116,8 @@
                 </mat-form-field>
           </div>  
       </div>
+      <mat-spinner *ngIf="this.isLoading"></mat-spinner>
+      <div *ngIf="!this.isLoading">
       <div fxLayout="row"  fxLayoutGap="30%">
           <div fxFlex="50%"> 
                 <h3>Acres of Flooded Habitat</h3>
@@ -220,6 +223,7 @@
               </div> 
           </div>
         </div>
+    </div>
   </mat-card>
 </mat-grid-tile>
 

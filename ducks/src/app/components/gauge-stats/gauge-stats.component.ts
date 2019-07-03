@@ -14,6 +14,7 @@ import { Query } from '@firebase/firestore-types'
 import { AngularFirestore } from '@angular/fire/firestore';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
+import { AppComponent } from 'src/app/app.component';
 
 
 @Component({
@@ -65,8 +66,9 @@ export class GaugeStatsComponent implements OnInit {
   public status;
 
   public cropstatus;
+  public isLoading;
 
-  constructor(private gaugeservice:GaugedataService,private firestore:AngularFirestore) {
+  constructor(private gaugeservice:GaugedataService,private firestore:AngularFirestore, private app:AppComponent) {
     this.getSymbology();
   }
 
@@ -196,6 +198,8 @@ export class GaugeStatsComponent implements OnInit {
 
   //fetch image for the particular Gauge
   getImage(CA,pool,image_name){
+    this.isLoading=true
+    //this.app.openLoadingDialog();
     var storage = firebase.storage().ref();
     var CA =CA.replace(" ","_")
     var imagepath=CA+"_"+pool+'/'+image_name+".jpg"
@@ -205,7 +209,9 @@ export class GaugeStatsComponent implements OnInit {
         console.log(url)
         this.image_url=url;
         console.log(this.image_name)
+        this.isLoading=false
     });  
+
   }
 
   //get map symbology image

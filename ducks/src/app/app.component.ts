@@ -69,8 +69,6 @@ export class AppComponent {
   public status;
   public selected_CA;
 
-  public isLoading=false;
-
   //this makes sure updates are properly loaded.
   //needed cause pwas caching can make it hard to seee updates
   constructor(private connectionService:ConnectionService,updates:SwUpdate,public dialog: MatDialog, private location:Location,
@@ -136,9 +134,7 @@ export class AppComponent {
 //once the app gets back online
 pushtocloudfromlocal(){
 
-  this.isLoading=true;
   this.openLoadingDialog()
-  console.log("Loading is "+this.isLoading)
   console.log("pushing to cloud from local")
 
   //push all locally stored weather to cloud 
@@ -326,9 +322,7 @@ pushtocloudfromlocal(){
 
         this.downloadallprevs('WaterManagement');
         
-        this.isLoading=false;
         this.closeLoadingDialog();
-        console.log("Loading is "+this.isLoading)
     }); 
 }
 
