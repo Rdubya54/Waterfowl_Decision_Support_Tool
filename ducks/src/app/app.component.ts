@@ -69,6 +69,8 @@ export class AppComponent {
   public status;
   public selected_CA;
 
+  public isLoading=false;
+
   //this makes sure updates are properly loaded.
   //needed cause pwas caching can make it hard to seee updates
   constructor(private connectionService:ConnectionService,updates:SwUpdate,public dialog: MatDialog, private location:Location,
@@ -133,6 +135,10 @@ export class AppComponent {
 //this function handles pushing data that is stored in local to the cloud
 //once the app gets back online
 pushtocloudfromlocal(){
+
+  this.isLoading=true;
+  this.openLoadingDialog()
+  console.log("Loading is "+this.isLoading)
   console.log("pushing to cloud from local")
 
   //push all locally stored weather to cloud 
@@ -319,6 +325,10 @@ pushtocloudfromlocal(){
         })
 
         this.downloadallprevs('WaterManagement');
+        
+        this.isLoading=false;
+        this.closeLoadingDialog();
+        console.log("Loading is "+this.isLoading)
     }); 
 }
 
@@ -574,6 +584,7 @@ if (table==='WaterManagement'){
       });
     });
   }
+
 }
 
 
@@ -652,6 +663,22 @@ openLogoutDialog(): void {
     console.log('The dialog was closed');
   });
 }
+
+openLoadingDialog(): void {
+  const dialogRef = this.dialog.open(LoadingDialog, {
+    width: '250px',
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    console.log('The dialog was closed');
+  });
+}
+
+closeLoadingDialog(): void {
+  const dialogRef = this.dialog.closeAll();
+}
+
+
 }
 
 
@@ -761,6 +788,22 @@ export class CASelectionDialog {
 
   onNoClick(): void {
     this.cookieservice.setCA(this.selectedCA);
+    this.dialogRef.close();
+  }
+
+}
+
+@Component({
+  selector: 'LoadingDialog',
+  templateUrl: 'loading-dialog.html',
+  styleUrls:["loading-dialog.css"]
+})
+export class LoadingDialog {
+
+
+  constructor(public dialogRef: MatDialogRef<CASelectionDialog>,private cookieservice:CookieService) {}
+  
+  onNoClick(): void {
     this.dialogRef.close();
   }
 

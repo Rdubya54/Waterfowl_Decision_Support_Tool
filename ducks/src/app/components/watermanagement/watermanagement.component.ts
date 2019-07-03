@@ -82,45 +82,70 @@ export class WatermanagementComponent implements OnInit {
 
   //opens past seven day page
   async openBottomSheet(){
-/*     this.cloudservice.getpast7WaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs)
 
-    this.bottomSheet.open(PastSevenDays) */
+    if (this.status==='online'){
 
-    this.cloudservice.getpast7WaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs).
-    subscribe(data => {
+      this.cloudservice.getpast7WaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs).
+      subscribe(data => {
 
-      this.sevendayservice.past_7_data_master.length=0;
+        this.sevendayservice.past_7_data_master.length=0;
 
-      data.forEach(doc => {
-        console.log('date is '+data.size)
-        this.stored_size=data.size
-      this.cloudservice.getWaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs,doc.id).
-      subscribe(data=>{
+        data.forEach(doc => {
+          console.log('date is '+data.size)
+          this.stored_size=data.size
+          this.cloudservice.getWaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs,doc.id).
+          subscribe(data=>{
 
-        console.log("pushing date:"+data.get('Date'))
+            console.log("pushing date:"+data.get('Date'))
 
-        this.sevendayservice.sevendaydata.Date=data.get('Date')
-        this.sevendayservice.sevendaydata.Gate_level=data.get('Gate_level')
-        this.sevendayservice.sevendaydata.Stoplog_level=data.get('Stoplog_level')
+            this.sevendayservice.sevendaydata.Date=data.get('Date')
+            this.sevendayservice.sevendaydata.Gate_level=data.get('Gate_level')
+            this.sevendayservice.sevendaydata.Stoplog_level=data.get('Stoplog_level')
 
-        this.sevendayservice.past_7_data_master.push(this.sevendayservice.sevendaydata);
+            this.sevendayservice.past_7_data_master.push(this.sevendayservice.sevendaydata);
 
-        //this.sevendayservice.past_7_data_master.shift();
+            this.sevendayservice.past_7_data_master = JSON.parse(JSON.stringify(this.sevendayservice.past_7_data_master));
 
-        this.sevendayservice.past_7_data_master = JSON.parse(JSON.stringify(this.sevendayservice.past_7_data_master));
+            console.log(this.sevendayservice.past_7_data_master)
 
-        console.log(this.sevendayservice.past_7_data_master)
+            this.sevendayservice.sevendaydata=new Watermanagement();
 
-        this.sevendayservice.sevendaydata=new Watermanagement();
+            if (this.sevendayservice.past_7_data_master.length === this.stored_size){
+              console.log("Master list is "+this.sevendayservice.past_7_data_master)
+              this.bottomSheet.open(PastSevenDays);
+            }
+            
+          });
+        });
+      });
+    }
 
-        if (this.sevendayservice.past_7_data_master.length === this.stored_size){
-          console.log("Master list is "+this.sevendayservice.past_7_data_master)
-          this.bottomSheet.open(PastSevenDays);
-        }
+    if (this.status==='offline'){
+      this.localService.getpast7WaterManagement(this.selected_CA,this.selected_unit,this.selected_Pool,this.selected_wcs).then(data => {
         
+        this.sevendayservice.past_7_data_master.length=0;
+        
+        data.forEach(record =>{
+            this.stored_size=data.length
+            this.sevendayservice.sevendaydata.Date=record['Date']
+            this.sevendayservice.sevendaydata.Gate_level=record['Gate_level']
+            this.sevendayservice.sevendaydata.Stoplog_level=record['Stoplog_level']
+
+            this.sevendayservice.past_7_data_master.push(this.sevendayservice.sevendaydata);
+
+            this.sevendayservice.past_7_data_master = JSON.parse(JSON.stringify(this.sevendayservice.past_7_data_master));
+
+            console.log(this.sevendayservice.past_7_data_master)
+
+            this.sevendayservice.sevendaydata=new Watermanagement();
+
+            if (this.sevendayservice.past_7_data_master.length === this.stored_size){
+              console.log("Master list is "+this.sevendayservice.past_7_data_master)
+              this.bottomSheet.open(PastSevenDays);
+            }
+        });
       });
-      });
-    });
+    }
   }
 
   ngOnInit() : void {

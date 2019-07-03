@@ -63,6 +63,25 @@ import { IWatermanagement } from '../model/watermanagement';
     });
   }
 
+  getpast7WaterManagement(CA,unit,pool,wcs){
+    console.log(wcs)
+    return this.connection.select({
+      from: "WaterManagement",
+      limit:7,
+      where:{
+        CA: CA,
+        Unit:unit,
+        Pool:pool,
+        Structure: wcs,
+      },
+      order: {
+        by: "Sort_time",
+        type: "desc" 
+    }
+
+    });
+  }
+
 
   getprevWaterManagement_forupdate(CA,unit,pool,wcs,date){
     console.log(wcs)

@@ -697,6 +697,8 @@ MIT
 
 @angular/material/radio
 
+@angular/material/progress-spinner
+
 zone.js
 MIT
 The MIT License

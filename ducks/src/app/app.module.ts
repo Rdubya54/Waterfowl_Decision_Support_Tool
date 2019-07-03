@@ -7,7 +7,7 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { FormsModule }   from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent, DataWrittenDialog, LogoutDialog } from './app.component';
+import { AppComponent, DataWrittenDialog, LogoutDialog, LoadingDialog } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { MaterialModule } from './material.module';
@@ -42,6 +42,7 @@ import { MatDialogRef } from '@angular/material';
 import { GaugeStatsComponent } from './components/gauge-stats/gauge-stats.component';
 import {MoistsoilService} from "./service/moistsoil.service"
 import { ChartService } from './service/chart.service';
+import { LoadedRouterConfig } from '@angular/router/src/config';
 
 var config = {
   apiKey: "AIzaSyChqXN2Wz2FRywEUwfEkfoxJJtc3hvr0CY",
@@ -86,6 +87,7 @@ firebase.firestore().enablePersistence()
     LogoutDialog,
     DataWrittenDialog,
     CASelectionDialog,
+    LoadingDialog,
     GaugeStatsComponent,
   ],
   imports: [
@@ -104,7 +106,7 @@ firebase.firestore().enablePersistence()
     ChartsModule,
     MatExpansionModule,
   ],
-  entryComponents: [BiweeklyWaterFoodComponent, PastSevenDays, WatermanagementComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,LogoutDialog,DataWrittenDialog,CASelectionDialog],
+  entryComponents: [BiweeklyWaterFoodComponent, PastSevenDays, WatermanagementComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,LogoutDialog,DataWrittenDialog,CASelectionDialog,LoadingDialog],
   providers: [LocalWaterManagementService,WatermanagementComponent,FoodAvailComponent,AppComponent,MoistsoilService,ChartService],
   bootstrap: [AppComponent]
 })
