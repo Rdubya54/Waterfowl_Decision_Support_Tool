@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import {GaugeStats} from 'src/app/model/gauge-stats.model';
+import {GaugeStats} from 'src/app/model/gauge-stats';
 import { AngularFirestoreCollection } from 'angularfire2/firestore';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
@@ -57,6 +57,18 @@ getDates_waterfood(CA,unit,pool) {
 getDates_weather(CA){
   return this.firestore.collection('Conservation_Areas').doc(CA).collection("Daily Weather Observation")
   .get();
+}
+
+getGauges(CA,unit,pool,wcs){
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit)
+  .collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Gauges")
+  .get();
+}
+
+getImageName(CA,unit,pool,wcs,gauge){
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit)
+  .collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Gauges").doc(gauge).collection('Stats')
+  .doc("Image_Name").get();
 }
 
 }

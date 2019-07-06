@@ -182,41 +182,21 @@ export class WatermanagementComponent implements OnInit {
     this.localService.getUnits(this.selected_CA).then(data => {
       this.watermanagements = data;
 
+      var previous = 'none';
+
       this.watermanagements.forEach(record =>{
           var Unit=record["Unit"]
-          this.unit_list.push(Unit)
+
+          if (Unit !== previous){
+            this.unit_list.push(Unit)
+            previous=Unit
+            console.log('uNIT LIST IS '+this.unit_list)
+          }
       });
     });
   }
 }
 
-
-// fetches list of availabe units in CA for dropdown
-getUnits(CA){
-  this.unit_list=[];
-  this.Pool_list=[];
-
-  if (this.status==="online"){
-  this.dbservice_cloud.getUnits(CA).subscribe(data => {
-    data.forEach(doc => {
-      console.log("unit is "+doc.id)
-      this.unit_list.push(doc.id)
-    });
-  });
-  }
-
-  else if (this.status==="offline"){
-    this.localService.getUnits(CA).then(data => {
-      this.watermanagements = data;
-
-      this.watermanagements.forEach(record =>{
-          var Unit=record["Unit"]
-          this.unit_list.push(Unit)
-          console.log(this.unit_list)
-      });
-    });
-  }
-}
 
 // fetches list of availabe pools in units for dropdown
 getPools(CA,unit){
@@ -234,10 +214,15 @@ getPools(CA,unit){
     this.localService.getPools(CA,unit).then(data => {
       this.watermanagements = data;
 
+      var previous='None';
+
       this.watermanagements.forEach(record =>{
           var pool=record["Pool"]
-          this.Pool_list.push(pool)
-          console.log(this.Pool_list)
+
+          if (pool !== previous){
+            this.Pool_list.push(pool)
+            previous=pool
+          }
       });
     });
   }
@@ -259,10 +244,15 @@ getWCS(CA,unit,pool){
     this.localService.getWCS(CA,unit,pool).then(data => {
       this.watermanagements = data;
 
+      var previous='None';
+      
       this.watermanagements.forEach(record =>{
           var wcs=record["Structure"]
-          this.wcs_list.push(wcs)
-          console.log(this.wcs_list)
+
+          if (wcs !== previous){
+            this.wcs_list.push(wcs)
+            previous=wcs
+          }
       });
     });
   }

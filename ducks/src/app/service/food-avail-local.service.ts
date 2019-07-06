@@ -32,7 +32,7 @@ import { IFoodAvail } from '../model/food-avail';
         CA: CA,
       },
       order: {
-        by: "sort_time",
+        by: "unit",
         type: "desc" 
     }
 
@@ -47,7 +47,7 @@ import { IFoodAvail } from '../model/food-avail';
         unit:Unit,
       },
       order: {
-        by: "sort_time",
+        by: "pool",
         type: "desc" 
     }
 
@@ -63,7 +63,7 @@ import { IFoodAvail } from '../model/food-avail';
         pool:Pool
       },
       order: {
-        by: "sort_time",
+        by: "structure",
         type: "desc" 
     }
 

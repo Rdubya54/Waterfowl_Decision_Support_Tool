@@ -39,7 +39,7 @@ export class LocalDbService extends BaseService{
         CA: CA,
       },
       order: {
-        by: "Sort_time",
+        by: "Unit",
         type: "desc" 
     }
 
@@ -54,7 +54,7 @@ export class LocalDbService extends BaseService{
         Unit:Unit,
       },
       order: {
-        by: "Sort_time",
+        by: "Pool",
         type: "desc" 
     }
 

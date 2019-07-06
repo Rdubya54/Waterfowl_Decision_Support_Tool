@@ -341,7 +341,7 @@ import { IFoodAvail } from '../model/food-avail';
       dataType: DATA_TYPE.String
      },
      {
-      name: 'wcs',
+      name: 'structure',
       dataType: DATA_TYPE.String,
      },
      {
@@ -498,12 +498,49 @@ import { IFoodAvail } from '../model/food-avail';
       dataType: DATA_TYPE.String,
      }, 
     ]
-  };
+    };
+    const tblGaugeStats: ITable = {
+      name: 'Gauge Stats',
+      columns: [{
+        name: 'id',
+        primaryKey: true,
+        autoIncrement: true
+       },
+       {
+        name: 'CA',
+        dataType: DATA_TYPE.String,
+       },
+       {
+        name: 'Unit',
+        dataType: DATA_TYPE.String
+       },
+       {
+        name: 'Pool',
+        dataType: DATA_TYPE.String,
+       },
+       {
+        name: 'Structure',
+        dataType: DATA_TYPE.String
+       },
+       {
+        name: 'Gauge',
+        dataType: DATA_TYPE.String,
+       },
+       {
+        name: 'Image_Name',
+        dataType: DATA_TYPE.String,
+       },
+       {
+        name: 'Image',
+        dataType: DATA_TYPE.Object,
+       }
+      ],
+    };
 
 
    const dataBase: IDataBase = {
     name: this.dbname,
-    tables: [tblWaterManagement,tblWeather,tblWaterFood,tblFoodAvail]
+    tables: [tblWaterManagement,tblWeather,tblWaterFood,tblFoodAvail,tblGaugeStats]
    };
    return dataBase;
   }

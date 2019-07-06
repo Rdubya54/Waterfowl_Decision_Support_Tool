@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import {GaugeStats} from 'src/app/model/gauge-stats.model';
 import { AngularFirestoreCollection } from 'angularfire2/firestore';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
@@ -65,15 +64,19 @@ getImageName(CA,unit,pool,wcs,gauge) {
   .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).collection('Stats').doc('Image_Name').get();
 }
 
-getImage(CA,pool,image_name){
+async getImage(CA,pool,image_name){
+
+  //CHANGE CA NAME FOR NOW
+  CA=CA.replace(/ /g,"_");
+
   var storage = firebase.storage().ref();
   var imagepath=CA+"_"+pool+'/'+image_name+".jpg"
   console.log(imagepath)
   var ref = storage.child(imagepath)
-  ref.getDownloadURL().then(url =>{
-      console.log(url)
+  const url= await ref.getDownloadURL()
+  
+  
+  return url
+}
 
-      return url;
-  });  
-} 
 }

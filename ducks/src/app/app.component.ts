@@ -10,6 +10,10 @@ import {CookieService} from 'src/app/service/cookie.service';
 
 import {dbService} from 'src/app/service/db.service';
 
+import {GaugeStats,IGaugeStats} from 'src/app/model/gauge-stats'
+import { GaugedataService } from 'src/app/service/gaugedata.service';
+import { GaugeStatLocalService } from 'src/app/service/gauge-stat-local.service';
+
 import { WeatherCloudService } from 'src/app/service/weather-cloud.service';
 import { WeatherLocalService } from 'src/app/service/weather-local.service';
 import {
@@ -47,6 +51,9 @@ import {
 })
 export class AppComponent {
 
+  gaugestats:any[];
+  newGaugeStat:IGaugeStats = new GaugeStats();
+
   weathers: any[];
   newWeather: IWeather = new Weather();
 
@@ -76,7 +83,8 @@ export class AppComponent {
     private foodavailcloudservice:FoodAvailCloudService, private foodavaillocalservice: FoodAvailLocalService, private dbservice: dbService,
     public moistsoilservice:MoistsoilService,private waterfoodcloudservice:BiweeklyWaterFoodService, 
     private waterfoodlocalservice:LocalWaterFood,private watermanagementlocalservice: LocalWaterManagementService, 
-    private watermanagementcloudservice: WatermanagementCloudService){
+    private watermanagementcloudservice: WatermanagementCloudService,
+    private gaugestatscloudservice:GaugedataService, private gaugestatslocalservice:GaugeStatLocalService){
     
     //this is only run when the connection status changes
     this.connectionService.monitor().subscribe(isConnected => {
@@ -136,6 +144,8 @@ pushtocloudfromlocal(){
 
   this.openLoadingDialog()
   console.log("pushing to cloud from local")
+
+  this.downloadallprevs('Gauge Stats');
 
   //push all locally stored weather to cloud 
   this.weatherlocalservice.getWeather_all().
@@ -567,7 +577,7 @@ if (table==='WaterManagement'){
                         if (addedWaterManagements.length > 0) {
                           this.clearNewWaterManagement();
                         }
-                        })                   
+                      })                   
                     })
                   });
                 });
@@ -579,8 +589,80 @@ if (table==='WaterManagement'){
     });
   }
 
+  if (table==='Gauge Stats'){
+    console.log("in gauge stats")
+    this.dbservice.getUnits(this.selected_CA).subscribe(data => {
+      data.forEach(doc => {
+        var Unit=doc.id;
+        console.log("Unit Gauge is"+Unit)
+        this.dbservice.getPools(this.selected_CA,Unit).subscribe(data => {
+          data.forEach(doc => {
+            var Pool=doc.id;
+            this.dbservice.getWCS(this.selected_CA,Unit,Pool).subscribe(data => {
+              data.forEach(doc => {
+                var wcs=doc.id;
+                this.dbservice.getGauges(this.selected_CA,Unit,Pool,wcs).subscribe(data => {
+                  data.forEach(doc => {
+                    var gauge=doc.id;
+                    console.log("Gauge is"+gauge)
+                    this.dbservice.getImageName(this.selected_CA,Unit,Pool,wcs,gauge).subscribe(data => {
+                        var image_name=data.get('Image_Name')
+                        this.newGaugeStat.CA=this.selected_CA;
+                        this.newGaugeStat.Unit=Unit;
+                        this.newGaugeStat.Pool=Pool;
+                        this.newGaugeStat.Structure=wcs;
+                        this.newGaugeStat.Gauge=gauge;
+                        this.newGaugeStat.Image_Name=image_name
+                        console.log("Image name is"+image_name)
+                        var imageurl = this.gaugestatscloudservice.getImage(this.selected_CA,Pool,image_name).then(imageurl =>{
+
+                          console.log(imageurl)
+
+                          this.loadImage(imageurl,this.cFunction,this.newGaugeStat,this.gaugestatslocalservice)
+                        });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+    });
+
 }
 
+}
+
+loadImage(url,cFunction,newGaugeStat,service){
+  var xhttp;
+  xhttp=new XMLHttpRequest();
+  xhttp.responseType = 'blob';
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      cFunction(this,newGaugeStat,service);
+    }
+ };
+  xhttp.open("GET", url, true);
+  xhttp.send();
+}
+
+cFunction(xhttp,newGaugeStat,service){
+  var blob = xhttp.response;
+  newGaugeStat.Image=blob
+
+  console.log('new Gauge stat is '+typeof(newGaugeStat.Image))
+  //console.log('new Gauge stat is '+newGaugeStat.Image)
+
+  //put gaugestat record into IndexDB
+  service.addGaugeStat(newGaugeStat).
+  then((addedGaugeStats: IGaugeStats[]) => {
+    if (addedGaugeStats.length > 0) {
+      //this.clearNewWaterManagement();
+    }
+  })    
+  //console.log('Blob is '+blob)
+}
 
 clearNewWaterManagement() {
   this.newWaterManagement = new Watermanagement();

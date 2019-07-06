@@ -83,44 +83,23 @@ export class BiweeklyWaterFoodComponent implements OnInit {
     }
 
     if (this.status=="offline"){
-       this.dbservice_local.getUnits(this.selected_CA).then(data => {
+      this.dbservice_local.getUnits(this.selected_CA).then(data => {
         this.waterfoods = data;
+  
+        var previous='None';
 
         this.waterfoods.forEach(record =>{
-            var unit=record["Unit"]
-            this.unit_list.push(unit)
-            console.log(this.unit_list)
+            var Unit=record["Unit"]
+            
+            if (Unit !== previous){
+              this.unit_list.push(Unit)
+              previous=Unit
+            }
         });
-      });
+      });    
     }
   }
-
-//get units for drop down
-getUnits(CA){
-  this.unit_list=[];
-  this.Pool_list=[];
-
-  if (this.status==="online"){
-  this.dbservice_cloud.getUnits(CA).subscribe(data => {
-    data.forEach(doc => {
-      console.log("unit is "+doc.id)
-      this.unit_list.push(doc.id)
-    });
-  });
-  }
-
-  else if (this.status==="offline"){
-    this.dbservice_local.getUnits(CA).then(data => {
-      this.waterfoods = data;
-
-      this.waterfoods.forEach(record =>{
-          var Unit=record["Unit"]
-          this.unit_list.push(Unit)
-          console.log(this.unit_list)
-      });
-    });    
-  }
-}
+  
 
 //get pools for drop down
 getPools(CA,unit){
@@ -138,10 +117,18 @@ getPools(CA,unit){
     this.dbservice_local.getPools(CA,unit).then(data => {
       this.waterfoods = data;
 
+      var previous='None'
+      
       this.waterfoods.forEach(record =>{
           var pool=record["Pool"]
-          this.Pool_list.push(pool)
-          console.log(this.Pool_list)
+
+          console.log("Pool:"+pool)
+          console.log("Pool list:"+this.Pool_list)
+
+          if (pool !== previous){
+            this.Pool_list.push(pool)
+            previous=pool
+          }
       });
     });   
   }

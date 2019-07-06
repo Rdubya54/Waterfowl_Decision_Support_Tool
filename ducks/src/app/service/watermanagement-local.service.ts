@@ -135,7 +135,7 @@ import { IWatermanagement } from '../model/watermanagement';
         CA: CA,
       },
       order: {
-        by: "Sort_time",
+        by: "Unit",
         type: "desc" 
     }
 
@@ -150,7 +150,7 @@ import { IWatermanagement } from '../model/watermanagement';
         Unit:Unit,
       },
       order: {
-        by: "Sort_time",
+        by: "Pool",
         type: "desc" 
     }
     });
@@ -165,7 +165,7 @@ import { IWatermanagement } from '../model/watermanagement';
         Pool:Pool
       },
       order: {
-        by: "Sort_time",
+        by: "WCS",
         type: "desc" 
     }
     });

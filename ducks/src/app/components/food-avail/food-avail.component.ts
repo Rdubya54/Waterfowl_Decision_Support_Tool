@@ -76,17 +76,6 @@ export class FoodAvailComponent implements OnInit {
 
     this.status=localStorage.getItem('Status')
 
-    //commented this out may need to uncomment
-
-/*     this.dbservice.getUnits(this.selected_CA).subscribe(data => {
-      this.unit_list=[];
-      this.Pool_list=[];
-      this.wcs_list=[];
-      data.forEach(doc => {
-        this.unit_list.push(doc.id)
-      });
-  }); */
-
   
   //if app is online push any locally cached data to the cloud
   if (this.status==="online"){
@@ -106,44 +95,20 @@ export class FoodAvailComponent implements OnInit {
     this.localService.getUnits(this.selected_CA).then(data => {
       this.foodavails = data;
 
+      var previous='None'
+
       this.foodavails.forEach(record =>{
           var unit=record["unit"]
-          this.unit_list.push(unit)
-          console.log(this.unit_list)
+
+          if (unit !== previous){
+            this.unit_list.push(unit)
+            previous=unit
+          }
       });
     });
   }
 }
 
-
-// fetches list of availabe units in CA for dropdown
-getUnits(CA){
-  this.unit_list=[];
-  this.Pool_list=[];
-
-  if (this.status==="online"){
-  console.log("getting from oneline")
-  this.dbservice.getUnits(CA).subscribe(data => {
-    data.forEach(doc => {
-      console.log("unit is "+doc.id)
-      this.unit_list.push(doc.id)
-    });
-  });
-  }
-
-  else if (this.status==="offline"){
-    console.log("getting from offline")
-    this.localService.getUnits(CA).then(data => {
-      this.foodavails = data;
-
-      this.foodavails.forEach(record =>{
-          var Unit=record["unit"]
-          this.unit_list.push(Unit)
-          console.log(this.unit_list)
-      });
-    });
-  }
-}
 
 // fetches list of availabe pools in units for dropdown
 getPools(CA,unit){
@@ -158,13 +123,19 @@ getPools(CA,unit){
   }
 
   else if (this.status==="offline"){
+
+    var previous = 'None';
+
     this.localService.getPools(CA,unit).then(data => {
       this.foodavails = data;
 
       this.foodavails.forEach(record =>{
           var pool=record["pool"]
-          this.Pool_list.push(pool)
-          console.log(this.Pool_list)
+
+          if (pool !== previous){
+            this.Pool_list.push(pool)
+            previous=pool
+          }
       });
     });
   }
@@ -182,13 +153,21 @@ getWCS(CA,unit,pool){
   });
   }
   else if (this.status==="offline"){
+
+    
+
     this.localService.getWCS(CA,unit,pool).then(data => {
+      var previous = 'None';
       this.foodavails = data;
 
       this.foodavails.forEach(record =>{
           var wcs=record["structure"]
-          this.wcs_list.push(wcs)
-          console.log(this.wcs_list)
+
+          if (wcs !== previous){
+            console.log("wcs is "+wcs)
+            this.wcs_list.push(wcs)
+            previous=wcs
+          }
       });
     });
   }
