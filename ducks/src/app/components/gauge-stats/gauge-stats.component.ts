@@ -27,6 +27,7 @@ export class GaugeStatsComponent implements OnInit {
 
   breakpoint:number;
 
+  //define dropdown menus
   public CA_list: string[]=[];
   public selected_CA;
   public unit_list: string[]=[];
@@ -39,7 +40,7 @@ export class GaugeStatsComponent implements OnInit {
   public selected_gauge;
 
 
-/*   public crop_master_list:{[key:string]:string[]}={}; */
+  //define lists for holding crop data
   public crop_master_list:string[]=[];
   public crop_keys:string[]=[];
   public crop_values:string[]=[];
