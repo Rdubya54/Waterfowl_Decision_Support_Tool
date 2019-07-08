@@ -54,11 +54,11 @@ export class GaugeStatsComponent implements OnInit {
   public eighteeninch=0;
   public eighteenplus=0;
 
-  public dry_per=0;
-  public sixinch_per=0;
-  public tweleveinch_per=0;
-  public eighteeninch_per=0;
-  public eighteenplus_per=0;
+  public dry_per;
+  public sixinch_per;
+  public tweleveinch_per;
+  public eighteeninch_per;
+  public eighteenplus_per;
 
   public image_url;
   public symbo_url;
@@ -216,11 +216,11 @@ export class GaugeStatsComponent implements OnInit {
             this.eighteeninch=data.get('Shallowly_Flooded_12_18in')
             this.eighteenplus=data.get('Full_Flooded_18in')
 
-            this.dry_per=Math.round((this.dry/this.total_acres)*100)
-            this.sixinch_per=Math.round((this.sixinch/this.total_acres)*100)
-            this.tweleveinch_per=Math.round((this.twelveinch/this.total_acres)*100)
-            this.eighteeninch_per=Math.round((this.eighteeninch/this.total_acres)*100)
-            this.eighteenplus_per=Math.round((this.eighteenplus/this.total_acres)*100)
+            this.dry_per=((this.dry/this.total_acres)*100).toFixed(2)
+            this.sixinch_per=((this.sixinch/this.total_acres)*100).toFixed(2)
+            this.tweleveinch_per=((this.twelveinch/this.total_acres)*100).toFixed(2)
+            this.eighteeninch_per=((this.eighteeninch/this.total_acres)*100).toFixed(2)
+            this.eighteenplus_per=((this.eighteenplus/this.total_acres)*100).toFixed(2)
 
             this.cropstatus='No Crop Data Available For Pool';
             this.crop_master_list=[]
@@ -245,11 +245,11 @@ export class GaugeStatsComponent implements OnInit {
                     this.crop_master_list[crop]=crop_list;
                     this.crop_keys=Object.keys(this.crop_master_list)
 
-                    crop_list['Dry_not_flooded %']=Math.round((crop_list['Dry_not_flooded']/crop_list['Total Acres'])*100)
-                    crop_list['Shallowly_Flooded_0_6in %']=Math.round((crop_list['Shallowly_Flooded_0_6in']/crop_list['Total Acres'])*100)
-                    crop_list['Shallowly_Flooded_6-12in %']=Math.round((crop_list['Shallowly_Flooded_6-12in']/crop_list['Total Acres'])*100)
-                    crop_list['Shallowly_Flooded_12_18in %']=Math.round((crop_list['Shallowly_Flooded_12_18in']/crop_list['Total Acres'])*100)
-                    crop_list['Full_Flooded_18in %']=Math.round((crop_list['Full_Flooded_18in']/crop_list['Total Acres'])*100)
+                    crop_list['Dry_not_flooded %']=((crop_list['Dry_not_flooded']/crop_list['Total Acres'])*100).toFixed(2)
+                    crop_list['Shallowly_Flooded_0_6in %']=((crop_list['Shallowly_Flooded_0_6in']/crop_list['Total Acres'])*100).toFixed(2)
+                    crop_list['Shallowly_Flooded_6-12in %']=((crop_list['Shallowly_Flooded_6-12in']/crop_list['Total Acres'])*100).toFixed(2)
+                    crop_list['Shallowly_Flooded_12_18in %']=((crop_list['Shallowly_Flooded_12_18in']/crop_list['Total Acres'])*100).toFixed(2)
+                    crop_list['Full_Flooded_18in %']=((crop_list['Full_Flooded_18in']/crop_list['Total Acres'])*100).toFixed(2)
                     //this.crop_values=Object.values(this.crop_master_list)
                     console.log(this.crop_master_list)
                     console.log(this.crop_values)

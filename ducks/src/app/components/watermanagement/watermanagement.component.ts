@@ -30,21 +30,22 @@ import { forEach } from '@angular/router/src/utils/collection';
 })
 export class WatermanagementComponent implements OnInit {
 
+  //need this for graphs 
   @ViewChild('rightSidenav') public sidenav: MatSidenav;
   ngVersion: string = VERSION.full;
   matVersion: string = '5.1.0'
+
+  //breakpoints for resizing app for responsive design
   breakpoint:number;
   breakpoint_top:number;
-  private localservice: LocalWaterManagementService;
+
   watermanagements: any[];
   newWaterManagement: IWatermanagement = new Watermanagement();
-  local_records: any[];
 
-  public buttonName: any = true;
+  //toggles chart view
   toggleActive:boolean = false;
 
-  chart_loaded=false;
-
+  //define properties for charts
   chart = [];
   dates = [];
   elevation_data=[];
@@ -53,6 +54,7 @@ export class WatermanagementComponent implements OnInit {
   geese_num_data=[];
   Graph_Title;
 
+  //define properties for dropdowns
   public CA_list: string[]=[];
   public selected_CA;
   public unit_list: string[]=[];
@@ -65,15 +67,16 @@ export class WatermanagementComponent implements OnInit {
   public selected_date;
   public nav_list: string[]=[];
 
+  //define properties for storing previous records
   public prev_data_master=[];
   public prev_data:string[]=[];
   public prev_data_2:string[]=[];
   public doc_array=[];
   public status;
-
   public stored_size;
-
   public data_length=this.prev_data_master.length;
+
+
    constructor(private comp:AppComponent, private localService: LocalWaterManagementService, 
     private cloudservice: WatermanagementCloudService,private dbservice_cloud:dbService, 
     private sidenavService:ChartService,private bottomSheet: MatBottomSheet, 
@@ -156,21 +159,20 @@ export class WatermanagementComponent implements OnInit {
   this.breakpoint_top = (window.innerWidth <= 768) ? 1 : 1;
   this.sidenavService.setSidenav(this.sidenav);
 
+  //clear all data from lists just in case
   this.CA_list=[];
   this.unit_list=[];
   this.Pool_list=[];
   this.wcs_list=[];
 
-  console.log(localStorage.getItem("CA"))
-
+  //get the CA and online status saved in local storage
   this.selected_CA=localStorage.getItem("CA")
-
   this.status=localStorage.getItem('Status')
 
-  //if app is online push any locally cached data to the cloud
+  //if app is online 
   if (this.status==="online"){
 
-    //get available CA's from dropdown menu
+    //get available Units for CA for drop down from cloud
     this.dbservice_cloud.getUnits(this.selected_CA).subscribe(data => {
       data.forEach(doc => {
         this.unit_list.push(doc.id)
@@ -178,7 +180,10 @@ export class WatermanagementComponent implements OnInit {
     });
   }
 
+  //if app is offline
   else if (this.status==="offline"){
+
+    //get available Units for CA for drop down from IndexDB (local)
     this.localService.getUnits(this.selected_CA).then(data => {
       this.watermanagements = data;
 
@@ -187,6 +192,7 @@ export class WatermanagementComponent implements OnInit {
       this.watermanagements.forEach(record =>{
           var Unit=record["Unit"]
 
+          //ensure that duplicates are not added to the drop down here
           if (Unit !== previous){
             this.unit_list.push(Unit)
             previous=Unit
@@ -200,17 +206,22 @@ export class WatermanagementComponent implements OnInit {
 
 // fetches list of availabe pools in units for dropdown
 getPools(CA,unit){
+  //clear pool list
   this.Pool_list=[];
 
+  //if app is online
   if (this.status==="online"){
-  this.dbservice_cloud.getPools(CA,unit).subscribe(data => {
-    data.forEach(doc => {
-      this.Pool_list.push(doc.id)
+    //get pools from cloud and push into dropdown
+    this.dbservice_cloud.getPools(CA,unit).subscribe(data => {
+      data.forEach(doc => {
+        this.Pool_list.push(doc.id)
+      });
     });
-  });
   }
 
+  //if app is offline
   else if (this.status==="offline"){
+    //get pools from local and push into dropdown
     this.localService.getPools(CA,unit).then(data => {
       this.watermanagements = data;
 
@@ -219,6 +230,7 @@ getPools(CA,unit){
       this.watermanagements.forEach(record =>{
           var pool=record["Pool"]
 
+           //ensure that duplicates are not added to the drop down here
           if (pool !== previous){
             this.Pool_list.push(pool)
             previous=pool
@@ -229,18 +241,24 @@ getPools(CA,unit){
 
 }
 
-// fetche list of available strucutres in pool for dropdown
+// fetch list of available strucutres in pool for dropdown
 getWCS(CA,unit,pool){
   this.wcs_list=[];
 
+  //if app is online
   if (this.status==="online"){
-  this.dbservice_cloud.getWCS(CA,unit,pool).subscribe(data => {
-    data.forEach(doc => {
-      this.wcs_list.push(doc.id)
+    //fetch data from cloud and put into dropdown
+    this.dbservice_cloud.getWCS(CA,unit,pool).subscribe(data => {
+      data.forEach(doc => {
+        this.wcs_list.push(doc.id)
+      });
     });
-  });
   }
+
+  //if app is offline
   else if (this.status==="offline"){
+
+    //fetch data from local and push into dropdown
     this.localService.getWCS(CA,unit,pool).then(data => {
       this.watermanagements = data;
 
@@ -262,21 +280,27 @@ getWCS(CA,unit,pool){
 getDates(CA,unit,pool,wcs,location){
   this.date_list=["Create New Record"];
 
+  //uses location instead of this.status for method reuseablity purposes
+
+  //if app is online
   if (location === "cloud"){
-  this.dbservice_cloud.getDates(CA,unit,pool,wcs).subscribe(data => {
-    data.forEach(doc => {
-      this.date_list.push(doc.id)
+    //get data from cloud
+    this.dbservice_cloud.getDates(CA,unit,pool,wcs).subscribe(data => {
+      data.forEach(doc => {
+        this.date_list.push(doc.id)
+      });
     });
-  });
   }
 
+  //if app is offline
   else if (location === "local"){
-  this.localService.getDates(CA,unit,pool,wcs).then(data => {
-    data.forEach(doc => {
-      console.log(doc['Date'])
-      this.date_list.push(doc['Date'])
+    //get data from LOCAL
+    this.localService.getDates(CA,unit,pool,wcs).then(data => {
+      data.forEach(doc => {
+        console.log(doc['Date'])
+        this.date_list.push(doc['Date'])
+      });
     });
-  });
   }
 }
 
