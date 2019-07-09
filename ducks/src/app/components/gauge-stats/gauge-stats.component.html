@@ -1,59 +1,5 @@
 <h1>Pool Gauge Level Statistics</h1>
 
-<!-- <mat-grid-list [cols]="breakpoint_top" rowHeight="400px" (window:resize)="onResize($event)">
-    <mat-grid-tile>
-        <mat-card class="example-container">
-            <h3>Parameters</h3>
-                <div> 
-                    <mat-form-field>
-                        <mat-select placeholder="Conservation Area" [(ngModel)]="selected_CA" (ngModelChange)="getUnits($event)">
-                        <mat-option *ngFor="let x of CA_list" [value]="x">
-                            {{x}}
-                        </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <div> 
-                    <mat-form-field>
-                        <mat-select placeholder="Pool Unit" [(ngModel)]="selected_unit" (ngModelChange)="getPools(selected_CA,$event)">
-                        <mat-option *ngFor="let x of unit_list" [value]="x">
-                            {{x}}
-                        </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <div> 
-                    <mat-form-field>
-                        <mat-select placeholder="Pools" [(ngModel)]="selected_Pool" (ngModelChange)="getWCS(selected_CA,selected_unit,$event)">
-                        <mat-option *ngFor="let x of Pool_list" [value]="x">
-                            {{x}}
-                        </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div> 
-                <div> 
-                    <mat-form-field>
-                        <mat-select placeholder="Water Control Structure" [(ngModel)]="selected_wcs" (ngModelChange)="getGauge(selected_CA,selected_unit,selected_Pool,$event)">
-                          <mat-option *ngFor="let x of wcs_list" [value]="x">
-                            {{x}}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                </div> 
-                <div> 
-                    <mat-form-field>
-                        <mat-select placeholder="Gauge (meters)" [(ngModel)]="selected_gauge" (ngModelChange)="getStats(selected_CA,selected_unit,selected_Pool,selected_wcs,$event)">
-                          <mat-option *ngFor="let x of gauge_list" [value]="x">
-                            {{x}}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                </div>
-            </mat-card>
-        </mat-grid-tile>
-    </mat-grid-list> -->
-
-
 <mat-grid-list [cols]="breakpoint" rowHeight="1500px" (window:resize)="onResize($event)">
 
 <mat-grid-tile>
@@ -61,7 +7,9 @@
       <ng-container>
           <mat-spinner *ngIf="this.isLoading"></mat-spinner>
           <div *ngIf="!this.isLoading"><img src={{image_url}}></div>
+          <img [src]=this.sanitizer.bypassSecurityTrustUrl(this.object_URL)>
           <img src={{symbo_url}}>
+          
         </ng-container>
   </mat-card>
 </mat-grid-tile>

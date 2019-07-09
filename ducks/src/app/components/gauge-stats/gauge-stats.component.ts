@@ -17,6 +17,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/storage';
 import { AppComponent } from 'src/app/app.component';
 
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-gauge-stats',
@@ -61,7 +62,6 @@ export class GaugeStatsComponent implements OnInit {
   public eighteeninch_per;
   public eighteenplus_per;
 
-  public image_url;
   public symbo_url;
 
   public status;
@@ -69,7 +69,12 @@ export class GaugeStatsComponent implements OnInit {
   public cropstatus;
   public isLoading;
 
-  constructor(private gaugeservice:GaugedataService,private gaugeservice_local:GaugeStatLocalService,private firestore:AngularFirestore, private app:AppComponent) {
+  public local_image;
+  public object_URL;
+  public image_url;
+
+  constructor(private gaugeservice:GaugedataService,private gaugeservice_local:GaugeStatLocalService,
+    private firestore:AngularFirestore, private app:AppComponent,public sanitizer:DomSanitizer) {
     this.getSymbology();
   }
 
@@ -268,16 +273,21 @@ export class GaugeStatsComponent implements OnInit {
         data.forEach(record =>{
           console.log('success')
           console.log('image is '+record["Image"])
-          this.image_name=record["Image"];
+          this.local_image=record["Image"];
+
+          var URL = window.URL;
+          this.object_URL = URL.createObjectURL(this.local_image);
+
+
+
         })
       });
     }
   }
+  
 
   //fetch image for the particular Gauge
   getImage(CA,pool,image_name){
-    this.isLoading=true
-    //this.app.openLoadingDialog();
     var storage = firebase.storage().ref();
     var CA =CA.replace(" ","_")
     var imagepath=CA+"_"+pool+'/'+image_name+".jpg"
