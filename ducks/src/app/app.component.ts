@@ -10,9 +10,13 @@ import {CookieService} from 'src/app/service/cookie.service';
 
 import {dbService} from 'src/app/service/db.service';
 
-import {GaugeStats,IGaugeStats} from 'src/app/model/gauge-stats'
+import {CropStats,ICropStats} from 'src/app/model/crop-stats';
+import {GaugeStats,IGaugeStats} from 'src/app/model/gauge-stats';
 import { GaugedataService } from 'src/app/service/gaugedata.service';
 import { GaugeStatLocalService } from 'src/app/service/gauge-stat-local.service';
+
+import {Image,IImage} from 'src/app/model/image'
+import { ImageLocalService } from 'src/app/service/image-local.service';
 
 import { WeatherCloudService } from 'src/app/service/weather-cloud.service';
 import { WeatherLocalService } from 'src/app/service/weather-local.service';
@@ -43,6 +47,9 @@ import {
   Watermanagement,
   IWatermanagement
 } from 'src/app/model/watermanagement';
+import { throwIfEmpty } from 'rxjs/operators';
+import { stat } from 'fs';
+import { resolve } from 'dns';
 
 @Component({
   selector: 'app-root',
@@ -50,6 +57,12 @@ import {
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
+
+  image:any[];
+  newImage:IImage=new Image();
+
+  cropstats:any[];
+  newCropStats:ICropStats = new CropStats();
 
   gaugestats:any[];
   newGaugeStat:IGaugeStats = new GaugeStats();
@@ -84,18 +97,21 @@ export class AppComponent {
     public moistsoilservice:MoistsoilService,private waterfoodcloudservice:BiweeklyWaterFoodService, 
     private waterfoodlocalservice:LocalWaterFood,private watermanagementlocalservice: LocalWaterManagementService, 
     private watermanagementcloudservice: WatermanagementCloudService,
-    private gaugestatscloudservice:GaugedataService, private gaugestatslocalservice:GaugeStatLocalService){
+    private gaugestatscloudservice:GaugedataService, private gaugestatslocalservice:GaugeStatLocalService, 
+    private imagelocalservice:ImageLocalService){
     
     //this is only run when the connection status changes
     this.connectionService.monitor().subscribe(isConnected => {
       this.isConnected = isConnected;
       
+      //if online open dialog and change status
       if (this.isConnected) {
         this.cookieservice.setStatus("online") 
         this.status=localStorage.getItem('Status')
         this.openConnectionStatusDialog();
-        
       }
+
+      //if offline do the same 
       else {
         this.cookieservice.setStatus("offline") 
         this.status=localStorage.getItem('Status')
@@ -104,48 +120,86 @@ export class AppComponent {
     })
   }
   
+  //on page load
   ngOnInit(){
-    console.log(this.location.path())
+    //get page
     this.page=this.location.path()
 
-    //find out which page you are on 
+    //if on app landing page open CA selection Dialog 
     if (this.page===""){
       this.openCASelectionDialog();
     }
+
   } 
 
+  //when page first loads this other online check needs to be done, this.connectionService.monitor()
+  //will not get the connection status at the beginning of the page load
   initial_onlineCheck() {
-      console.log("CA in local storage is "+localStorage.getItem('CA'))
+      //get SELETED CA
       this.selected_CA=localStorage.getItem('CA')
       this.online_status = window.navigator.onLine;
+
+      //if online
       if (this.online_status){
         //push all records into cloud
-        this.pushtocloudfromlocal()
+        this.openLoadingDialog();
+        this.pushtocloudfromlocal().then(result =>{
+          this.closeLoadingDialog();
+        })
+
+        //set statuses
         this.cookieservice.setStatus("online") 
         this.status=localStorage.getItem('Status')
       }      
 
+      //if offline
       else{
+        //set statuses
         this.cookieservice.setStatus("offline") 
         this.status=localStorage.getItem('Status')
       }
 
-      var loginstatus=localStorage.getItem('logged in')
+      //may use this later
+/*       var loginstatus=localStorage.getItem('logged in')
       console.log("loginstatus is "+loginstatus)
       if(loginstatus !== 'true'){
         this.openLoginDialog();
         this.openConnectionStatusDialog();
-      }
+      } */
 }
 
 //this function handles pushing data that is stored in local to the cloud
 //once the app gets back online
-pushtocloudfromlocal(){
+async pushtocloudfromlocal(){
 
-  this.openLoadingDialog()
   console.log("pushing to cloud from local")
 
-  this.downloadallprevs('Gauge Stats');
+  //get all gaugestat records to see if they have already been downloaded
+  this.gaugestatslocalservice.getAll(this.selected_CA)
+    .then(data =>{
+      if (data.length>0){
+        console.log("data full")
+        
+        //get name of CA in a record to verify that CA isn't being changed
+        //and images don't need to be redownloaded
+        var lastCA = data.forEach(record =>{
+          var lastCA=record["CA"]
+
+          return lastCA
+        })
+
+/*         if (lastCA!==this.selected_CA){
+            //user is switching conservation areas, redownload data
+            this.downloadallprevs('Gauge Stats');
+        } */
+
+      }
+
+      else {
+        //only download Gauge Stats if they aren't already downloaded since these rarely change
+        this.downloadallprevs('Gauge Stats');
+      }
+    })
 
   //push all locally stored weather to cloud 
   this.weatherlocalservice.getWeather_all().
@@ -331,8 +385,6 @@ pushtocloudfromlocal(){
         })
 
         this.downloadallprevs('WaterManagement');
-        
-        this.closeLoadingDialog();
     }); 
 }
 
@@ -591,36 +643,119 @@ if (table==='WaterManagement'){
 
   if (table==='Gauge Stats'){
     console.log("in gauge stats")
+
+    //download symbology image 
+    var symbourl='https://firebasestorage.googleapis.com/v0/b/waterfowltool.appspot.com/o/symbology%2FSymbology_Image.JPG?alt=media&token=d746a218-ab78-48dd-8a06-a76b45c41dd0'
+    this.loadImage(symbourl,this.cFunction,this.newImage,this.imagelocalservice,"symbo")
+
     this.dbservice.getUnits(this.selected_CA).subscribe(data => {
       data.forEach(doc => {
         var Unit=doc.id;
-        console.log("Unit Gauge is"+Unit)
+        console.log("...Unit is "+Unit)
         this.dbservice.getPools(this.selected_CA,Unit).subscribe(data => {
           data.forEach(doc => {
             var Pool=doc.id;
+            console.log("...Pool is "+Pool)
             this.dbservice.getWCS(this.selected_CA,Unit,Pool).subscribe(data => {
               data.forEach(doc => {
                 var wcs=doc.id;
+                console.log("...wcs is "+wcs)
                 this.dbservice.getGauges(this.selected_CA,Unit,Pool,wcs).subscribe(data => {
                   data.forEach(doc => {
                     var gauge=doc.id;
-                    console.log("Gauge is"+gauge)
+                    console.log("...Gauge is "+gauge)
+                    //get name of image
                     this.dbservice.getImageName(this.selected_CA,Unit,Pool,wcs,gauge).subscribe(data => {
                         var image_name=data.get('Image_Name')
-                        this.newGaugeStat.CA=this.selected_CA;
-                        this.newGaugeStat.Unit=Unit;
-                        this.newGaugeStat.Pool=Pool;
-                        this.newGaugeStat.Structure=wcs;
-                        this.newGaugeStat.Gauge=gauge;
-                        this.newGaugeStat.Image_Name=image_name
-                        console.log("Image name is"+image_name)
-                        var imageurl = this.gaugestatscloudservice.getImage(this.selected_CA,Pool,image_name).then(imageurl =>{
+
+                        console.log("...Image name is"+image_name)
+
+                        //make a deep copy of the object otherwise one same record will written for every record
+                        let copystat=Object.assign({},this.newGaugeStat);
+
+                        //get the image from the storage bucket
+                        var imageurl = this.gaugestatscloudservice.getImage(this.selected_CA,Unit,Pool,wcs,gauge,image_name).then(imageurl =>{
 
                           console.log(imageurl)
 
-                          this.loadImage(imageurl,this.cFunction,this.newGaugeStat,this.gaugestatslocalservice)
+                          //get stats for the gauge level
+                          this.gaugestatscloudservice.getHabitat(this.selected_CA,Unit,Pool,wcs,gauge).subscribe(data => {
+
+                            copystat.CA=this.selected_CA;
+                            copystat.Unit=Unit;
+                            copystat.Pool=Pool;
+                            copystat.Structure=wcs;
+                            copystat.Gauge=gauge;
+                            copystat.Image_Name=image_name;
+                            copystat.Total_Acres=data.get('Total_Acres')
+                            copystat.Dry=data.get('Dry_not_flooded')
+                            copystat.Sixinch=data.get('Shallowly_Flooded_0_6in')
+                            copystat.Twelveinch=data.get('Shallowly_Flooded_6_12in')
+                            copystat.Eightteeninch=data.get('Shallowly_Flooded_12_18in')
+                            copystat.Flooded=data.get('Full_Flooded_18in')
+
+                            copystat.Crop_Stats=[];
+
+                            console.log("...Dry is "+copystat.Dry)
+
+                            //put the image into the database as a blob
+                            this.loadImage(imageurl,this.cFunction,this.newImage,this.imagelocalservice,image_name) 
+                            
+                            //get the crop names
+                            this.gaugestatscloudservice.getCrops(this.selected_CA,Unit,Pool,wcs,gauge).subscribe(data => {
+
+                                console.log("...snapshot is "+data.docs.length)
+                                var counter=0;
+                                var length=data.docs.length;
+                                //get stats for each crop
+
+                                //if there is crop data (sometimes there wont be)
+                                if (length>0){
+                                  data.forEach(doc =>{
+
+                                    //make a deep copy of the object otherwise one same record will written for every record
+                                    let cropcopy=Object.assign({},this.newCropStats);
+
+                                    console.log("...Crop Name is" + doc.id)
+                                    var crop_name = doc.id
+
+                                    cropcopy.Name = crop_name
+                                    
+                                    this.gaugestatscloudservice.getCropStats(this.selected_CA,Unit,Pool,wcs,gauge,crop_name).subscribe(data => {
+
+                                      console.log("...total acres is "+data.get('Total Acres'))
+                                    
+                                      counter++;
+
+                                      cropcopy.Total_Acres=data.get('Total Acres')
+                                      cropcopy.Dry=data.get('Dry_not_flooded')
+                                      cropcopy.Sixinch=data.get('Shallowly_Flooded_0_6in')
+                                      cropcopy.Twelveinch=data.get('Shallowly_Flooded_6-12in')
+                                      cropcopy.Eightteeninch=data.get('Shallowly_Flooded_12_18in')
+                                      cropcopy.Flooded=data.get('Full_Flooded_18in')
+
+
+                                      console.log("...crop list is "+cropcopy)
+
+                                      console.log("...counter is "+counter)
+                                      
+                                      copystat.Crop_Stats.push(cropcopy)
+
+                                      if (counter === length){
+                                        this.pushGaugeStatRecord(copystat,this.gaugestatslocalservice)
+                                      }
+                                    });
+                                  })
+                                }
+
+                                //if there was no crop data finsih pushing the record
+                                else {
+                                  this.pushGaugeStatRecord(copystat,this.gaugestatslocalservice)
+                                }
+                            });
+                          });
                         });
-                  });
+                    });
                 });
               });
             });
@@ -629,39 +764,46 @@ if (table==='WaterManagement'){
       });
     });
     });
-
+    return "done"
 }
 
 }
 
-loadImage(url,cFunction,newGaugeStat,service){
+pushGaugeStatRecord(copystat,gaugestatslocalservice){
+  gaugestatslocalservice.addGaugeStat(copystat).
+  then((addedGaugeStats: IGaugeStats[]) => {
+  }) 
+}
+
+loadImage(url,cFunction,newImage,service,image_name){
+
+  console.log("image url is "+url)
   var xhttp;
   xhttp=new XMLHttpRequest();
   xhttp.responseType = 'blob';
   xhttp.onreadystatechange = function() {
+    console.log("ready is "+this.readyState)
     if (this.readyState == 4 && this.status == 200) {
-      cFunction(this,newGaugeStat,service);
+      cFunction(this,newImage,service,image_name);
     }
  };
   xhttp.open("GET", url, true);
   xhttp.send();
 }
 
-cFunction(xhttp,newGaugeStat,service){
+cFunction(xhttp,newImage,service,image_name){
   var blob = xhttp.response;
-  newGaugeStat.Image=blob
+  newImage.Image=blob
+  newImage.Image_Name=image_name;
 
-  console.log('new Gauge stat is '+typeof(newGaugeStat.Image))
-  //console.log('new Gauge stat is '+newGaugeStat.Image)
+  console.log('new imageis '+typeof(newImage.Image_Name))
 
   //put gaugestat record into IndexDB
-  service.addGaugeStat(newGaugeStat).
-  then((addedGaugeStats: IGaugeStats[]) => {
-    if (addedGaugeStats.length > 0) {
-      //this.clearNewWaterManagement();
+  service.addImage(newImage).
+  then((addedImages: IImage[]) => {
+    if (addedImages.length > 0) {
     }
   })    
-  //console.log('Blob is '+blob)
 }
 
 clearNewWaterManagement() {

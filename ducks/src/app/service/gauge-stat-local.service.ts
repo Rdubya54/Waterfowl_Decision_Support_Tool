@@ -11,6 +11,15 @@ export class GaugeStatLocalService extends BaseService{
     super();
   }
 
+  getAll(CA){
+    return this.connection.select({
+      from: "Gauge Stats",
+      where:{
+        CA: CA,
+      }
+    });
+  }
+
   getUnits(CA){
     return this.connection.select({
       from: "Gauge Stats",
@@ -19,7 +28,7 @@ export class GaugeStatLocalService extends BaseService{
       },
       order: {
         by: "Unit",
-        type: "desc" 
+        type: "asc" 
     }
     });
   }
@@ -30,7 +39,11 @@ export class GaugeStatLocalService extends BaseService{
       where:{
         CA: CA,
         Unit:Unit,
-      }
+      },
+      order: {
+        by: "Pool",
+        type: "asc" 
+    }
     });
   }
 
@@ -41,7 +54,11 @@ export class GaugeStatLocalService extends BaseService{
         CA: CA,
         Unit:Unit,
         Pool:Pool
-      }
+      },
+      order: {
+        by: "Structure",
+        type: "asc" 
+    }
     });
   }
 
@@ -53,11 +70,15 @@ export class GaugeStatLocalService extends BaseService{
         Unit:Unit,
         Pool:Pool,
         Structure:wcs
-      }
+      },      
+      order: {
+        by: "Gauge",
+        type: "asc" 
+    }
     });
   }
 
-  getImage(CA,Unit,Pool,wcs,gauge){
+  getStats(CA,Unit,Pool,wcs,gauge){
     return this.connection.select({
       from: "Gauge Stats",
       where:{
@@ -71,9 +92,11 @@ export class GaugeStatLocalService extends BaseService{
   }
 
 
-  addGaugeStat(gaugestats: IGaugeStats) {
+  addGaugeStat(gaugestats) {
     /* this.standardizeinputs(watermanagement) */
-    //console.log("C!!!!!!!!!! CA IS "+gaugestats.Image)
+    console.log("image pool service "+gaugestats.Pool)
+    console.log("image wcs service "+gaugestats.Structure)
+    console.log("crop array is "+gaugestats.Crop_Stats)
     return this.connection.insert({
       into: 'Gauge Stats',
       return: true, // as id is autoincrement, so we would like to    get the inserted value

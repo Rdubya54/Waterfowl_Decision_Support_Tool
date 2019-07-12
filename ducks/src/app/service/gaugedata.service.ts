@@ -64,7 +64,13 @@ getImageName(CA,unit,pool,wcs,gauge) {
   .doc(pool).collection('WCS').doc(wcs).collection('Gauges').doc(gauge).collection('Stats').doc('Image_Name').get();
 }
 
-async getImage(CA,pool,image_name){
+getSymboImage(){
+  
+}
+
+
+
+async getImage(CA, unit, pool,wcs, gauge, image_name){
 
   //CHANGE CA NAME FOR NOW
   CA=CA.replace(/ /g,"_");

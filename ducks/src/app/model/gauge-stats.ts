@@ -7,6 +7,13 @@ export class IGaugeStats {
     Gauge:string;
     Image_Name:string;
     Image:object;
+    Total_Acres:string;
+    Dry:string;
+    Sixinch:string;
+    Twelveinch:string;
+    Eightteeninch:string;
+    Flooded:string;
+    Crop_Stats:Array<Object>;
 }
 
 export class GaugeStats implements IGaugeStats {
@@ -18,4 +25,11 @@ export class GaugeStats implements IGaugeStats {
     Structure:string;
     Image_Name:string;
     Image:object;
+    Total_Acres:string;
+    Dry:string;
+    Sixinch:string;
+    Twelveinch:string;
+    Eightteeninch:string;
+    Flooded:string;
+    Crop_Stats:Array<Object>;
 }

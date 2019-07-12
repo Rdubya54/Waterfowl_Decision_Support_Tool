@@ -71,4 +71,10 @@ getImageName(CA,unit,pool,wcs,gauge){
   .doc("Image_Name").get();
 }
 
+getStats(CA,unit,pool,wcs,gauge){
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit)
+  .collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Gauges").doc(gauge).collection('Stats')
+  .doc("Flooded_Habitat_By_Acres").get();
+}
+
 }

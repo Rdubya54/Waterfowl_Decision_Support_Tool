@@ -7,6 +7,7 @@ import {
 
 import {GaugedataService} from 'src/app/service/gaugedata.service';
 import {GaugeStatLocalService} from 'src/app/service/gauge-stat-local.service';
+import {ImageLocalService} from 'src/app/service/image-local.service'
 import { GaugeStats } from 'src/app/model/gauge-stats';
 import { CastExpr } from '@angular/compiler';
 import { AngularFirestoreCollection } from 'angularfire2/firestore';
@@ -18,6 +19,7 @@ import 'firebase/storage';
 import { AppComponent } from 'src/app/app.component';
 
 import {DomSanitizer} from '@angular/platform-browser';
+import { CropStats } from 'src/app/model/crop-stats';
 
 @Component({
   selector: 'app-gauge-stats',
@@ -70,12 +72,14 @@ export class GaugeStatsComponent implements OnInit {
   public isLoading;
 
   public local_image;
+  public local_image_name;
   public object_URL;
   public image_url;
 
   constructor(private gaugeservice:GaugedataService,private gaugeservice_local:GaugeStatLocalService,
-    private firestore:AngularFirestore, private app:AppComponent,public sanitizer:DomSanitizer) {
-    this.getSymbology();
+    private firestore:AngularFirestore, private app:AppComponent,public sanitizer:DomSanitizer,
+    private imageservice_local:ImageLocalService) {
+    
   }
 
   ngOnInit() {
@@ -86,6 +90,8 @@ export class GaugeStatsComponent implements OnInit {
     this.selected_CA=localStorage.getItem("CA")
 
     this.status=localStorage.getItem('Status')
+
+    this.getSymbology();
 
     if (this.status==="online"){
 
@@ -132,7 +138,6 @@ export class GaugeStatsComponent implements OnInit {
     }
 
     if (this.status==="offline"){
-      
 
       this.gaugeservice_local.getPools(CA,unit).then(data => {
         var previous = 'None';
@@ -211,6 +216,9 @@ export class GaugeStatsComponent implements OnInit {
   //fetch stats for the particular gauge for dropdown
   getStats(CA,unit,pool,wcs,gauge){
 
+    this.cropstatus='No Crop Data Available For Pool';
+    this.crop_master_list=[]
+
     if (this.status==="online"){
         this.gaugeservice.getStats(CA,unit,pool,wcs,gauge).subscribe(data => {
 
@@ -227,9 +235,6 @@ export class GaugeStatsComponent implements OnInit {
             this.tweleveinch_per=((this.twelveinch/this.total_acres)*100).toFixed(2)
             this.eighteeninch_per=((this.eighteeninch/this.total_acres)*100).toFixed(2)
             this.eighteenplus_per=((this.eighteenplus/this.total_acres)*100).toFixed(2)
-
-            this.cropstatus='No Crop Data Available For Pool';
-            this.crop_master_list=[]
 
             this.gaugeservice.getImageName(CA,unit,pool,wcs,gauge).subscribe(data => {
               this.image_name=data.get('Image_Name')
@@ -268,18 +273,62 @@ export class GaugeStatsComponent implements OnInit {
     }
 
     if (this.status==="offline"){
-      this.gaugeservice_local.getImage(CA,unit,pool,wcs,gauge).then(data => {
+
+      this.gaugeservice_local.getStats(CA,unit,pool,wcs,gauge).then(data => {
         
         data.forEach(record =>{
-          console.log('success')
-          console.log('image is '+record["Image"])
-          this.local_image=record["Image"];
+          this.total_acres=record['Total_Acres']
+          this.dry=record['Dry']
+          this.sixinch=record['Sixinch']
+          this.twelveinch=record['Twelveinch']
+          this.eighteeninch=record['Eightteeninch']
+          this.eighteenplus=record['Flooded']
+          var crop_stats=record['Crop_Stats']
 
-          var URL = window.URL;
-          this.object_URL = URL.createObjectURL(this.local_image);
+          this.dry_per=((this.dry/this.total_acres)*100).toFixed(2)
+          this.sixinch_per=((this.sixinch/this.total_acres)*100).toFixed(2)
+          this.tweleveinch_per=((this.twelveinch/this.total_acres)*100).toFixed(2)
+          this.eighteeninch_per=((this.eighteeninch/this.total_acres)*100).toFixed(2)
+          this.eighteenplus_per=((this.eighteenplus/this.total_acres)*100).toFixed(2)  
 
+          crop_stats.forEach(crop_stat =>{
 
+            this.cropstatus='';
+            var crop=crop_stat.Name as string;
+            var crop_list=[];
+            this.crop_master_list[crop]=crop_list
+            
+            console.log("crop array offline is "+crop_stat.Name)
 
+            crop_list['Total Acres']=crop_stat.Total_Acres;
+            crop_list['Dry_not_flooded']=crop_stat.Dry
+            crop_list['Shallowly_Flooded_0_6in']=crop_stat.Sixinch
+            crop_list['Shallowly_Flooded_6-12in']=crop_stat.Twelveinch
+            crop_list['Shallowly_Flooded_12_18in']=crop_stat.Eightteeninch
+            crop_list['Full_Flooded_18in']=crop_stat.Flooded
+            this.crop_master_list[crop]=crop_list;
+            this.crop_keys=Object.keys(this.crop_master_list)
+
+            crop_list['Dry_not_flooded %']=((crop_list['Dry_not_flooded']/crop_list['Total Acres'])*100).toFixed(2)
+            crop_list['Shallowly_Flooded_0_6in %']=((crop_list['Shallowly_Flooded_0_6in']/crop_list['Total Acres'])*100).toFixed(2)
+            crop_list['Shallowly_Flooded_6-12in %']=((crop_list['Shallowly_Flooded_6-12in']/crop_list['Total Acres'])*100).toFixed(2)
+            crop_list['Shallowly_Flooded_12_18in %']=((crop_list['Shallowly_Flooded_12_18in']/crop_list['Total Acres'])*100).toFixed(2)
+            crop_list['Full_Flooded_18in %']=((crop_list['Full_Flooded_18in']/crop_list['Total Acres'])*100).toFixed(2)
+
+            this.local_image_name=record["Image_Name"];
+
+            this.imageservice_local.getImage(this.local_image_name).then(data => {
+          
+              data.forEach(record =>{
+                console.log('success')
+                console.log('image is '+record["Image"])
+                this.local_image=record["Image"];
+      
+                var URL = window.URL;
+                this.object_URL = URL.createObjectURL(this.local_image);
+              })
+            });
+          });
         })
       });
     }
@@ -304,15 +353,30 @@ export class GaugeStatsComponent implements OnInit {
 
   //get map symbology image
   getSymbology(){
-    var storage = firebase.storage().ref();
-    var imagepath='symbology/Symbology_Image.JPG'
-    console.log(imagepath)
-    var ref = storage.child(imagepath)
-    ref.getDownloadURL().then(url =>{
-        console.log(url)
-        this.symbo_url=url;
-        console.log(this.image_name)
-    });    
+    if (this.status==="online"){
+      var storage = firebase.storage().ref();
+      var imagepath='symbology/Symbology_Image.JPG'
+      console.log(imagepath)
+      var ref = storage.child(imagepath)
+      ref.getDownloadURL().then(url =>{
+          console.log(url)
+          this.symbo_url=url;
+          console.log(this.image_name)
+      }); 
+    }
+    
+    if (this.status==="offline"){
+      console.log("getting offline symbo")
+      this.imageservice_local.getImage('symbo').then(data => {
+        console.log("cuaght a symbo")
+        data.forEach(record =>{
+          this.local_image=record["Image"];
+          console.log("symbo:"+this.local_image)
+          var URL = window.URL;
+          this.symbo_url = URL.createObjectURL(this.local_image);
+        })
+      });
+    }
   }
 
   onResize(event) {

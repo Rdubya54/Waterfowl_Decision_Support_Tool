@@ -531,6 +531,43 @@ import { IFoodAvail } from '../model/food-avail';
         dataType: DATA_TYPE.String,
        },
        {
+        name: 'Crop_Stats',
+        dataType: DATA_TYPE.Array,
+       }
+      ],
+    };
+    const tblImages: ITable = {
+      name: 'Images',
+      columns: [{
+        name: 'id',
+        primaryKey: true,
+        autoIncrement: true
+       },
+       {
+        name: 'CA',
+        dataType: DATA_TYPE.String,
+       },
+       {
+        name: 'Unit',
+        dataType: DATA_TYPE.String
+       },
+       {
+        name: 'Pool',
+        dataType: DATA_TYPE.String,
+       },
+       {
+        name: 'Structure',
+        dataType: DATA_TYPE.String
+       },
+       {
+        name: 'Gauge',
+        dataType: DATA_TYPE.String,
+       },
+       {
+        name: 'Image_Name',
+        dataType: DATA_TYPE.String,
+       },
+       {
         name: 'Image',
         dataType: DATA_TYPE.Object,
        }
@@ -540,7 +577,7 @@ import { IFoodAvail } from '../model/food-avail';
 
    const dataBase: IDataBase = {
     name: this.dbname,
-    tables: [tblWaterManagement,tblWeather,tblWaterFood,tblFoodAvail,tblGaugeStats]
+    tables: [tblWaterManagement,tblWeather,tblWaterFood,tblFoodAvail,tblGaugeStats,tblImages]
    };
    return dataBase;
   }

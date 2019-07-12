@@ -7,8 +7,8 @@
       <ng-container>
           <mat-spinner *ngIf="this.isLoading"></mat-spinner>
           <div *ngIf="!this.isLoading"><img src={{image_url}}></div>
-          <img [src]=this.sanitizer.bypassSecurityTrustUrl(this.object_URL)>
-          <img src={{symbo_url}}>
+          <div *ngIf="this.status==='offline'"><img [src]=this.sanitizer.bypassSecurityTrustUrl(this.object_URL)></div>
+          <div *ngIf="!this.isLoading"><img [src]=this.sanitizer.bypassSecurityTrustUrl(this.symbo_url)></div>
           
         </ng-container>
   </mat-card>
