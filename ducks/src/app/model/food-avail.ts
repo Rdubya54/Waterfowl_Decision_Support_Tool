@@ -2,11 +2,11 @@ export class IFoodAvail {
 
     id?: number;
     CA:string;
-    unit:string;
-    pool:string;
-    structure:string;
-    date:string;
-    sort_time:string
+    Unit:string;
+    Pool:string;
+    WCS:string;
+    Date:string;
+    Sort_time:string
     corn_unharv:string;
     corn_harv:string;
     corn_yield:string;
@@ -49,11 +49,11 @@ export class IFoodAvail {
 export class FoodAvail implements IFoodAvail {
     id?: 0;
     CA:"";
-    unit:"";
-    pool:"";
-    structure: "";
-    date:"";
-    sort_time:"";
+    Unit:"";
+    Pool:"";
+    WCS: "";
+    Date:"";
+    Sort_time:"";
     corn_unharv:"";
     corn_harv:"";
     corn_yield:"";

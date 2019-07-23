@@ -16,23 +16,7 @@ constructor(private firestore:AngularFirestore) {
 }
 
 
-getCAs() {
-  return this.firestore.collection('Conservation_Areas').get();    
-}
 
-getUnits(CA) {
-  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").get();
-}
-
-getPools(CA,unit) {
-  console.log("selected CA is "+CA)
-  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection("Pools").get();
-}
-
-getWCS(CA,unit,pool) {
-  console.log("selected pool is "+pool)
-  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection("Pools").doc(pool).collection("WCS").get();
-}
 
 getGauge(CA,unit,pool,wcs) {
   console.log("selected wcs is "+wcs)

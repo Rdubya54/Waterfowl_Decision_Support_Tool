@@ -9,7 +9,7 @@ export class BiweeklyWaterFoodService {
 
   constructor(private firestore:AngularFirestore) { }
 
-   addWaterFood(waterfood:IWaterFood) {
+   add_WaterFood_record(waterfood:IWaterFood) {
     console.log(waterfood)
 
     return this.firestore.collection('Conservation_Areas').doc(waterfood.CA).collection("Units")
@@ -53,7 +53,7 @@ export class BiweeklyWaterFoodService {
   }
 
   //returns the last waterfood record pushed to cloud for a given pool (but not the fields)
-  getprevWaterFood(CA,unit,pool,sort_time){
+  get_prev_WaterFood_record(CA,unit,pool,sort_time){
 
     //WHEN you need the last two for the pool at a specific time (used when viewing old records)
     if (sort_time){
@@ -71,8 +71,15 @@ export class BiweeklyWaterFoodService {
     }
   }
 
-  getWaterFood(CA,unit,pool,record){
+  get_WaterFood_record(CA,unit,pool,record){
     return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit).collection("Pools")
     .doc(pool).collection("Biweekly Water and Food Availability").doc(record).get();
+  }
+
+  get_available_Dates(CA,unit,pool) {
+    console.log("selected pool is "+pool)
+    return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit)
+    .collection("Pools").doc(pool).collection("Biweekly Water and Food Availability")
+    .get();
   }
 }

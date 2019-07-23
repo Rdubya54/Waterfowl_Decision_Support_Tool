@@ -10,7 +10,7 @@ export class WeatherCloudService {
 
   constructor(public firestore: AngularFirestore) { }
 
-  addWeather(Weather:IWeather){
+  add_Weather_record(Weather:IWeather){
     return this.firestore.collection('Conservation_Areas').doc(Weather.CA)
     .collection("Daily Weather Observation").doc(Weather.date).set({
         CA:Weather.CA,
@@ -26,15 +26,21 @@ export class WeatherCloudService {
     });
   }
 
-  //get Weather
-  getWeather(CA,date){
+  //fetch a weather record
+  get_Weather_record(CA,date){
     return this.firestore.collection('Conservation_Areas').doc(CA).collection("Daily Weather Observation").doc(date).get();
   }
 
   //get prev weather for offline tree walking purposes
-  getprevWeather(CA){
+  get_prev_Weather_record(CA){
 
       return this.firestore.collection('Conservation_Areas').doc(CA).collection("Daily Weather Observation", 
       ref=>ref.orderBy('sort_time', 'desc').limit(1)).get();
+  }
+
+  
+  get_available_Dates(CA){
+    return this.firestore.collection('Conservation_Areas').doc(CA).collection("Daily Weather Observation",ref=>ref.orderBy('sort_time', 'desc'))
+    .get();
   }
 }

@@ -28,8 +28,8 @@
             </div> 
             <div> 
                 <mat-form-field>
-                    <mat-select placeholder="Water Control Structure" [(ngModel)]="selected_wcs" (ngModelChange)="getWatermanagement(selected_CA,selected_unit,selected_Pool,$event,'none')">
-                    <mat-option *ngFor="let x of wcs_list" [value]="x">
+                        <mat-select placeholder="Water Control Structure" [(ngModel)]="selected_wcs" (ngModelChange)="getDates(selected_CA,selected_unit,selected_Pool,$event)">
+                        <mat-option *ngFor="let x of wcs_list" [value]="x">
                         {{x}}
                     </mat-option>
                     </mat-select>
@@ -37,7 +37,7 @@
             </div> 
             <div> 
                 <mat-form-field>
-                    <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="getWatermanagement(selected_CA,selected_unit,selected_Pool,selected_wcs,$event)">
+                    <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="populate_page_with_data(selected_CA,selected_unit,selected_Pool,selected_wcs,$event)">
                     <mat-option *ngFor="let x of date_list" [value]="x">
                         {{x}}
                     </mat-option>
@@ -45,18 +45,27 @@
                 </mat-form-field>
             </div>
 
+            <div fxLayout="row" fxLayoutGap="0.5%">
+                <div fxFlex="50%">
+                </div>
+                <div fxFleX="50%">  
+                    <div>
+                        <button mat-raised-button color="primary" (click)="openBottomSheet()">Activity Last 7 Days</button>
+                    </div>
+                </div>
+            </div>
         </mat-card>
     </mat-grid-tile>
 </mat-grid-list>
 
 
-  <mat-grid-list [cols]="breakpoint" rowHeight="700px" (window:resize)="onResize($event)">
+  <mat-grid-list [cols]="breakpoint" rowHeight="1000px" (window:resize)="onResize($event)">
   <mat-grid-tile>
   <mat-card class="example-container">
   <div fxLayout="row"  fxLayoutGap="5%">
       <div fxFlex="70%"> 
           <mat-form-field class="prev" *ngIf="data_length>0">  
-          <input type="text" [(ngModel)]="prev_data_master[0]['Date']" [disabled]='true' matInput placeholder="Last Record Date">
+          <input type="text" [(ngModel)]="this.prev_data_master[0]['Date']" [disabled]='true' matInput placeholder="Last Record Date">
           </mat-form-field>
       </div> 
   </div>
@@ -179,18 +188,9 @@
 </mat-card>
 </mat-grid-tile>
 
-<mat-grid-tile>
+<mat-grid-tile *ngIf="this.mode==='create record'">
 <mat-card>
 
-        <div fxLayout="row" fxLayoutGap="0.5%">
-            <div fxFlex=75%>
-            </div>
-            <div fxFleX="25%">  
-                <div>
-                    <button mat-raised-button color="primary" (click)="openBottomSheet()">Activity Last 7 Days</button>
-                </div>
-            </div>
-        </div>
 
 
         <div fxLayout="column" fxLayoutGap="0.5%">
@@ -232,9 +232,12 @@
                     </mat-form-field>
                   </div> 
             </div>
-              <button *ngIf="this.status === 'online';"  mat-raised-button color="primary" (click)="addWaterManagement(selected_CA,selected_unit,selected_Pool,selected_wcs,selected_date)">Push to Cloud</button>
-              <button *ngIf="this.status === 'offline';" mat-raised-button color="primary" (click)="localaddWatermanagement('new')">Push to Local</button>
+<!--               <button *ngIf="this.status === 'online';"  mat-raised-button color="primary" (click)="addWaterManagement(selected_CA,selected_unit,selected_Pool,selected_wcs,selected_date)">Push to Cloud</button> -->
+<!--               <button *ngIf="this.status === 'offline';" mat-raised-button color="primary" (click)="localaddWatermanagement('new')">Push to Local</button> -->
+
+                <button mat-raised-button color="primary" (click)="addData()">Submit</button>
               <button mat-raised-button color="primary" (click)="clearNewWaterManagement()">Clear Fields</button>
+              <button mat-raised-button color="primary" (click)="DeleteRecord(this.newWaterManagement)">Delete Record</button>
         </mat-card>
 </mat-grid-tile>       
 

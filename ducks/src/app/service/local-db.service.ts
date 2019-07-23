@@ -40,7 +40,7 @@ export class LocalDbService extends BaseService{
       },
       order: {
         by: "Unit",
-        type: "desc" 
+        type: "asc" 
     }
 
     });
@@ -55,7 +55,7 @@ export class LocalDbService extends BaseService{
       },
       order: {
         by: "Pool",
-        type: "desc" 
+        type: "asc" 
     }
 
     });

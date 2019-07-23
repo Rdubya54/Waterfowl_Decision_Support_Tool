@@ -3,7 +3,7 @@ export class IGaugeStats {
     CA:string;
     Unit:string;
     Pool:string;
-    Structure:string;
+    WCS:string;
     Gauge:string;
     Image_Name:string;
     Image:object;
@@ -22,7 +22,7 @@ export class GaugeStats implements IGaugeStats {
     Unit:string;
     Pool:string;
     Gauge:string;
-    Structure:string;
+    WCS:string;
     Image_Name:string;
     Image:object;
     Total_Acres:string;

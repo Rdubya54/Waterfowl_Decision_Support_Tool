@@ -36,7 +36,7 @@ getWCS(CA,unit,pool) {
 getDates(CA,unit,pool,wcs) {
   console.log("selected pool is "+pool)
   return this.firestore.collection('Conservation_Areas').doc(CA).collection("Units").doc(unit)
-  .collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Water Management")
+  .collection("Pools").doc(pool).collection("WCS").doc(wcs).collection("Water Management",ref=>ref.orderBy('Sort_time', 'desc'))
   .get();
 }
 
@@ -55,7 +55,7 @@ getDates_waterfood(CA,unit,pool) {
 }
 
 getDates_weather(CA){
-  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Daily Weather Observation")
+  return this.firestore.collection('Conservation_Areas').doc(CA).collection("Daily Weather Observation",ref=>ref.orderBy('sort_time', 'desc'))
   .get();
 }
 

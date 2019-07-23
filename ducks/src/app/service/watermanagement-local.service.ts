@@ -32,28 +32,44 @@ import { IWatermanagement } from '../model/watermanagement';
     Pool=Pool.replace(/ /g,"_");
     watermanagement.Pool=Pool;    
 
-    var Structure=watermanagement.Structure.toUpperCase();
+    var Structure=watermanagement.WCS.toUpperCase();
     Structure=Structure.replace(/ /g,"_");
-    watermanagement.Structure=Structure;    
+    watermanagement.WCS=Structure;    
 
   }
 
+  get_available_Dates(CA,Unit,Pool,wcs){
+    return this.connection.select({
+      from: "WaterManagement",
+      where:{
+        CA: CA,
+        Unit:Unit,
+        Pool:Pool,
+        WCS:wcs
+      },
+      order: {
+        by: "Sort_time",
+        type: "desc" 
+    }
+    });
+  }
 
-  getWaterManagment() {
+  get_all_WaterManagment_records() {
     return this.connection.select({
       from: 'WaterManagement'
     });
   }
 
-  getprevWaterManagements(CA,unit,pool,wcs){
+  get_prev_2_WaterManagement_records(CA,unit,pool,wcs){
     console.log(wcs)
     return this.connection.select({
       from: "WaterManagement",
+      limit:2,
       where:{
         CA: CA,
         Unit:unit,
         Pool:pool,
-        Structure: wcs,
+        WCS: wcs,
       },
       order: {
         by: "Sort_time",
@@ -63,27 +79,7 @@ import { IWatermanagement } from '../model/watermanagement';
     });
   }
 
-  getpast7WaterManagement(CA,unit,pool,wcs){
-    console.log(wcs)
-    return this.connection.select({
-      from: "WaterManagement",
-      limit:7,
-      where:{
-        CA: CA,
-        Unit:unit,
-        Pool:pool,
-        Structure: wcs,
-      },
-      order: {
-        by: "Sort_time",
-        type: "desc" 
-    }
-
-    });
-  }
-
-
-  getprevWaterManagement_forupdate(CA,unit,pool,wcs,date){
+  get_WaterManagement_record(CA,unit,pool,wcs,date){
     console.log(wcs)
     return this.connection.select({
       from: "WaterManagement",
@@ -91,7 +87,7 @@ import { IWatermanagement } from '../model/watermanagement';
         CA: CA,
         Unit:unit,
         Pool:pool,
-        Structure: wcs,
+        WCS: wcs,
         Date:date
       },
       order: {
@@ -102,7 +98,26 @@ import { IWatermanagement } from '../model/watermanagement';
     });
   }
 
-  addWaterManagement(watermanagement: IWatermanagement) {
+  get_prev_7_WaterManagement_records(CA,unit,pool,wcs){
+    console.log(wcs)
+    return this.connection.select({
+      from: "WaterManagement",
+      limit:7,
+      where:{
+        CA: CA,
+        Unit:unit,
+        Pool:pool,
+        WCS: wcs,
+      },
+      order: {
+        by: "Sort_time",
+        type: "asc" 
+    }
+
+    });
+  }
+
+  add_WaterManagement_record(watermanagement: IWatermanagement) {
     /* this.standardizeinputs(watermanagement) */
     console.log("C!!!!!!!!!! CA IS "+watermanagement.CA)
     return this.connection.insert({
@@ -112,7 +127,7 @@ import { IWatermanagement } from '../model/watermanagement';
     });
   }
   
-  deleteWaterManagement(the_id){
+  delete_WaterManagement_record(the_id){
     return this.connection.remove({
       from: 'WaterManagement',
       where: {
@@ -120,71 +135,4 @@ import { IWatermanagement } from '../model/watermanagement';
       }
     });
   }
-
-
-  getCAs() {
-    return this.connection.select({
-      from: 'WaterManagement'
-    });
-  }
-
-  getUnits(CA){
-    return this.connection.select({
-      from: "WaterManagement",
-      where:{
-        CA: CA,
-      },
-      order: {
-        by: "Unit",
-        type: "desc" 
-    }
-
-    });
-  }
-
-  getPools(CA,Unit){
-    return this.connection.select({
-      from: "WaterManagement",
-      where:{
-        CA: CA,
-        Unit:Unit,
-      },
-      order: {
-        by: "Pool",
-        type: "desc" 
-    }
-    });
-  }
-
-  getWCS(CA,Unit,Pool){
-    return this.connection.select({
-      from: "WaterManagement",
-      where:{
-        CA: CA,
-        Unit:Unit,
-        Pool:Pool
-      },
-      order: {
-        by: "WCS",
-        type: "desc" 
-    }
-    });
-  }
-
-  getDates(CA,Unit,Pool,wcs){
-    return this.connection.select({
-      from: "WaterManagement",
-      where:{
-        CA: CA,
-        Unit:Unit,
-        Pool:Pool,
-        Structure:wcs
-      },
-      order: {
-        by: "Sort_time",
-        type: "desc" 
-    }
-    });
-  }
-
 }

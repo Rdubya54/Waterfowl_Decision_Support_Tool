@@ -20,27 +20,21 @@ export class WeatherLocalService extends BaseService {
     super();
   }
 
-  getCAs() {
-    return this.connection.select({
-      from: 'Daily_Weather_Observations'
-    });
-  }
-
-  getDates(CA){
+  get_available_Dates(CA){
     return this.connection.select({
       from: 'Daily_Weather_Observations',
       where:{
         CA: CA,
       },
       order: {
-        by: "sort_time",
+        by: "Sort_time",
         type: "desc" 
     }
 
     });
   }
 
-  getWeather(CA,date) {
+  get_Weather_record(CA,date) {
     return this.connection.select({
       from: 'Daily_Weather_Observations',
       where:{
@@ -48,20 +42,20 @@ export class WeatherLocalService extends BaseService {
         date:date
       },
       order: {
-        by: "sort_time",
+        by: "Sort_time",
         type: "desc" 
     }
     });
   }
 
   
-  getWeather_all() {
+  get_all_Weather_records() {
     return this.connection.select({
       from: 'Daily_Weather_Observations'
     });
   }
 
-  addWeather(weather: IWeather) {
+  add_Weather_record(weather: IWeather) {
     return this.connection.insert({
       into: 'Daily_Weather_Observations',
       return: true, // as id is autoincrement, so we would like to    get the inserted value
@@ -69,7 +63,7 @@ export class WeatherLocalService extends BaseService {
     });
   }
   
-  deleteWeather(the_id){
+  delete_Weather_record(the_id){
     return this.connection.remove({
       from: 'Daily_Weather_Observations',
       where: {

@@ -4,7 +4,7 @@ export class IWatermanagement {
         CA:string;
         Unit:string;
         Pool:string;
-        Structure:string;
+        WCS:string;
         Date: string;
         Elevation: string;
         Gate_manipulation:string;
@@ -19,6 +19,9 @@ export class IWatermanagement {
         Notes:string;
         Reasons:string;
         Sort_time:string;
+        Update_time:string;
+        UID:string;
+        Delete:number;
 }
 
 export class Watermanagement implements IWatermanagement {
@@ -26,7 +29,7 @@ export class Watermanagement implements IWatermanagement {
     CA:'';
     Unit:'';
     Pool:'';
-    Structure:'';
+    WCS:'';
     Date:'';
     Elevation: '';
     Gate_manipulation:'';
@@ -41,4 +44,7 @@ export class Watermanagement implements IWatermanagement {
     Notes:'';
     Reasons:'';
     Sort_time:'';
+    Update_time:'';
+    UID:'';
+    Delete:0;
 }

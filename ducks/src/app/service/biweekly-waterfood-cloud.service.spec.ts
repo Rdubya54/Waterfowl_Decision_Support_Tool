@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BiweeklyWaterFoodService } from './waterfood-cloud.service';
+import { BiweeklyWaterFoodService } from './biweekly-waterfood-cloud.service';
 
 describe('BiweeklyWaterFoodService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));

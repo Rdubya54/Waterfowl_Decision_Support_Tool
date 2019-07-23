@@ -6,8 +6,7 @@ import {ChangeDetectorRef, OnDestroy} from '@angular/core';
 import {MatBottomSheet, MatBottomSheetRef} from '@angular/material';
 import {AppComponent} from 'src/app/app.component';
 
-import {dbService} from 'src/app/service/db.service';
-import {LocalDbService} from 'src/app/service/local-db.service'
+import {DropDownMenuDataService} from 'src/app/service/drop-down-menu-data.service';
 import {MoistsoilService} from 'src/app/service/moistsoil.service'
 import {FoodAvailCloudService} from 'src/app/service/food-avail-cloud.service';
 
@@ -42,28 +41,22 @@ export class FoodAvailComponent implements OnInit {
   public selected_wcs;
   public date_list: string[]=["Create New Record"];
   public selected_date;
-  public prev_data:string[]=[];
-
-  public previous_records;
-  public second_previous_records;
 
   public status;
+  public mode;
+
+  public local_table ="Fall_Food_Availability"
+
   public placeholderid;
 
   public buttonName: any = true;
   toggleActive:boolean = false;
 
   constructor(private comp:AppComponent,private localService: FoodAvailLocalService,
-    private cloudservice: FoodAvailCloudService, private dbservice:dbService,private dbservice_local:LocalDbService,private firebase: AngularFireDatabase,
-    private bottomSheet: MatBottomSheet,public moistsoilservice:MoistsoilService) {
-      this.localservice = localService;
-      this.moistsoilservice=moistsoilservice;
-      this.dbservice=dbservice;
-  }
+    private cloudservice: FoodAvailCloudService, private firebase: AngularFireDatabase,
+    private bottomSheet: MatBottomSheet,public moistsoilservice:MoistsoilService, private dropdownservice:DropDownMenuDataService) {
 
-  //opens Moist Soil Calculator
-  openBottomSheet(): void {
-    this.bottomSheet.open(BottomSheetOverviewExampleSheet);
+      this.moistsoilservice=moistsoilservice
   }
 
   ngOnInit() {
@@ -76,37 +69,22 @@ export class FoodAvailComponent implements OnInit {
 
     this.status=localStorage.getItem('Status')
 
-  
-  //if app is online push any locally cached data to the cloud
-  if (this.status==="online"){
-    this.dbservice.getUnits(this.selected_CA).subscribe(data => {
-      this.unit_list=[];
-      this.Pool_list=[];
-      this.wcs_list=[];
-      data.forEach(doc => {
-        this.unit_list.push(doc.id)
-      });
-  });
-
-  }
-
-  else if (this.status==="offline"){
-    console.log("GETTING CAs")
-    this.localService.getUnits(this.selected_CA).then(data => {
+    this.dropdownservice.getUnits(this.local_table,this.selected_CA).then(data => {
       this.foodavails = data;
 
       var previous='None'
 
       this.foodavails.forEach(record =>{
-          var unit=record["unit"]
+          var unit=record["Unit"]
 
           if (unit !== previous){
             this.unit_list.push(unit)
             previous=unit
           }
       });
+
+      this.unit_list.push("KINGS LAKE")
     });
-  }
 }
 
 
@@ -114,23 +92,13 @@ export class FoodAvailComponent implements OnInit {
 getPools(CA,unit){
   this.Pool_list=[];
 
-  if (this.status==="online"){
-  this.dbservice.getPools(CA,unit).subscribe(data => {
-    data.forEach(doc => {
-      this.Pool_list.push(doc.id)
-    });
-  });
-  }
-
-  else if (this.status==="offline"){
-
     var previous = 'None';
 
-    this.localService.getPools(CA,unit).then(data => {
+    this.dropdownservice.getPools(this.local_table,CA,unit).then(data => {
       this.foodavails = data;
 
       this.foodavails.forEach(record =>{
-          var pool=record["pool"]
+          var pool=record["Pool"]
 
           if (pool !== previous){
             this.Pool_list.push(pool)
@@ -138,30 +106,20 @@ getPools(CA,unit){
           }
       });
     });
-  }
+
+    this.Pool_list.push("KL_2")
 }
 
 // fetches list of available strucutres in pool for dropdown
 getWCS(CA,unit,pool){
   this.wcs_list=[];
 
-  if (this.status==="online"){
-  this.dbservice.getWCS(CA,unit,pool).subscribe(data => {
-    data.forEach(doc => {
-      this.wcs_list.push(doc.id)
-    });
-  });
-  }
-  else if (this.status==="offline"){
-
-    
-
-    this.localService.getWCS(CA,unit,pool).then(data => {
+    this.dropdownservice.getWCS(this.local_table,CA,unit,pool).then(data => {
       var previous = 'None';
       this.foodavails = data;
 
       this.foodavails.forEach(record =>{
-          var wcs=record["structure"]
+          var wcs=record["WCS"]
 
           if (wcs !== previous){
             console.log("wcs is "+wcs)
@@ -170,16 +128,17 @@ getWCS(CA,unit,pool){
           }
       });
     });
-  }
+
+    this.wcs_list.push("POOL_2A_FLAP_GATE")
+
 }
 
 // fetches list of available record dates for pool for dropdown
 getDates(CA,unit,pool,wcs){
   this.date_list=["Create New Record"];
-  console.log('locatin:'+location)
 
   if (this.status==="online"){
-  this.dbservice.getDates_foodavail(CA,unit,pool,wcs).subscribe(data => {
+  this.cloudservice.get_available_Dates(CA,unit,pool,wcs).subscribe(data => {
     data.forEach(doc => {
       this.date_list.push(doc.id)
     });
@@ -187,33 +146,45 @@ getDates(CA,unit,pool,wcs){
   }
 
   else if (this.status==="offline"){
-  this.localService.getDates(CA,unit,pool,wcs).then(data => {
+  this.localService.get_available_Dates(CA,unit,pool,wcs).then(data => {
     data.forEach(doc => {
-      console.log(doc['date'])
-      this.date_list.push(doc['date'])
+      console.log(doc['Date'])
+      this.date_list.push(doc['Date'])
     });
   });
   }
 }
 
-//read a foodavail record
-getFoodAvail(CA,Unit,Pool,WCS,date){
+//this function fetches previous records and displays them on page.
+//if app is in create record mode this function essetinally does nothing,
+//if app is in update record mode, records for updating are fetched 
+populate_page_with_data(CA,unit,pool,wcs,date){
 
-  //when you are only getting old data
-  if (this.selected_date!=='Create New Record'){
+  //put app in create record mode if Create New Record is selected
+  if (date==="Create New Record"){
+    this.mode = 'create record'
+    //clear data on page
+    this.clearNewFoodAvail()
+    this.moistsoilservice.clearNewMoistSoilData();
+  }
 
-    //populate page with old record
+  //put app in update record mode if a date/previous entry is selected
+  else {
+    this.mode = 'update record'
+  }
+
+  if (this.mode === "update record"){
+
     if (this.status==="online"){
-      console.log('fetching cloud')
-      this.cloudservice.getFoodAvail(CA,Unit,Pool,WCS,date).
+      this.cloudservice.get_FoodAvail_record(CA,unit,pool,wcs,date).
       subscribe(data=>{
         console.log(data)
         this.newFoodAvail.CA=data.get('CA')
-        this.newFoodAvail.unit=data.get('unit')
-        this.newFoodAvail.pool=data.get('pool')
-        this.newFoodAvail.structure=data.get('structure')
-        this.newFoodAvail.date=data.get('date')
-        this.newFoodAvail.sort_time=data.get('sort_time')
+        this.newFoodAvail.Unit=data.get('Unit')
+        this.newFoodAvail.Pool=data.get('Pool')
+        this.newFoodAvail.WCS=data.get('WCS')
+        this.newFoodAvail.Date=data.get('Date')
+        this.newFoodAvail.Sort_time=data.get('Sort_time')
         this.newFoodAvail.corn_unharv=data.get('corn_unharv')
         this.newFoodAvail.corn_harv=data.get('corn_harv')
         this.newFoodAvail.corn_yield=data.get('corn_yield')
@@ -270,123 +241,109 @@ getFoodAvail(CA,Unit,Pool,WCS,date){
         this.moistsoilservice.newMoistSoil.sedge_output=data.get('sedge_output')
         this.moistsoilservice.newMoistSoil.rush_output=data.get('rush_output')
 
-      })
-    }
+      });
+  }
 
-      //populate page with old record
-     else if (this.status==="offline"){
-      this.localservice.getFoodAvail_selected(CA,Unit,Pool,WCS,date).
-        then(data => {
-            this.foodavails = data;
-            this.foodavails.forEach(record =>{
-              console.log(record)
-              this.placeholderid=record["id"]
-              this.newFoodAvail.CA=record['CA']
-              this.newFoodAvail.unit=record['unit']
-              this.newFoodAvail.pool=record['pool']
-              this.newFoodAvail.structure=record['structure']
-              this.newFoodAvail.date=record['date']
-              this.newFoodAvail.sort_time=record['sort_time']
-              this.newFoodAvail.corn_unharv=record['corn_unharv']
-              this.newFoodAvail.corn_harv=record['corn_harv']
-              this.newFoodAvail.corn_yield=record['corn_yield']
-              this.newFoodAvail.corn_yield_field=record['corn_yield_field']
-              this.newFoodAvail.beans_unharv=record['beans_unharv']
-              this.newFoodAvail.beans_harv=record['beans_harv']
-              this.newFoodAvail.beans_yield=record['beans_yield']
-              this.newFoodAvail.beans_yield_field=record['beans_yield_field']
-              this.newFoodAvail.milo_unharv=record['milo_unharv']
-              this.newFoodAvail.milo_harv=record['milo_harv']
-              this.newFoodAvail.milo_yield=record['milo_yield']
-              this.newFoodAvail.milo_yield_field=record['milo_yield_field']
-              this.newFoodAvail.wheat_green=record['wheat_green']
-              this.newFoodAvail.wheat_harv=record['wheat_harv']
-              this.newFoodAvail.soil_standing=record['soil_standing']
-              this.newFoodAvail.soil_mowed=record['soil_mowed']
-              this.newFoodAvail.soil_disced=record['soil_disced']
-              this.newFoodAvail.millet_output=record['millet_output']
-              this.newFoodAvail.foxtail_output=record['foxtail_output']
-              this.newFoodAvail.rice_cut_output=record['rice_cut_output']
-              this.newFoodAvail.panic_grass_output=record['panic_grass_output']
-              this.newFoodAvail.crabgrass_output=record['crabgrass_output']
-              this.newFoodAvail.sprangletop_output=record['sprangletop_output']
-              this.newFoodAvail.lapathifolium_output=record['lapathifolium_output']
-              this.newFoodAvail.pennsylvanicum_output=record['pennsylvanicum_output']
-              this.newFoodAvail.coccineum_output=record['coccineum_output']
-              this.newFoodAvail.water_pepper_output=record['water_pepper_output']
-              this.newFoodAvail.pigweed_output=record['pigweed_output']
-              this.newFoodAvail.bidens_output=record['bidens_output']
-              this.newFoodAvail.other_seed_output=record['other_seed_output']
-              this.newFoodAvail.open_water_output=record['open_water_output']
-              this.newFoodAvail.recently_disced_output=record['recently_disced_output']
-              this.newFoodAvail.chufa_output=record['chufa_output']
-              this.newFoodAvail.redroot_output=record['redroot_output']
-              this.newFoodAvail.sedge_output=record['sedge_output']
-              this.newFoodAvail.rush_output=record['rush_output'] 
-              this.moistsoilservice.newMoistSoil.millet_output=record['millet_output']
-              this.moistsoilservice.newMoistSoil.foxtail_output=record['foxtail_output']
-              this.moistsoilservice.newMoistSoil.rice_cut_output=record['rice_cut_output']
-              this.moistsoilservice.newMoistSoil.panic_grass_output=record['panic_grass_output']
-              this.moistsoilservice.newMoistSoil.crabgrass_output=record['crabgrass_output']
-              this.moistsoilservice.newMoistSoil.sprangletop_output=record['sprangletop_output']
-              this.moistsoilservice.newMoistSoil.lapathifolium_output=record['lapathifolium_output']
-              this.moistsoilservice.newMoistSoil.pennsylvanicum_output=record['pennsylvanicum_output']
-              this.moistsoilservice.newMoistSoil.coccineum_output=record['coccineum_output']
-              this.moistsoilservice.newMoistSoil.water_pepper_output=record['water_pepper_output']
-              this.moistsoilservice.newMoistSoil.pigweed_output=record['pigweed_output']
-              this.moistsoilservice.newMoistSoil.bidens_output=record['bidens_output']
-              this.moistsoilservice.newMoistSoil.other_seed_output=record['other_seed_output']
-              this.moistsoilservice.newMoistSoil.open_water_output=record['open_water_output']
-              this.moistsoilservice.newMoistSoil.recently_disced_output=record['recently_disced_output']
-              this.moistsoilservice.newMoistSoil.chufa_output=record['chufa_output']
-              this.moistsoilservice.newMoistSoil.redroot_output=record['redroot_output']
-              this.moistsoilservice.newMoistSoil.sedge_output=record['sedge_output']
-              this.moistsoilservice.newMoistSoil.rush_output=record['rush_output']
-            });
+  else if (this.status==="offline"){
+    this.localService.get_selected_FoodAvail_record(CA,unit,pool,wcs,date).
+    then(data => {
+        this.foodavails = data;
+        this.foodavails.forEach(record =>{
+          console.log(record)
+          this.placeholderid=record["id"]
+          this.newFoodAvail.CA=record['CA']
+          this.newFoodAvail.Unit=record['Unit']
+          this.newFoodAvail.Pool=record['Pool']
+          this.newFoodAvail.WCS=record['WCS']
+          this.newFoodAvail.Date=record['Date']
+          this.newFoodAvail.Sort_time=record['sort_time']
+          this.newFoodAvail.corn_unharv=record['corn_unharv']
+          this.newFoodAvail.corn_harv=record['corn_harv']
+          this.newFoodAvail.corn_yield=record['corn_yield']
+          this.newFoodAvail.corn_yield_field=record['corn_yield_field']
+          this.newFoodAvail.beans_unharv=record['beans_unharv']
+          this.newFoodAvail.beans_harv=record['beans_harv']
+          this.newFoodAvail.beans_yield=record['beans_yield']
+          this.newFoodAvail.beans_yield_field=record['beans_yield_field']
+          this.newFoodAvail.milo_unharv=record['milo_unharv']
+          this.newFoodAvail.milo_harv=record['milo_harv']
+          this.newFoodAvail.milo_yield=record['milo_yield']
+          this.newFoodAvail.milo_yield_field=record['milo_yield_field']
+          this.newFoodAvail.wheat_green=record['wheat_green']
+          this.newFoodAvail.wheat_harv=record['wheat_harv']
+          this.newFoodAvail.soil_standing=record['soil_standing']
+          this.newFoodAvail.soil_mowed=record['soil_mowed']
+          this.newFoodAvail.soil_disced=record['soil_disced']
+          this.newFoodAvail.millet_output=record['millet_output']
+          this.newFoodAvail.foxtail_output=record['foxtail_output']
+          this.newFoodAvail.rice_cut_output=record['rice_cut_output']
+          this.newFoodAvail.panic_grass_output=record['panic_grass_output']
+          this.newFoodAvail.crabgrass_output=record['crabgrass_output']
+          this.newFoodAvail.sprangletop_output=record['sprangletop_output']
+          this.newFoodAvail.lapathifolium_output=record['lapathifolium_output']
+          this.newFoodAvail.pennsylvanicum_output=record['pennsylvanicum_output']
+          this.newFoodAvail.coccineum_output=record['coccineum_output']
+          this.newFoodAvail.water_pepper_output=record['water_pepper_output']
+          this.newFoodAvail.pigweed_output=record['pigweed_output']
+          this.newFoodAvail.bidens_output=record['bidens_output']
+          this.newFoodAvail.other_seed_output=record['other_seed_output']
+          this.newFoodAvail.open_water_output=record['open_water_output']
+          this.newFoodAvail.recently_disced_output=record['recently_disced_output']
+          this.newFoodAvail.chufa_output=record['chufa_output']
+          this.newFoodAvail.redroot_output=record['redroot_output']
+          this.newFoodAvail.sedge_output=record['sedge_output']
+          this.newFoodAvail.rush_output=record['rush_output'] 
+          this.moistsoilservice.newMoistSoil.millet_output=record['millet_output']
+          this.moistsoilservice.newMoistSoil.foxtail_output=record['foxtail_output']
+          this.moistsoilservice.newMoistSoil.rice_cut_output=record['rice_cut_output']
+          this.moistsoilservice.newMoistSoil.panic_grass_output=record['panic_grass_output']
+          this.moistsoilservice.newMoistSoil.crabgrass_output=record['crabgrass_output']
+          this.moistsoilservice.newMoistSoil.sprangletop_output=record['sprangletop_output']
+          this.moistsoilservice.newMoistSoil.lapathifolium_output=record['lapathifolium_output']
+          this.moistsoilservice.newMoistSoil.pennsylvanicum_output=record['pennsylvanicum_output']
+          this.moistsoilservice.newMoistSoil.coccineum_output=record['coccineum_output']
+          this.moistsoilservice.newMoistSoil.water_pepper_output=record['water_pepper_output']
+          this.moistsoilservice.newMoistSoil.pigweed_output=record['pigweed_output']
+          this.moistsoilservice.newMoistSoil.bidens_output=record['bidens_output']
+          this.moistsoilservice.newMoistSoil.other_seed_output=record['other_seed_output']
+          this.moistsoilservice.newMoistSoil.open_water_output=record['open_water_output']
+          this.moistsoilservice.newMoistSoil.recently_disced_output=record['recently_disced_output']
+          this.moistsoilservice.newMoistSoil.chufa_output=record['chufa_output']
+          this.moistsoilservice.newMoistSoil.redroot_output=record['redroot_output']
+          this.moistsoilservice.newMoistSoil.sedge_output=record['sedge_output']
+          this.moistsoilservice.newMoistSoil.rush_output=record['rush_output']
         });
-    }
+    });
+  }
   }
 }
 
-//write data to either local or cloud depending on online status
-addData(selected_date){
+//adds data to either IndexDB or the Cloud depending on connection status
+addData(){
 
-    this.newFoodAvail.CA=this.selected_CA;
-    this.newFoodAvail.unit=this.selected_unit
-    this.newFoodAvail.pool=this.selected_Pool
-    this.newFoodAvail.structure=this.selected_wcs
+  this.newFoodAvail.CA=this.selected_CA;
+  this.newFoodAvail.Unit=this.selected_unit
+  this.newFoodAvail.Pool=this.selected_Pool
+  this.newFoodAvail.WCS=this.selected_wcs
 
-    //if updating a record you will already have all of this info
-    if (selected_date==="Create New Record"){
-      this.getdatesfordb()
-    }
+  console.log("test is "+this.moistsoilservice.newMoistSoil.millet_output)
 
-    else {
-      this.newFoodAvail.date=this.selected_date
-    }
-
-    //if app is offline, write to indexdb
-    if (this.status=="offline"){
-    this.localservice.addFoodAvail(this.newFoodAvail).
-    then((addedFoodAvails: IFoodAvail[]) => {
-    if (addedFoodAvails.length > 0) {
-      if(this.selected_date!=='Create New Record'){
-        this.localService.deleteFoodAvail(this.placeholderid)
-      }
-
-      this.foodavails.push(addedFoodAvails[0]);
-      this.clearNewFoodAvail();
-    }
-    })
+  //only update date related fields when you are creating a new record
+  if (this.mode === "create record"){
+    this.getdatesfordb();
+  }
+  //push entry to cloud
+  if (this.status==="online"){
+    this.cloudservice.add_FoodAvail_record(this.newFoodAvail,this.moistsoilservice.newMoistSoil);
   }
 
-  //if app is online, write to cloud (firestore for the time being)
-  else{
-    this.cloudservice.addFoodAvail(this.newFoodAvail);
+  //push entry to IndexDB
+  else if (this.status==="offline"){
+    this.localService.add_FoodAvail_record(this.newFoodAvail,this.moistsoilservice.newMoistSoil);
   }
 
-  //display writtn to dialog and refresh the page
-  this.comp.openDataWrittenDialog();
+  //display data written dialogue and refresh the page
+  this.comp.openDataWrittenDialog()
 }
  
 //creates timestamps to write to dbs
@@ -408,17 +365,22 @@ getdatesfordb(){
     var full_date=stringg;
     console.log(full_date)
 
-
-    this.newFoodAvail.date=full_date
-    this.newFoodAvail.sort_time=time;
+    this.newFoodAvail.Date=full_date
+    this.newFoodAvail.Sort_time=time;
 }
 
+//clears data on page
 clearNewFoodAvail() {
     this.newFoodAvail = new FoodAvail();
 }
 
 onResize(event) {
     this.breakpoint = (event.target.innerWidth <= 768) ? 1 : 2; 
+}
+
+//opens Moist Soil Calculator
+openBottomSheet(): void {
+  this.bottomSheet.open(BottomSheetOverviewExampleSheet);
 }
 
 }

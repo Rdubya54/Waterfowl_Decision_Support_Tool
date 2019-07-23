@@ -21,4 +21,8 @@ export class MoistsoilService {
   getData () {
     return this.newMoistSoil;
   }
+
+  clearNewMoistSoilData (){
+    this.newMoistSoil = new MoistSoil();
+  }
 }

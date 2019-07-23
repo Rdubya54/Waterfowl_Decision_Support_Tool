@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
  
 import { IFoodAvail } from '../model/food-avail';
+import { IMoistSoil } from '../model/moist-soil';
+
  @Injectable({
   providedIn: 'root'
  })
@@ -19,102 +21,52 @@ import { IFoodAvail } from '../model/food-avail';
    super();
   }
 
-  getCAs() {
+  get_available_Dates(CA,Unit,Pool,wcs){
+    return this.connection.select({
+      from: "Fall_Food_Availability",
+      where:{
+        CA: CA,
+        Unit:Unit,
+        Pool:Pool,
+        WCS:wcs
+      },
+      order: {
+        by: "Sort_time",
+        type: "desc" 
+    }
+
+    });
+  }
+
+  get_all_FoodAvail_records() {
     return this.connection.select({
       from: 'Fall_Food_Availability'
     });
   }
 
-  getUnits(CA){
-    return this.connection.select({
-      from: "Fall_Food_Availability",
-      where:{
-        CA: CA,
-      },
-      order: {
-        by: "unit",
-        type: "desc" 
-    }
-
-    });
-  }
-
-  getPools(CA,Unit){
-    return this.connection.select({
-      from: "Fall_Food_Availability",
-      where:{
-        CA: CA,
-        unit:Unit,
-      },
-      order: {
-        by: "pool",
-        type: "desc" 
-    }
-
-    });
-  }
-
-  getWCS(CA,Unit,Pool){
-    return this.connection.select({
-      from: "Fall_Food_Availability",
-      where:{
-        CA: CA,
-        unit:Unit,
-        pool:Pool
-      },
-      order: {
-        by: "structure",
-        type: "desc" 
-    }
-
-    });
-  }
-
-  getDates(CA,Unit,Pool,wcs){
-    return this.connection.select({
-      from: "Fall_Food_Availability",
-      where:{
-        CA: CA,
-        unit:Unit,
-        pool:Pool,
-        structure:wcs
-      },
-      order: {
-        by: "sort_time",
-        type: "desc" 
-    }
-
-    });
-  }
-
-  getFoodAvail() {
-    return this.connection.select({
-      from: 'Fall_Food_Availability'
-    });
-  }
-
-  getFoodAvail_selected(CA,Unit,Pool,wcs,date) {
+  get_selected_FoodAvail_record(CA,Unit,Pool,wcs,date) {
     return this.connection.select({
       from: 'Fall_Food_Availability',
       where:{
         CA: CA,
-        unit:Unit,
-        pool:Pool,
-        structure:wcs,
-        date:date
+        Unit:Unit,
+        Pool:Pool,
+        WCS:wcs,
+        Date:date
       }
     });
   }
 
-  addFoodAvail(foodavail: IFoodAvail) {
+  add_FoodAvail_record(foodavail: IFoodAvail,moistsoil:IMoistSoil) {
+    console.log('Unit is g '+foodavail.Unit)
     return this.connection.insert({
       into: 'Fall_Food_Availability',
       return: true, // as id is autoincrement, so we would like to    get the inserted value
-      values: [foodavail]
+      values: [foodavail,moistsoil]
     });
   }
   
-  deleteFoodAvail(the_id){
+  delete_FoodAvail_record(the_id){
     return this.connection.remove({
       from: 'Fall_Food_Availability',
       where: {

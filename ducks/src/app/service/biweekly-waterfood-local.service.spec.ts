@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LocalWaterFood } from './waterfood-local.service';
+import { LocalWaterFood } from './biweekly-waterfood-local.service';
 
 describe('WaterfoodLocalService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));

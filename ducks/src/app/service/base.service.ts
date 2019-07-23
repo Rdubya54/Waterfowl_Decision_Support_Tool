@@ -57,7 +57,7 @@ import { IFoodAvail } from '../model/food-avail';
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'Structure',
+      name: 'WCS',
       dataType: DATA_TYPE.String
      },
      {
@@ -111,6 +111,18 @@ import { IFoodAvail } from '../model/food-avail';
      {
       name: 'Sort_time',
       dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'Update_time',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name:'UID',
+      dataType: DATA_TYPE.String,
+     },
+     {
+      name: 'Delete',
+      dataType: DATA_TYPE.Number,
      }
     ],
   }
@@ -160,7 +172,7 @@ import { IFoodAvail } from '../model/food-avail';
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'sort_time',
+      name: 'Sort_time',
       dataType: DATA_TYPE.String,
      }
     ]
@@ -333,19 +345,19 @@ import { IFoodAvail } from '../model/food-avail';
       dataType: DATA_TYPE.String
      },
      {
-      name: 'unit',
+      name: 'Unit',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'pool',
+      name: 'Pool',
       dataType: DATA_TYPE.String
      },
      {
-      name: 'structure',
+      name: 'WCS',
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'date',
+      name: 'Date',
       dataType: DATA_TYPE.String,
      },
      {
@@ -494,7 +506,7 @@ import { IFoodAvail } from '../model/food-avail';
       dataType: DATA_TYPE.String,
      },
      {
-      name: 'sort_time',
+      name: 'Sort_time',
       dataType: DATA_TYPE.String,
      }, 
     ]
@@ -519,7 +531,7 @@ import { IFoodAvail } from '../model/food-avail';
         dataType: DATA_TYPE.String,
        },
        {
-        name: 'Structure',
+        name: 'WCS',
         dataType: DATA_TYPE.String
        },
        {
@@ -556,7 +568,7 @@ import { IFoodAvail } from '../model/food-avail';
         dataType: DATA_TYPE.String,
        },
        {
-        name: 'Structure',
+        name: 'WCS',
         dataType: DATA_TYPE.String
        },
        {

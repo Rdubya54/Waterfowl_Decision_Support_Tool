@@ -69,7 +69,7 @@ export class GaugeStatLocalService extends BaseService{
         CA: CA,
         Unit:Unit,
         Pool:Pool,
-        Structure:wcs
+        WCS:wcs
       },      
       order: {
         by: "Gauge",
@@ -85,7 +85,7 @@ export class GaugeStatLocalService extends BaseService{
         CA: CA,
         Unit:Unit,
         Pool:Pool,
-        Structure:wcs,
+        WCS:wcs,
         Gauge:gauge
       }
     });
@@ -93,10 +93,6 @@ export class GaugeStatLocalService extends BaseService{
 
 
   addGaugeStat(gaugestats) {
-    /* this.standardizeinputs(watermanagement) */
-    console.log("image pool service "+gaugestats.Pool)
-    console.log("image wcs service "+gaugestats.Structure)
-    console.log("crop array is "+gaugestats.Crop_Stats)
     return this.connection.insert({
       into: 'Gauge Stats',
       return: true, // as id is autoincrement, so we would like to    get the inserted value

@@ -20,7 +20,7 @@
                     </div>
                     <div> 
                             <mat-form-field>
-                                <mat-select placeholder="Pool" [(ngModel)]="selected_Pool" (ngModelChange)="getprevWaterFood(selected_CA,selected_unit,$event,'')">
+                                <mat-select placeholder="Pool" [(ngModel)]="selected_Pool" (ngModelChange)="getDates(selected_CA,selected_unit,$event)">
                                 <mat-option *ngFor="let x of Pool_list" [value]="x">
                                     {{x}}
                                 </mat-option>
@@ -29,7 +29,7 @@
                         </div> 
                         <div> 
                             <mat-form-field>
-                                <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="updateWaterFood(selected_CA,selected_unit,selected_Pool,$event)">
+                                <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="populate_page_with_data(selected_CA,selected_unit,selected_Pool,$event)">
                                 <mat-option *ngFor="let x of date_list" [value]="x">
                                     {{x}}
                                 </mat-option>
@@ -47,7 +47,7 @@
 <mat-grid-tile>
 <mat-card class="example-container">
 <div fxLayout="row"  fxLayoutGap="5%">
-        <div fxFlex="100%"> 
+        <div *ngIf="this.prev_data['Date']" fxFlex="100%"> 
             <mat-form-field class="prev">  
             <input type="text" [(ngModel)]="this.prev_data['Date']" [disabled]='true' matInput placeholder="Last Record Date">
             </mat-form-field>
@@ -472,8 +472,7 @@
                               </mat-form-field>
                           </div> 
                       </div>
-                          <button *ngIf="this.status === 'online';" mat-raised-button color="primary" (click)="addData()">Submit</button>
-                          <button *ngIf="this.status === 'offline';" mat-raised-button color="primary" (click)="local_addData('new')">Push to Local</button>
+                          <button mat-raised-button color="primary" (click)="addData()">Submit</button>
                           <button mat-raised-button color="primary" (click)="clearNewWaterFood()">Clear Fields</button>
                     </mat-card>
             </mat-grid-tile>       

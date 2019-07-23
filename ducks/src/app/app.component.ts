@@ -34,8 +34,8 @@ import {
 } from 'src/app/model/food-avail';
 
 
-import { LocalWaterFood } from 'src/app/service/waterfood-local.service';
-import {BiweeklyWaterFoodService} from 'src/app/service/waterfood-cloud.service';
+import { LocalWaterFood } from 'src/app/service/biweekly-waterfood-local.service';
+import {BiweeklyWaterFoodService} from 'src/app/service/biweekly-waterfood-cloud.service';
 import {
   WaterFood,
   IWaterFood
@@ -47,7 +47,8 @@ import {
   Watermanagement,
   IWatermanagement
 } from 'src/app/model/watermanagement';
-import { throwIfEmpty } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import 'rxjs/add/observable/timer';
 import { stat } from 'fs';
 import { resolve } from 'dns';
 
@@ -89,9 +90,15 @@ export class AppComponent {
   public status;
   public selected_CA;
 
+  public promise1;
+  public promise2;
+
+
+  public downloadstatuscheck = Observable.timer(1000, 1000);
+
   //this makes sure updates are properly loaded.
   //needed cause pwas caching can make it hard to seee updates
-  constructor(private connectionService:ConnectionService,updates:SwUpdate,public dialog: MatDialog, private location:Location,
+  constructor(private connectionService:ConnectionService,updates:SwUpdate,public dialog: MatDialog, private path:Location,
     private authservice:AuthService,private weatherlocalservice:WeatherLocalService,private weathercloudservice:WeatherCloudService, private cookieservice:CookieService,
     private foodavailcloudservice:FoodAvailCloudService, private foodavaillocalservice: FoodAvailLocalService, private dbservice: dbService,
     public moistsoilservice:MoistsoilService,private waterfoodcloudservice:BiweeklyWaterFoodService, 
@@ -117,20 +124,28 @@ export class AppComponent {
         this.status=localStorage.getItem('Status')
         this.openConnectionStatusDialog();
       }
+
+      location.reload();
     })
   }
   
   //on page load
   ngOnInit(){
     //get page
-    this.page=this.location.path()
+    this.page=this.path.path()
 
     //if on app landing page open CA selection Dialog 
     if (this.page===""){
       this.openCASelectionDialog();
     }
 
+    
+
   } 
+
+  onTimeOut() {
+    console.log("hi")
+  }
 
   //when page first loads this other online check needs to be done, this.connectionService.monitor()
   //will not get the connection status at the beginning of the page load
@@ -143,9 +158,8 @@ export class AppComponent {
       if (this.online_status){
         //push all records into cloud
         this.openLoadingDialog();
-        this.pushtocloudfromlocal().then(result =>{
-          this.closeLoadingDialog();
-        })
+        this.pushtocloudfromlocal();
+        this.closeLoadingDialog();
 
         //set statuses
         this.cookieservice.setStatus("online") 
@@ -170,7 +184,9 @@ export class AppComponent {
 
 //this function handles pushing data that is stored in local to the cloud
 //once the app gets back online
-async pushtocloudfromlocal(){
+pushtocloudfromlocal(){
+
+  this.downloadstatuscheck.subscribe((t) => this.onTimeOut());
 
   console.log("pushing to cloud from local")
 
@@ -184,7 +200,7 @@ async pushtocloudfromlocal(){
         //and images don't need to be redownloaded
         var lastCA = data.forEach(record =>{
           var lastCA=record["CA"]
-
+          
           return lastCA
         })
 
@@ -197,18 +213,23 @@ async pushtocloudfromlocal(){
 
       else {
         //only download Gauge Stats if they aren't already downloaded since these rarely change
-        this.downloadallprevs('Gauge Stats');
+        
+
+        const promise1 = this.downloadallprevs('Gauge Stats').then(status =>{
+
+          console.log('done downloading gaugestat')
+        });
       }
     })
 
   //push all locally stored weather to cloud 
-  this.weatherlocalservice.getWeather_all().
+  this.weatherlocalservice.get_all_Weather_records().
     then(data => {
         this.weathers = data;
 
         this.weathers.forEach(record =>{
           this.newWeather.CA=record["CA"]
-          this.newWeather.date=record["date"]
+          this.newWeather.date=record["Date"]
           this.newWeather.area_ice=record["area_ice"]
           this.newWeather.ice_thick=record["ice_thick"]
           this.newWeather.low_temp=record["low_temp"]
@@ -223,28 +244,28 @@ async pushtocloudfromlocal(){
 
           //add the locally stored Weather to Cloud (if the record was already there it is being added
           //but sense everything is the same it is basically doing nothing)
-           this.weathercloudservice.addWeather(this.newWeather) 
+           this.weathercloudservice.add_Weather_record(this.newWeather) 
 
           //delete the record from local
           console.log('deleting:'+record["id"])
-          this.weatherlocalservice.deleteWeather(record["id"]);
+          this.weatherlocalservice.delete_Weather_record(record["id"]);
         })
 
-        this.downloadallprevs('Daily Weather Observations');
+        const promise2 = this.downloadallprevs('Daily Weather Observations');
     }); 
 
   //push all locally stored FoodAvails to cloud 
-  this.foodavaillocalservice.getFoodAvail().
+  this.foodavaillocalservice.get_all_FoodAvail_records().
     then(data => {
         this.foodavails = data;
 
         this.foodavails.forEach(record =>{
           this.newFoodAvail.CA=record['CA']
-          this.newFoodAvail.unit=record['unit']
-          this.newFoodAvail.pool=record['pool']
-          this.newFoodAvail.structure=record['structure']
-          this.newFoodAvail.date=record['date']
-          this.newFoodAvail.sort_time=record['sort_time']
+          this.newFoodAvail.Unit=record['Unit']
+          this.newFoodAvail.Pool=record['Pool']
+          this.newFoodAvail.WCS=record['WCS']
+          this.newFoodAvail.Date=record['Date']
+          this.newFoodAvail.Sort_time=record['Sort_time']
           this.newFoodAvail.corn_unharv=record['corn_unharv']
           this.newFoodAvail.corn_harv=record['corn_harv']
           this.newFoodAvail.corn_yield=record['corn_yield']
@@ -287,18 +308,20 @@ async pushtocloudfromlocal(){
 
           //add the locally stored Weather to Cloud (if the record was already there it is being added
           //but sense everything is the same it is basically doing nothing)
-           this.foodavailcloudservice.addFoodAvail(this.newFoodAvail) 
+          if (this.newFoodAvail.CA){
+           this.foodavailcloudservice.add_FoodAvail_record_from_local(this.newFoodAvail) 
+          }
 
           //delete the record from local
           console.log('deleting:'+record["id"])
-          this.foodavaillocalservice.deleteFoodAvail(record["id"]);
+          this.foodavaillocalservice.delete_FoodAvail_record(record["id"]);
         })
 
         this.downloadallprevs('Fall Food Availability')
     }); 
 
   //push all locally stored waterfood to cloud 
-  this.waterfoodlocalservice.getData().
+  this.waterfoodlocalservice.get_all_WaterFood_records().
     then(data => {
         this.waterfoods = data;
 
@@ -340,16 +363,16 @@ async pushtocloudfromlocal(){
 
           //add the locally stored Weather to Cloud (if the record was already there it is being added
           //but sense everything is the same it is basically doing nothing)
-           this.waterfoodcloudservice.addWaterFood(this.newWaterFood) 
+           this.waterfoodcloudservice.add_WaterFood_record(this.newWaterFood) 
 
           //delete the record from local
           console.log('deleting:'+record["id"])
-          this.waterfoodlocalservice.deleteWaterFood(record["id"]);
+          this.waterfoodlocalservice.delete_WaterFood_record(record["id"]);
         })
 
         this.downloadallprevs('Biweekly');
     }); 
-    this.watermanagementlocalservice.getWaterManagment().
+    this.watermanagementlocalservice.get_all_WaterManagment_records().
     then(data => {
         this.watermanagements = data;
 
@@ -357,7 +380,7 @@ async pushtocloudfromlocal(){
           this.newWaterManagement.CA=record["CA"],
           this.newWaterManagement.Unit=record["Unit"],
           this.newWaterManagement.Pool=record["Pool"],
-          this.newWaterManagement.Structure=record["Structure"],
+          this.newWaterManagement.WCS=record["WCS"],
           this.newWaterManagement.Date=record["Date"],
           this.newWaterManagement.Elevation=record["Elevation"],
           this.newWaterManagement.Gate_manipulation=record["Gate_manipulation"],
@@ -371,37 +394,43 @@ async pushtocloudfromlocal(){
           this.newWaterManagement.Fiscal_year=record["Fiscal_year"],
           this.newWaterManagement.Notes=record["Notes"],
           this.newWaterManagement.Reasons=record["Reasons"],
-          this.newWaterManagement.Sort_time=record["Sort_time"]
+          this.newWaterManagement.Sort_time=record["Sort_time"],
+          this.newWaterManagement.Update_time=record["Update_time"],
+          this.newWaterManagement.UID=record["UID"],
+          this.newWaterManagement.Delete=record["Delete"]
           console.log("adding waterfood from local to cloud")
           console.log(record)
 
           //add the locally stored Weather to Cloud (if the record was already there it is being added
           //but sense everything is the same it is basically doing nothing)
-           this.watermanagementcloudservice.addWaterManagement(this.newWaterManagement) 
+           this.watermanagementcloudservice.add_WaterManagement_record(this.newWaterManagement) 
 
           //delete the record from local
           console.log('deleting:'+record["id"])
-          this.watermanagementlocalservice.deleteWaterManagement(record["id"]);
+          this.watermanagementlocalservice.delete_WaterManagement_record(record["id"]);
         })
 
-        this.downloadallprevs('WaterManagement');
+        this.downloadallprevs('WaterManagement').then(status =>{
+
+          console.log('done downloading watermanagement')
+        });
     }); 
 }
 
 //get last record for EVERY tree endpoint from cloud
-downloadallprevs(table){
+async downloadallprevs(table){
   console.log('downloading all prevs')
   if (table==='Daily Weather Observations'){
       console.log("downloading weather")
       console.log('selected CA:'+this.selected_CA)
-      this.weathercloudservice.getprevWeather(this.selected_CA).subscribe(data => {
+      this.weathercloudservice.get_prev_Weather_record(this.selected_CA).subscribe(data => {
         data.forEach(doc => {
         console.log(doc.id)
           console.log("THIS is "+doc.id)
           var date=doc.id;
           
           
-          this.weathercloudservice.getWeather(this.selected_CA,date).
+          this.weathercloudservice.get_Weather_record(this.selected_CA,date).
           subscribe(data=>{
             console.log('Adding data :'+data.get('date'))
             console.log('Adding data :'+data.get('low temp'))
@@ -416,18 +445,18 @@ downloadallprevs(table){
             this.newWeather.other_observations=data.get('other_observations') 
             this.newWeather.sort_time=data.get('sort_time') 
 
-            this.weatherlocalservice.addWeather(this.newWeather).
+            this.weatherlocalservice.add_Weather_record(this.newWeather).
             then((addedWaterManagements: IWeather[]) => {
             if (addedWaterManagements.length > 0) {
 
         
               this.weathers.push(addedWaterManagements[0]);
               this.clearNewWeather();
+              
             }
             })
             console.log('data not yet created')
           })
-          
       });
     }); 
   }
@@ -448,19 +477,20 @@ downloadallprevs(table){
               data.forEach(doc => {
                 console.log("WCS is"+doc.id)
                 var wcs=doc.id;
-                this.foodavailcloudservice.getprevFoodAvails(this.selected_CA,Unit,Pool,wcs).subscribe(data => {
+                this.foodavailcloudservice.get_prev_FoodAvail_record(this.selected_CA,Unit,Pool,wcs).subscribe(data => {
                   data.forEach(doc => {
                   console.log(doc.id)
                     console.log("Date is "+doc.id)
                     var date=doc.id;
-                    this.foodavailcloudservice.getFoodAvail(this.selected_CA,Unit,Pool,wcs,date).
+                    this.foodavailcloudservice.get_FoodAvail_record(this.selected_CA,Unit,Pool,wcs,date).
                     subscribe(data=>{
                       this.newFoodAvail.CA=data.get('CA')
-                      this.newFoodAvail.unit=data.get('unit')
-                      this.newFoodAvail.pool=data.get('pool')
-                      this.newFoodAvail.structure=data.get('wcs')
-                      this.newFoodAvail.date=data.get('date')
-                      this.newFoodAvail.sort_time=data.get('sort_time')
+                      this.newFoodAvail.Unit=data.get('Unit')
+                      console.log('Unit is g '+this.newFoodAvail.Unit)
+                      this.newFoodAvail.Pool=data.get('Pool')
+                      this.newFoodAvail.WCS=data.get('WCS')
+                      this.newFoodAvail.Date=data.get('Date')
+                      this.newFoodAvail.Sort_time=data.get('Sort_time')
                       this.newFoodAvail.corn_unharv=data.get('corn_unharv')
                       this.newFoodAvail.corn_harv=data.get('corn_harv')
                       this.newFoodAvail.corn_yield=data.get('corn_yield')
@@ -500,7 +530,7 @@ downloadallprevs(table){
 
                       console.log("FOOOD: "+this.newFoodAvail)
                         
-                      this.foodavaillocalservice.addFoodAvail(this.newFoodAvail).
+                      this.foodavaillocalservice.add_FoodAvail_record(this.newFoodAvail,this.moistsoilservice.newMoistSoil).
                       then((addedFoodAvails: IFoodAvail[]) => {
                       if (addedFoodAvails.length > 0) {
                         this.clearNewFoodAvail();
@@ -530,12 +560,12 @@ downloadallprevs(table){
           data.forEach(doc => {
             console.log("Biweekly Pool is"+doc.id)
             var Pool=doc.id;
-              this.waterfoodcloudservice.getprevWaterFood(this.selected_CA,Unit,Pool,"").subscribe(data => {
+              this.waterfoodcloudservice.get_prev_WaterFood_record(this.selected_CA,Unit,Pool,"").subscribe(data => {
                 data.forEach(doc => {
                 console.log(doc.id)
                   console.log("Biweekly Date is "+doc.id)
                   var date=doc.id;
-                  this.waterfoodcloudservice.getWaterFood(this.selected_CA,Unit,Pool,date).
+                  this.waterfoodcloudservice.get_WaterFood_record(this.selected_CA,Unit,Pool,date).
                   subscribe(data=>{
                     this.newWaterFood.CA=data.get('CA');                                                                          
                     this.newWaterFood.Unit=Unit;
@@ -573,7 +603,7 @@ downloadallprevs(table){
 
                     console.log("BIWEEKLY: "+this.newWaterFood)
                         
-                    this.waterfoodlocalservice.addData(this.newWaterFood).
+                    this.waterfoodlocalservice.add_WaterFood_record(this.newWaterFood).
                     then((addedWaterFoods: IWaterFood[]) => {
                     if (addedWaterFoods.length > 0) {
                       this.clearNewWaterFood();
@@ -601,16 +631,16 @@ if (table==='WaterManagement'){
               data.forEach(doc => {
                 console.log("CA is"+doc.id)
                 var wcs=doc.id;
-                this.watermanagementcloudservice.getprevWaterManagement(this.selected_CA,Unit,Pool,wcs,"").subscribe(data => {
+                this.watermanagementcloudservice.get_prev_7_WaterManagement_records(this.selected_CA,Unit,Pool,wcs).subscribe(data => {
                   data.forEach(doc => {
                   console.log(doc.id)
                     var date=doc.id;
-                    this.watermanagementcloudservice.getWaterManagement(this.selected_CA,Unit,Pool,wcs,date).
+                    this.watermanagementcloudservice.get_WaterManagement_record(this.selected_CA,Unit,Pool,wcs,date).
                     subscribe(data=>{
                       this.newWaterManagement.CA=this.selected_CA;
                       this.newWaterManagement.Unit=Unit;
                       this.newWaterManagement.Pool=Pool;
-                      this.newWaterManagement.Structure=wcs;
+                      this.newWaterManagement.WCS=wcs;
                       this.newWaterManagement.Date=data.get('Date');
                       this.newWaterManagement.Elevation=data.get('Elevation');
                       this.newWaterManagement.Gate_manipulation=data.get('Gate_manipulation');
@@ -622,9 +652,12 @@ if (table==='WaterManagement'){
                       this.newWaterManagement.Notes=data.get('Notes');
                       this.newWaterManagement.Reasons=data.get('Reasons')
                       this.newWaterManagement.Sort_time=data.get('Sort_time')
+                      this.newWaterManagement.UID=data.get('UID')
+                      this.newWaterManagement.Delete=data.get('Delete')
+                      this.newWaterManagement.Update_time=data.get('Update_time')
                   
                       //put watermanagement record into IndexDB
-                      this.watermanagementlocalservice.addWaterManagement(this.newWaterManagement).
+                      this.watermanagementlocalservice.add_WaterManagement_record(this.newWaterManagement).
                       then((addedWaterManagements: IWatermanagement[]) => {
                         if (addedWaterManagements.length > 0) {
                           this.clearNewWaterManagement();
@@ -639,6 +672,8 @@ if (table==='WaterManagement'){
         });
       });
     });
+
+    //Promise.all([this.promise1,this.promise2])
   }
 
   if (table==='Gauge Stats'){
@@ -684,7 +719,7 @@ if (table==='WaterManagement'){
                             copystat.CA=this.selected_CA;
                             copystat.Unit=Unit;
                             copystat.Pool=Pool;
-                            copystat.Structure=wcs;
+                            copystat.WCS=wcs;
                             copystat.Gauge=gauge;
                             copystat.Image_Name=image_name;
                             copystat.Total_Acres=data.get('Total_Acres')
@@ -767,6 +802,18 @@ if (table==='WaterManagement'){
     return "done"
 }
 
+}
+
+generateUUID() { // Public Domain/MIT
+  var d = new Date().getTime();
+  if (typeof performance !== 'undefined' && typeof performance.now === 'function'){
+      d += performance.now(); //use high-precision timer if available
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
 }
 
 pushGaugeStatRecord(copystat,gaugestatslocalservice){

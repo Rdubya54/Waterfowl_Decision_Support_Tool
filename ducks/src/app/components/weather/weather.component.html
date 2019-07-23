@@ -11,7 +11,7 @@
             </div>
             <div> 
                       <mat-form-field>
-                          <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="getWeather(this.selected_CA,$event)">
+                          <mat-select placeholder="Date" [(ngModel)]="selected_date" (ngModelChange)="populate_page_with_data(this.selected_CA,$event)">
                           <mat-option *ngFor="let x of date_list" [value]="x">
                               {{x}}
                           </mat-option>
@@ -63,8 +63,7 @@
                 <input type="text" [(ngModel)]="newWeather.other_observations" [ngModelOptions]="{standalone:true}" matInput placeholder="Other Weather Observations">
               </mat-form-field>
             </div>
-        <button *ngIf="this.status === 'online';"  mat-raised-button color="primary" (click)="addWeather(selected_CA,selected_date)">Push to Cloud</button>
-        <button *ngIf="this.status === 'offline';" mat-raised-button color="primary" (click)="addWeather(selected_CA,selected_date)">Push to Local</button>
+        <button mat-raised-button color="primary" (click)="addData(selected_CA,selected_date)">Submit</button>
         <button mat-raised-button color="primary" (click)="clearNewWeather()">Clear Fields</button> 
   </mat-card>
 </mat-grid-tile>
