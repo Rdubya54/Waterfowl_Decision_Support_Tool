@@ -121,6 +121,8 @@ export class WatermanagementComponent implements OnInit {
           console.log('uNIT LIST IS '+this.unit_list)
         }
     });
+
+    this.unit_list.push('KINGS LAKE')
   });
 }
 
@@ -146,6 +148,7 @@ getPools(CA,unit){
             previous=pool
           }
       });
+      this.Pool_list.push('KL_2')
     });
   
 }
@@ -168,6 +171,7 @@ getWCS(CA,unit,pool){
             previous=wcs
           }
       });
+      this.wcs_list.push('POOL_2A_FLAP_GATE')
     });
 
 }
@@ -365,10 +369,10 @@ getprevWaterManagement(CA,unit,pool,wcs){
       var month1=(d.getMonth()+1);
       var year1=d.getFullYear();
       var time=d.getTime()
-      this.newWaterManagement.Sort_time=time.toString();
+      this.newWaterManagement.Sort_time=time;
 
       //set update time same as sort time when creating new record
-      this.newWaterManagement.Update_time=time.toString();
+      this.newWaterManagement.Update_time=time;
       var day=day1.toString();
       var month=month1.toString();
       var year=year1.toString();
@@ -391,7 +395,7 @@ getprevWaterManagement(CA,unit,pool,wcs){
       var time=d.getTime()
 
       //set update time to the time the record is updated
-      this.newWaterManagement.Update_time=time.toString();
+      this.newWaterManagement.Update_time=time;
     }
   }
 

@@ -125,7 +125,7 @@ import { IFoodAvail } from '../model/food-avail';
       dataType: DATA_TYPE.Number,
      }
     ],
-  }
+  };
   const tblWeather: ITable = {
     name: 'Daily_Weather_Observations',
     columns: [{

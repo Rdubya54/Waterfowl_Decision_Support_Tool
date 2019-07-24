@@ -11,6 +11,7 @@ export class WeatherCloudService {
   constructor(public firestore: AngularFirestore) { }
 
   add_Weather_record(Weather:IWeather){
+    console.log("WEATHER IS "+Weather.date)
     return this.firestore.collection('Conservation_Areas').doc(Weather.CA)
     .collection("Daily Weather Observation").doc(Weather.date).set({
         CA:Weather.CA,

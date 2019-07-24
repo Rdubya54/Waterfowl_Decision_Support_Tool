@@ -63,7 +63,7 @@
                 <input type="text" [(ngModel)]="newWeather.other_observations" [ngModelOptions]="{standalone:true}" matInput placeholder="Other Weather Observations">
               </mat-form-field>
             </div>
-        <button mat-raised-button color="primary" (click)="addData(selected_CA,selected_date)">Submit</button>
+        <button mat-raised-button color="primary" (click)="addData()">Submit</button>
         <button mat-raised-button color="primary" (click)="clearNewWeather()">Clear Fields</button> 
   </mat-card>
 </mat-grid-tile>
