@@ -82,12 +82,12 @@
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%">
           <mat-form-field class="wmgmt">
-              <input type="text" [(ngModel)]="newWaterManagement.Elevation"  [ngModelOptions]="{standalone:true}" matInput placeholder="Elevation" (change)="updateChart('elevation')">
+              <input type="number" [(ngModel)]="newWaterManagement.Elevation"  [ngModelOptions]="{standalone:true}" matInput placeholder="Elevation" (change)="updateChart('elevation')">
           </mat-form-field>
       </div> 
       <div fxFlex="40%"> 
           <mat-form-field class="prev" *ngIf="data_length>0"> 
-              <input type="text" [(ngModel)]="this.prev_data_master[0]['Elevation']" [disabled]='true' matInput placeholder="" >
+              <input type="number" [(ngModel)]="this.prev_data_master[0]['Elevation']" [disabled]='true' matInput placeholder="" >
           </mat-form-field>
       </div> 
   </div>
@@ -95,12 +95,12 @@
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%"> 
           <mat-form-field class="wmgmt"  width="75%">
-              <input type="text" [(ngModel)]="newWaterManagement.Gate_manipulation"  [ngModelOptions]="{standalone:true}" matInput placeholder="Gate Manipulation">
+              <input type="number" [(ngModel)]="newWaterManagement.Gate_manipulation"  [ngModelOptions]="{standalone:true}" matInput placeholder="Gate Manipulation">
           </mat-form-field>
       </div> 
       <div fxFlex="40%">
           <mat-form-field class="prev" *ngIf="data_length>0"> 
-              <input type="text" [(ngModel)]="prev_data_master[0]['Gate_manipulation']"  [disabled]='true' matInput placeholder="">
+              <input type="number" [(ngModel)]="prev_data_master[0]['Gate_manipulation']"  [disabled]='true' matInput placeholder="">
           </mat-form-field>
       </div> 
   </div>
@@ -108,24 +108,24 @@
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%"> 
           <mat-form-field class="wmgmt">
-              <input type="text" [(ngModel)]="newWaterManagement.Gate_level"  [ngModelOptions]="{standalone:true}" matInput placeholder="Gate Level" (change)="updateChart('gate_level')">
+              <input type="number" [(ngModel)]="newWaterManagement.Gate_level"  [ngModelOptions]="{standalone:true}" matInput placeholder="Gate Level" (change)="updateChart('gate_level')">
           </mat-form-field>
       </div> 
       <div fxFlex="40%">
           <mat-form-field class="prev" *ngIf="data_length>0"> 
-              <input type="text" [(ngModel)]="prev_data_master[0]['Gate_level']"  [disabled]='true' matInput placeholder="">
+              <input type="number" [(ngModel)]="prev_data_master[0]['Gate_level']"  [disabled]='true' matInput placeholder="">
           </mat-form-field>
         </div> 
     </div>
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%"> 
           <mat-form-field class="wmgmt">
-              <input type="text" [(ngModel)]="newWaterManagement.Stoplog_change"  [ngModelOptions]="{standalone:true}" matInput placeholder="Stoplog Change">
+              <input type="number" [(ngModel)]="newWaterManagement.Stoplog_change"  [ngModelOptions]="{standalone:true}" matInput placeholder="Stoplog Change">
           </mat-form-field>
       </div> 
       <div fxFlex="40%">
           <mat-form-field class="prev" *ngIf="data_length>0" > 
-              <input type="text" [(ngModel)]="prev_data_master[0]['Stoplog_change']" [disabled]='true' matInput placeholder="">
+              <input type="number" [(ngModel)]="prev_data_master[0]['Stoplog_change']" [disabled]='true' matInput placeholder="">
           </mat-form-field>
       </div> 
   </div>
@@ -133,12 +133,12 @@
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%"> 
           <mat-form-field class="wmgmt">
-              <input type="text" [(ngModel)]="newWaterManagement.Stoplog_level"  [ngModelOptions]="{standalone:true}" matInput placeholder="Stoplog Level">
+              <input type="number" [(ngModel)]="newWaterManagement.Stoplog_level"  [ngModelOptions]="{standalone:true}" matInput placeholder="Stoplog Level">
           </mat-form-field>
       </div> 
       <div fxFlex="40%">
           <mat-form-field class="prev" *ngIf="data_length>0" > 
-              <input type="text" [(ngModel)]="prev_data_master[0]['Stoplog_level']" [disabled]='true'  matInput placeholder="">
+              <input type="number" [(ngModel)]="prev_data_master[0]['Stoplog_level']" [disabled]='true'  matInput placeholder="">
           </mat-form-field>
       </div> 
   </div>
@@ -146,12 +146,12 @@
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%"> 
               <mat-form-field class="wmgmt">
-                  <input type="text" [(ngModel)]="newWaterManagement.Duck_numbers"  [ngModelOptions]="{standalone:true}" matInput placeholder="Duck Numbers" (change)="updateChart('bird_nums')">
+                  <input type="number" [(ngModel)]="newWaterManagement.Duck_numbers"  [ngModelOptions]="{standalone:true}" matInput placeholder="Duck Numbers" (change)="updateChart('bird_nums')">
                 </mat-form-field>   
       </div> 
       <div fxFlex="40%">
           <mat-form-field class="prev" *ngIf="data_length>0">
-              <input type="text" [(ngModel)]="prev_data_master[0]['Duck_numbers']" [disabled]='true' matInput placeholder="">
+              <input type="number" [(ngModel)]="prev_data_master[0]['Duck_numbers']" [disabled]='true' matInput placeholder="">
           </mat-form-field>
       </div> 
   </div>
@@ -159,12 +159,12 @@
   <div fxLayout="row" fxLayoutGap="5%">
       <div fxFlex="60%"> 
               <mat-form-field class="wmgmt">
-                  <input type="text"  [(ngModel)]="newWaterManagement.Goose_numbers"  [ngModelOptions]="{standalone:true}" matInput placeholder="Goose Numbers" (change)="updateChart('bird_nums')">
+                  <input type="number"  [(ngModel)]="newWaterManagement.Goose_numbers"  [ngModelOptions]="{standalone:true}" matInput placeholder="Goose Numbers" (change)="updateChart('bird_nums')">
                 </mat-form-field>   
       </div> 
       <div fxFlex="40%">
           <mat-form-field class="prev" *ngIf="data_length>0"> 
-              <input type="text" [(ngModel)]="prev_data_master[0]['Goose_numbers']" [disabled]='true' matInput placeholder="">
+              <input type="number" [(ngModel)]="prev_data_master[0]['Goose_numbers']" [disabled]='true' matInput placeholder="">
           </mat-form-field>
           
       </div> 
@@ -173,7 +173,7 @@
   <div fxLayout="row"  fxLayoutGap="5%">
         <div fxFlex="80%">
                 <mat-form-field class="prev"> 
-                    <input type="text" [(ngModel)]="newWaterManagement.Fiscal_year" matInput placeholder="Fiscal Year">
+                    <input type="number" [(ngModel)]="newWaterManagement.Fiscal_year" matInput placeholder="Fiscal Year">
                 </mat-form-field>
         </div> 
     </div>

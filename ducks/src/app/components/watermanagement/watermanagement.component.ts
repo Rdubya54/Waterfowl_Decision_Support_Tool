@@ -408,6 +408,8 @@ getprevWaterManagement(CA,unit,pool,wcs){
     this.newWaterManagement.WCS=this.selected_wcs;
     this.newWaterManagement.Delete=0;
 
+    console.log("type here is "+typeof(this.newWaterManagement.Elevation))
+
     //only update date related fields when you are creating a new record
     if (this.mode === "create record"){
       this.getdatesfordb('new');

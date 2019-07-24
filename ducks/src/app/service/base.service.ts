@@ -62,43 +62,43 @@ import { IFoodAvail } from '../model/food-avail';
      },
      {
       name: 'Elevation',
-      dataType: DATA_TYPE.String,
+      dataType: DATA_TYPE.Number,
      },
      {
       name: 'Gate_manipulation',
-      dataType: DATA_TYPE.String,
+      dataType: DATA_TYPE.Number,
      },
      {
       name: 'Gate_level',
-      dataType: DATA_TYPE.String,
+      dataType: DATA_TYPE.Number,
      },
      {
       name: 'Stoplog_change',
-      dataType: DATA_TYPE.String,
+      dataType: DATA_TYPE.Number,
      },
      {
       name: 'Stoplog_level',
-      dataType: DATA_TYPE.String,
+      dataType: DATA_TYPE.Number,
      },
      {
       name: 'Duck_numbers',
-      dataType: DATA_TYPE.String,
+      dataType: DATA_TYPE.Number,
      },
      {
       name: 'Goose_numbers',
-      dataType: DATA_TYPE.String,
+      dataType: DATA_TYPE.Number,
      },
      {
       name: 'Year',
-      dataType: DATA_TYPE.String,
+      dataType: DATA_TYPE.Number,
      },
      {
       name: 'Time',
-      dataType: DATA_TYPE.String,
+      dataType: DATA_TYPE.Number,
      },
      {
       name: 'Fiscal_year',
-      dataType: DATA_TYPE.String,
+      dataType: DATA_TYPE.Number,
      },
      {
       name: 'Notes',
@@ -110,11 +110,11 @@ import { IFoodAvail } from '../model/food-avail';
      },
      {
       name: 'Sort_time',
-      dataType: DATA_TYPE.String,
+      dataType: DATA_TYPE.Number,
      },
      {
       name: 'Update_time',
-      dataType: DATA_TYPE.String,
+      dataType: DATA_TYPE.Number,
      },
      {
       name:'UID',

@@ -14,7 +14,7 @@ export class WatermanagementCloudService {
    //this function pushes a water management record to the cloud
    add_WaterManagement_record(watermanagement:IWatermanagement) {
 
-    console.log('type is::'+typeof(watermanagement.Elevation))
+    console.log('type is:'+typeof(watermanagement.Elevation))
   
     return this.firestore.collection('Conservation_Areas').doc(watermanagement.CA).collection("Units")
     .doc(watermanagement.Unit).collection("Pools").doc(watermanagement.Pool).collection("WCS").doc(watermanagement.WCS)
