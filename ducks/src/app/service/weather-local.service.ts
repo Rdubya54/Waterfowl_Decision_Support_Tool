@@ -72,4 +72,8 @@ export class WeatherLocalService extends BaseService {
     });
   }
 
+  clearTable(){
+    this.connection.clear('Daily_Weather_Observations')
+  }
+
 }

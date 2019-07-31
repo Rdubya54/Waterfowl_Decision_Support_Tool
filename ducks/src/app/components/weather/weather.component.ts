@@ -38,6 +38,9 @@ export class WeatherComponent implements OnInit {
 
   public placeholderid;
 
+  public forecast;
+  public ice_options: string[]=["0-0.9 inches","1-1.9 inches", "2+ inches"]
+
 
   constructor(private comp:AppComponent,private http: HttpClient,private localService: WeatherLocalService, private cloudService:WeatherCloudService,
       private firebase: AngularFireDatabase) {
@@ -50,15 +53,16 @@ export class WeatherComponent implements OnInit {
     this.breakpoint = (window.innerWidth <= 768) ? 1 : 2;
 
     console.log(localStorage.getItem("CA"))
-
     this.selected_CA=localStorage.getItem("CA")
-
     this.status=localStorage.getItem('Status')
 
-    //attempt to get coordinates of user, if it succeds, get weather data from api
-    navigator.geolocation.getCurrentPosition((position) =>
-      this.get_weather_from_api(position)
-    );
+    if (this.status==="online"){
+      //update local db for next time app is offline 
+      //(now loading screen is necessary because this can happen in the
+      //background nothing in local while user is connected will be affected)'
+      this.localService.clearTable();
+      this.comp.downloadallprevs('Daily Weather Observations')
+    }
 
     this.date_list=["Create New Record"];
  
@@ -96,6 +100,11 @@ populate_page_with_data(CA,date){
   if (date==="Create New Record"){
     this.mode = 'create record'
     //clear data on page
+    this.clearNewWeather();
+    //attempt to get coordinates of user, if it succeds, get weather data from api
+    navigator.geolocation.getCurrentPosition((position) =>
+    this.get_weather_from_api(position)
+    );
   }
 
   //put app in update record mode if a date/previous entry is selected
@@ -194,27 +203,38 @@ clearNewWeather() {
 //with data from the OpenWeather API
 async get_weather_from_api(position){
     
-  const res = await fetch("http://api.openweathermap.org/data/2.5/weather?lat="+position.coords.latitude+"&lon="+position.coords.longitude+'&units=imperial&appid=80dc87045d3dae46154b1dc9f2455de1')
+/*   const res2 = await fetch("http://api.openweathermap.org/data/2.5/weather?lat="+position.coords.latitude+"&lon="+position.coords.longitude+'&units=imperial&appid=80dc87045d3dae46154b1dc9f2455de1')
+  const data2 = await res2.json(); */
+
+  const res = await fetch("https://api.weather.gov/points/"+position.coords.latitude+","+position.coords.longitude+"/forecast")
   const data = await res.json();
 
-  console.log(data)
+  this.forecast=data.properties.periods[0]
 
-  this.newWeather.wind_dir=data.wind.deg.toString();
+  console.log("weather stuff "+data.properties.periods[0])
+/* 
+  this.newWeather.wind_dir=forecast.windDirection.toString();
   this.newWeather.wind_dir=this.degToCompass(data.wind.deg).toString();
   this.newWeather.wind_speed=data.wind.speed.toString();
-  this.newWeather.low_temp=data.main.temp_min.toString();
+  this.newWeather.low_temp=data.main.temp_min.toString(); */
+
+  this.newWeather.wind_dir=this.forecast.windDirection.toString();
+  this.newWeather.wind_speed=this.forecast.windSpeed.toString();
+  //temp on this api is low temp
+  this.newWeather.low_temp=this.forecast.temperature.toString();
+  this.newWeather.other_observations=this.forecast.shortForecast.toString();
 
   return data
 }
 
 //this functions converts the degrees returned by the weather api 
 //into actual cardinal directions
-degToCompass(num) {
+/* degToCompass(num) {
   var val = Math.floor((num / 22.5) + 0.5);
   var arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
   return arr[(val % 16)];
 }
-
+ */
 onResize(event) {
   this.breakpoint = (event.target.innerWidth <= 768) ? 1 : 2;
 }

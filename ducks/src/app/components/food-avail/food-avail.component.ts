@@ -64,12 +64,18 @@ export class FoodAvailComponent implements OnInit {
     this.breakpoint = (window.innerWidth <= 768) ? 1 : 2;
 
     console.log(localStorage.getItem("CA"))
-
     this.selected_CA=localStorage.getItem("CA")
-
     this.status=localStorage.getItem('Status')
 
-    this.dropdownservice.getUnits(this.local_table,this.selected_CA).then(data => {
+    if (this.status==="online"){
+      //update local db for next time app is offline 
+      //(now loading screen is necessary because this can happen in the
+      //background nothing in local while user is connected will be affected)'
+      this.localService.clearTable();
+      this.comp.downloadallprevs('Fall Food Availability')
+    }
+
+    this.dropdownservice.getUnits(this.selected_CA).then(data => {
       this.foodavails = data;
 
       var previous='None'
@@ -82,8 +88,6 @@ export class FoodAvailComponent implements OnInit {
             previous=unit
           }
       });
-
-      this.unit_list.push("KINGS LAKE")
     });
 }
 
@@ -91,10 +95,12 @@ export class FoodAvailComponent implements OnInit {
 // fetches list of availabe pools in units for dropdown
 getPools(CA,unit){
   this.Pool_list=[];
+  this.wcs_list=[];
+  this.date_list=["Create New Record"]
 
     var previous = 'None';
 
-    this.dropdownservice.getPools(this.local_table,CA,unit).then(data => {
+    this.dropdownservice.getPools(CA,unit).then(data => {
       this.foodavails = data;
 
       this.foodavails.forEach(record =>{
@@ -106,15 +112,14 @@ getPools(CA,unit){
           }
       });
     });
-
-    this.Pool_list.push("KL_2")
 }
 
 // fetches list of available strucutres in pool for dropdown
 getWCS(CA,unit,pool){
   this.wcs_list=[];
+  this.date_list=["Create New Record"]
 
-    this.dropdownservice.getWCS(this.local_table,CA,unit,pool).then(data => {
+    this.dropdownservice.getWCS(CA,unit,pool).then(data => {
       var previous = 'None';
       this.foodavails = data;
 
@@ -128,9 +133,6 @@ getWCS(CA,unit,pool){
           }
       });
     });
-
-    this.wcs_list.push("POOL_2A_FLAP_GATE")
-
 }
 
 // fetches list of available record dates for pool for dropdown

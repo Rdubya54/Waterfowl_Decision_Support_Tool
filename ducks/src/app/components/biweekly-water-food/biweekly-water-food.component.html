@@ -59,7 +59,7 @@
         <div fxFlex="75%">
 
         </div>
-        <div class="previous" fxFlex="25%">
+        <div class="previous" fxFlex="25%" *ngIf="this.prev_data['Date']">
                 Previous Entry
         </div> 
 </div>
@@ -72,7 +72,7 @@
         </mat-form-field>
     </div> 
     <div fxFlex="25%">
-            <mat-form-field class="wmgmt">
+            <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']">
                 <input type="text" [(ngModel)]="this.prev_data['Percent_of_Pool_Full']" [disabled]='true' matInput placeholder="">
             </mat-form-field>
         </div> 
@@ -85,7 +85,7 @@
         <div fxFlex="75%">
 
         </div>
-        <div class="previous" fxFlex="25%">
+        <div class="previous" fxFlex="25%" *ngIf="this.prev_data['Date']">
                 Previous Entry
         </div> 
 </div>
@@ -97,7 +97,7 @@
         </mat-form-field>
     </div> 
     <div fxFlex="25%">
-        <mat-form-field class="wmgmt"> 
+        <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
             <input type="text" [(ngModel)]="this.prev_data['less_than_six']" [disabled]='true' matInput placeholder="">
         </mat-form-field>
     </div> 
@@ -110,7 +110,7 @@
         </mat-form-field>
     </div> 
     <div fxFlex="25%">
-        <mat-form-field class="wmgmt"> 
+        <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
             <input type="text" [(ngModel)]="this.prev_data['seven_to_twelve']" [disabled]='true' matInput placeholder="">
         </mat-form-field>
     </div> 
@@ -123,7 +123,7 @@
         </mat-form-field>
     </div> 
     <div fxFlex="25%">
-        <mat-form-field class="wmgmt"> 
+        <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
             <input type="text" [(ngModel)]="this.prev_data['thirteen_or_more']" [disabled]='true' matInput placeholder="">
         </mat-form-field>
     </div> 
@@ -141,7 +141,7 @@
         <div fxFlex="75%">
 
         </div>
-        <div class="previous" fxFlex="25%">
+        <div class="previous" fxFlex="25%" *ngIf="this.prev_data['Date']">
                 Previous Entry
         </div> 
     </div>
@@ -152,8 +152,8 @@
                 <input type="text" [(ngModel)]="newWaterFood.habitat_standing"  [ngModelOptions]="{standalone:true}" matInput placeholder="Moist Soil Standing">
             </mat-form-field>
         </div> 
-        <div fxFlex="25%">
-            <mat-form-field class="wmgmt"> 
+        <div fxFlex="25%" *ngIf="this.prev_data['Date']">
+            <mat-form-field class="wmgmt">
                 <input type="text" [(ngModel)]="this.prev_data['habitat_standing']" [disabled]='true'  matInput placeholder="">
             </mat-form-field>
         </div> 
@@ -167,7 +167,7 @@
                   </mat-form-field>   
         </div> 
         <div fxFlex="25%">
-            <mat-form-field class="wmgmt"> 
+            <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                 <input type="text" [(ngModel)]="this.prev_data['habitat_mowed']" [disabled]='true' matInput placeholder="">
             </mat-form-field>
         </div> 
@@ -179,7 +179,7 @@
                     <input type="text"  [(ngModel)]="newWaterFood.habitat_disced"  [ngModelOptions]="{standalone:true}" matInput placeholder="Moist Soil Disced">
                   </mat-form-field>   
         </div> 
-        <div fxFlex="25%">
+        <div fxFlex="25%" *ngIf="this.prev_data['Date']">
             <mat-form-field class="wmgmt"> 
     
                 <input type="text" [(ngModel)]="this.prev_data['habitat_disced']" [disabled]='true' matInput placeholder="">
@@ -193,7 +193,7 @@
                     <input type="text" [(ngModel)]="newWaterFood.habitat_unharv_corn"  [ngModelOptions]="{standalone:true}" matInput placeholder="Unharvested Corn">
                 </mat-form-field>
             </div> 
-            <div fxFlex="25%">
+            <div fxFlex="25%" *ngIf="this.prev_data['Date']">
                 <mat-form-field class="wmgmt"> 
                     <input type="text" [(ngModel)]="this.prev_data['habitat_unharv_corn']" [disabled]='true'  matInput placeholder="">
                 </mat-form-field>
@@ -207,7 +207,7 @@
                       </mat-form-field>   
             </div> 
             <div fxFlex="25%">
-                <mat-form-field class="wmgmt"> 
+                <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                     <input type="text" [(ngModel)]="this.prev_data['habitat_harv_corn']" [disabled]='true' matInput placeholder="">
                 </mat-form-field>
             </div> 
@@ -220,7 +220,7 @@
                       </mat-form-field>   
             </div> 
             <div fxFlex="25%">
-                <mat-form-field class="wmgmt"> 
+                <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                     <input type="text" [(ngModel)]="this.prev_data['habitat_unharv_milo']" [disabled]='true' matInput placeholder="">
                 </mat-form-field>
             </div> 
@@ -232,7 +232,7 @@
                           </mat-form-field>   
                 </div> 
                 <div fxFlex="25%">
-                    <mat-form-field class="wmgmt"> 
+                    <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
             
                         <input type="text" [(ngModel)]="this.prev_data['habitat_harv_milo']" [disabled]='true' matInput placeholder="">
                     </mat-form-field>
@@ -246,7 +246,7 @@
                         </mat-form-field>
                     </div> 
                     <div fxFlex="25%">
-                        <mat-form-field class="wmgmt"> 
+                        <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                             <input type="text" [(ngModel)]="this.prev_data['habitat_unharv_beans']" [disabled]='true'  matInput placeholder="">
                         </mat-form-field>
                     </div> 
@@ -259,7 +259,7 @@
                     </mat-form-field>
                 </div> 
                 <div fxFlex="25%">
-                    <mat-form-field class="wmgmt"> 
+                    <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                         <input type="text" [(ngModel)]="this.prev_data['habitat_harv_beans']" [disabled]='true'  matInput placeholder="">
                     </mat-form-field>
                 </div> 
@@ -272,7 +272,7 @@
                               </mat-form-field>   
                     </div> 
                     <div fxFlex="25%">
-                        <mat-form-field class="wmgmt"> 
+                        <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                             <input type="text" [(ngModel)]="this.prev_data['habitat_browse']" [disabled]='true' matInput placeholder="">
                         </mat-form-field>
                     </div> 
@@ -288,7 +288,7 @@
                 <div fxFlex="75%">
         
                 </div>
-                <div class="previous" fxFlex="25%">
+                <div class="previous" fxFlex="25%" *ngIf="this.prev_data['Date']">
                         Previous Entry
                 </div> 
             </div>
@@ -300,7 +300,7 @@
                     </mat-form-field>
                 </div> 
                 <div fxFlex="25%">
-                    <mat-form-field class="wmgmt">   
+                    <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']">   
                         <input type="text" [(ngModel)]="this.prev_data['ice_standing']" [disabled]='true'  matInput placeholder="">
                     </mat-form-field>
                 </div> 
@@ -314,7 +314,7 @@
                           </mat-form-field>   
                 </div> 
                 <div fxFlex="25%">
-                    <mat-form-field class="wmgmt"> 
+                    <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                         <input type="text" [(ngModel)]="this.prev_data['ice_mowed']" [disabled]='true' matInput placeholder="">
                     </mat-form-field>
                 </div> 
@@ -327,7 +327,7 @@
                           </mat-form-field>   
                 </div> 
                 <div fxFlex="25%">
-                    <mat-form-field class="wmgmt" > 
+                    <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                         <input type="text" [(ngModel)]="this.prev_data['ice_mowed']" [disabled]='true' matInput placeholder="">
                     </mat-form-field>
                 </div> 
@@ -340,7 +340,7 @@
                         </mat-form-field>
                     </div> 
                     <div fxFlex="25%">
-                        <mat-form-field class="wmgmt"> 
+                        <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                             <input type="text" [(ngModel)]="this.prev_data['ice_unharv_corn']" [disabled]='true'  matInput placeholder="">
                         </mat-form-field>
                     </div> 
@@ -353,7 +353,7 @@
                               </mat-form-field>   
                     </div> 
                     <div fxFlex="25%">
-                        <mat-form-field class="wmgmt"> 
+                        <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                             <input type="text" [(ngModel)]="this.prev_data['ice_harv_corn']" [disabled]='true' matInput placeholder="">
                         </mat-form-field>
                     </div> 
@@ -366,7 +366,7 @@
                               </mat-form-field>   
                     </div> 
                     <div fxFlex="25%">
-                        <mat-form-field class="wmgmt"> 
+                        <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                 
                             <input type="text" [(ngModel)]="this.prev_data['ice_unharv_milo']" [disabled]='true' matInput placeholder="">
                         </mat-form-field>
@@ -379,7 +379,7 @@
                                   </mat-form-field>   
                         </div> 
                         <div fxFlex="25%">
-                            <mat-form-field class="wmgmt"> 
+                            <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                     
                                 <input type="text" [(ngModel)]="this.prev_data['ice_harv_milo']" [disabled]='true' matInput placeholder="">
                             </mat-form-field>
@@ -393,7 +393,7 @@
                                 </mat-form-field>
                             </div> 
                             <div fxFlex="25%">
-                                <mat-form-field class="wmgmt" > 
+                                <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                                     <input type="text" [(ngModel)]="this.prev_data['ice_unharv_beans']" [disabled]='true'  matInput placeholder="">
                                 </mat-form-field>
                             </div> 
@@ -406,7 +406,7 @@
                             </mat-form-field>
                         </div> 
                         <div fxFlex="25%">
-                            <mat-form-field class="wmgmt"> 
+                            <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                                 <input type="text" [(ngModel)]="this.prev_data['ice_harv_beans']" [disabled]='true'  matInput placeholder="">
                             </mat-form-field>
                         </div> 
@@ -419,7 +419,7 @@
                                       </mat-form-field>   
                             </div> 
                             <div fxFlex="25%">
-                                <mat-form-field class="wmgmt"> 
+                                <mat-form-field class="wmgmt" *ngIf="this.prev_data['Date']"> 
                                     <input type="text" [(ngModel)]="this.prev_data['ice_browse']" [disabled]='true' matInput placeholder="">
                                 </mat-form-field>
                             </div> 

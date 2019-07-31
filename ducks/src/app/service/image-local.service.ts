@@ -31,4 +31,8 @@ export class ImageLocalService extends BaseService{
       }
     });
   }
+
+  clearTable(){
+    this.connection.clear('Images')
+  }
 }

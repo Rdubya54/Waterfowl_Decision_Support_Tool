@@ -5,18 +5,23 @@ import { stripSummaryForJitFileSuffix } from '@angular/compiler/src/aot/util';
 import { Location } from '@angular/common';
 
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
-import {AuthService} from 'src/app/service/auth.service';
 import {CookieService} from 'src/app/service/cookie.service';
 
-import {dbService} from 'src/app/service/db.service';
+import {dbService} from 'src/app/service/cloud-db.service';
 
 import {CropStats,ICropStats} from 'src/app/model/crop-stats';
 import {GaugeStats,IGaugeStats} from 'src/app/model/gauge-stats';
-import { GaugedataService } from 'src/app/service/gaugedata.service';
-import { GaugeStatLocalService } from 'src/app/service/gauge-stat-local.service';
+import { GaugedataService } from 'src/app/service/gaugedata-cloud.service';
+import { GaugeStatLocalService } from 'src/app/service/gaugedata-local.service';
 
 import {Image,IImage} from 'src/app/model/image'
 import { ImageLocalService } from 'src/app/service/image-local.service';
+
+import { WCSService } from 'src/app/service/wcs.service';
+import {
+  WCS,
+  IWCS
+} from 'src/app/model/water-control-structures';
 
 import { WeatherCloudService } from 'src/app/service/weather-cloud.service';
 import { WeatherLocalService } from 'src/app/service/weather-local.service';
@@ -49,8 +54,8 @@ import {
 } from 'src/app/model/watermanagement';
 import { Observable } from 'rxjs';
 import 'rxjs/add/observable/timer';
-import { stat } from 'fs';
-import { resolve } from 'dns';
+import { last } from '@angular/router/src/utils/collection';
+
 
 @Component({
   selector: 'app-root',
@@ -58,6 +63,9 @@ import { resolve } from 'dns';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
+
+  WCSs:any[];
+  newWCS:IWCS=new WCS();
 
   image:any[];
   newImage:IImage=new Image();
@@ -99,13 +107,13 @@ export class AppComponent {
   //this makes sure updates are properly loaded.
   //needed cause pwas caching can make it hard to seee updates
   constructor(private connectionService:ConnectionService,updates:SwUpdate,public dialog: MatDialog, private path:Location,
-    private authservice:AuthService,private weatherlocalservice:WeatherLocalService,private weathercloudservice:WeatherCloudService, private cookieservice:CookieService,
-    private foodavailcloudservice:FoodAvailCloudService, private foodavaillocalservice: FoodAvailLocalService, private dbservice: dbService,
+    private weatherlocalservice:WeatherLocalService,private weathercloudservice:WeatherCloudService, private cookieservice:CookieService,
+    private foodavailcloudservice:FoodAvailCloudService, private foodavaillocalservice: FoodAvailLocalService, private cloud_db_service: dbService,
     public moistsoilservice:MoistsoilService,private waterfoodcloudservice:BiweeklyWaterFoodService, 
     private waterfoodlocalservice:LocalWaterFood,private watermanagementlocalservice: LocalWaterManagementService, 
     private watermanagementcloudservice: WatermanagementCloudService,
     private gaugestatscloudservice:GaugedataService, private gaugestatslocalservice:GaugeStatLocalService, 
-    private imagelocalservice:ImageLocalService){
+    private imagelocalservice:ImageLocalService,private WCSlocalservice:WCSService){
     
     //this is only run when the connection status changes
     this.connectionService.monitor().subscribe(isConnected => {
@@ -125,7 +133,8 @@ export class AppComponent {
         this.openConnectionStatusDialog();
       }
 
-      location.reload();
+      //take user back to landing page of the app to ensure app updates every table
+      location.replace("");
     })
   }
   
@@ -134,18 +143,18 @@ export class AppComponent {
     //get page
     this.page=this.path.path()
 
-    //if on app landing page open CA selection Dialog 
+    //if on app landing page 
     if (this.page===""){
-      this.openCASelectionDialog();
+      //open CA selection if a CA has not been chosen
+      if (localStorage.getItem('CA')===null){
+        this.openCASelectionDialog();
+      }
+      //if CA has already been chosen, start doing updates
+      else {
+        this.initial_onlineCheck();
+      }
     }
-
-    
-
   } 
-
-  onTimeOut() {
-    console.log("hi")
-  }
 
   //when page first loads this other online check needs to be done, this.connectionService.monitor()
   //will not get the connection status at the beginning of the page load
@@ -158,24 +167,7 @@ export class AppComponent {
       if (this.online_status){
         //push all records into cloud
         
-        //this.pushtocloudfromlocal();
-/*         this.pushtocloudfromlocal_new('Daily Weather Observations').then(result=>{
-          console.log("result is "+result)
-          this.downloadallprevs("Daily Weather Observations")
-        }) */
-        
-
-        this.openLoadingDialog();
-        Promise.all([this.pushtocloudfromlocal_new('Daily Weather Observations'),this.pushtocloudfromlocal_new('Fall Food Availability'),
-        this.pushtocloudfromlocal_new('Biweekly'),this.pushtocloudfromlocal_new('WaterManagement'),
-        this.pushtocloudfromlocal_new('Gauge Stats')],).then(result=>{
-          console.log('we waited ' +result)
-          Promise.all([this.downloadallprevs('Daily Weather Observations'),this.downloadallprevs('Fall Food Availability'),
-          this.downloadallprevs('Biweekly'),this.downloadallprevs('WaterManagement'),
-          this.downloadallprevs('Gauge Stats')]).then(result=>{
-            this.closeLoadingDialog();
-          })
-        }); 
+        this.openUpdatingDialog();
 
         //set statuses
         this.cookieservice.setStatus("online") 
@@ -189,19 +181,13 @@ export class AppComponent {
         this.status=localStorage.getItem('Status')
       }
 
-      //may use this later
-/*       var loginstatus=localStorage.getItem('logged in')
-      console.log("loginstatus is "+loginstatus)
-      if(loginstatus !== 'true'){
-        this.openLoginDialog();
-        this.openConnectionStatusDialog();
-      } */
 }
 
 //this function handles pushing data that is stored in local to the cloud
 //once the app gets back online
-pushtocloudfromlocal_new(table){
+pushtocloudfromlocal(table){
   //push all locally stored weather to cloud 
+  console.log("pushing table "+table)
 
   return new Promise((resolve, reject) => {
 
@@ -234,6 +220,7 @@ pushtocloudfromlocal_new(table){
             this.weatherlocalservice.delete_Weather_record(record["id"]);
           })
 
+          console.log("resolving weather")
           resolve(data)
       }); 
   }
@@ -301,6 +288,7 @@ pushtocloudfromlocal_new(table){
           console.log('deleting:'+record["id"])
           this.foodavaillocalservice.delete_FoodAvail_record(record["id"]);
         })
+        console.log("resolving foodavail")
         resolve(data)
     }); 
     }
@@ -354,7 +342,7 @@ pushtocloudfromlocal_new(table){
             console.log('deleting:'+record["id"])
             this.waterfoodlocalservice.delete_WaterFood_record(record["id"]);
           })
-  
+          console.log("resolving waterfood")
           resolve(data);
       }); 
     }
@@ -400,61 +388,31 @@ pushtocloudfromlocal_new(table){
             this.watermanagementlocalservice.delete_WaterManagement_record(record["id"]);
           })
   
+          console.log("resolving watermangement")
           resolve(data)
       }); 
-    }
-
-    if (table==="Gauge Stats"){
-  //get all gaugestat records to see if they have already been downloaded
-  this.gaugestatslocalservice.getAll(this.selected_CA)
-    .then(data =>{
-      if (data.length>0){
-        console.log("data full")
-        
-        //get name of CA in a record to verify that CA isn't being changed
-        //and images don't need to be redownloaded
-        var lastCA = data.forEach(record =>{
-          var lastCA=record["CA"]
-          
-          resolve(data)
-          return lastCA
-          
-        })
-
-/*         if (lastCA!==this.selected_CA){
-            //user is switching conservation areas, redownload data
-            this.downloadallprevs('Gauge Stats');
-        } */
-
-      }
-
-      else {
-        //only download Gauge Stats if they aren't already downloaded since these rarely change
-        
-
-        resolve(data)
-      }
-    })
     }
   });
 }
 
 //get last record for EVERY tree endpoint from cloud
 downloadallprevs(table){
-  console.log('downloading all prevs')
+  console.log('downloading all prevs '+table)
+
+  var CA=localStorage.getItem('CA')
 
   return new Promise((resolve, reject) => {
     if (table==='Daily Weather Observations'){
         console.log("downloading weather")
-        console.log('selected CA:'+this.selected_CA)
-        this.weathercloudservice.get_prev_Weather_record(this.selected_CA).subscribe(data => {
+        console.log('selected CA:'+CA)
+        this.weathercloudservice.get_prev_Weather_record(CA).subscribe(data => {
           data.forEach(doc => {
           console.log(doc.id)
             console.log("THIS is "+doc.id)
             var date=doc.id;
             
             
-            this.weathercloudservice.get_Weather_record(this.selected_CA,date).
+            this.weathercloudservice.get_Weather_record(CA,date).
             subscribe(data=>{
               console.log('Adding data :'+data.get('date'))
               console.log('Adding data :'+data.get('low temp'))
@@ -473,8 +431,6 @@ downloadallprevs(table){
               then((addedWaterManagements: IWeather[]) => {
               if (addedWaterManagements.length > 0) {
 
-          
-                this.weathers.push(addedWaterManagements[0]);
                 this.clearNewWeather();
                 resolve(data)
               }
@@ -485,28 +441,71 @@ downloadallprevs(table){
       }); 
     }
 
+    if (table==='WCSs'){
+    //get all gaugestat records to see if they have already been downloaded
+    this.WCSlocalservice.getAll(CA)
+      .then(data =>{
+        if (data.length>0){
+          console.log("wcs data full")
+          resolve(data)
+        }
+
+        else {
+          //only download WCSs if they aren't already downloaded since these rarely change
+          console.log("fetching wcss")
+          this.cloud_db_service.getUnits(CA).subscribe(data => {
+            data.forEach(doc =>{
+              var unit =doc.id
+              this.cloud_db_service.getPools(CA,unit).subscribe(data=>{
+                data.forEach(doc =>{
+                  var pool=doc.id
+                  this.cloud_db_service.getWCS(CA,unit,pool).subscribe(data=>{
+                    data.forEach(doc =>{ 
+                      var wcs=doc.id
+                      console.log("addin wcs "+wcs)
+                      this.newWCS.CA=CA;
+                      this.newWCS.Unit=unit;
+                      this.newWCS.Pool=pool;
+                      this.newWCS.WCS=wcs
+                      this.WCSlocalservice.add_WCS_record(this.newWCS).
+                      then((addedWCS: IWCS[]) => {
+                      if (addedWCS.length > 0) {
+                        this.clearNewWCS();
+                        resolve(data)
+                      }
+                      })
+                    })
+                })
+                })
+              })
+            })
+          });          
+        }
+      })
+    }
+
     if (table==='Fall Food Availability'){
 
-      console.log("Fall Fooad Avail CA is "+this.selected_CA)
+      console.log("Fall Fooad Avail CA is "+CA)
       
-      this.dbservice.getUnits(this.selected_CA).subscribe(data => {
+      this.cloud_db_service.getUnits(CA).subscribe(data => {
         data.forEach(doc => {
           console.log("Unit is"+doc.id)
           var Unit=doc.id;
-          this.dbservice.getPools(this.selected_CA,Unit).subscribe(data => {
+          this.cloud_db_service.getPools(CA,Unit).subscribe(data => {
             data.forEach(doc => {
               console.log("Pool is"+doc.id)
               var Pool=doc.id;
-              this.dbservice.getWCS(this.selected_CA,Unit,Pool).subscribe(data => {
+              this.cloud_db_service.getWCS(CA,Unit,Pool).subscribe(data => {
                 data.forEach(doc => {
                   console.log("WCS is"+doc.id)
                   var wcs=doc.id;
-                  this.foodavailcloudservice.get_prev_FoodAvail_record(this.selected_CA,Unit,Pool,wcs).subscribe(data => {
+                  this.foodavailcloudservice.get_prev_FoodAvail_record(CA,Unit,Pool,wcs).subscribe(data => {
                     data.forEach(doc => {
                     console.log(doc.id)
                       console.log("Date is "+doc.id)
                       var date=doc.id;
-                      this.foodavailcloudservice.get_FoodAvail_record(this.selected_CA,Unit,Pool,wcs,date).
+                      this.foodavailcloudservice.get_FoodAvail_record(CA,Unit,Pool,wcs,date).
                       subscribe(data=>{
                         this.newFoodAvail.CA=data.get('CA')
                         this.newFoodAvail.Unit=data.get('Unit')
@@ -574,22 +573,22 @@ downloadallprevs(table){
 
     if (table==='Biweekly'){
 
-      console.log('Biweekly CA is '+this.selected_CA)
+      console.log('Biweekly CA is '+CA)
 
-      this.dbservice.getUnits(this.selected_CA).subscribe(data => {
+      this.cloud_db_service.getUnits(CA).subscribe(data => {
         data.forEach(doc => {
           console.log("Biweekly Unit is"+doc.id)
           var Unit=doc.id;
-          this.dbservice.getPools(this.selected_CA,Unit).subscribe(data => {
+          this.cloud_db_service.getPools(CA,Unit).subscribe(data => {
             data.forEach(doc => {
               console.log("Biweekly Pool is"+doc.id)
               var Pool=doc.id;
-                this.waterfoodcloudservice.get_prev_WaterFood_record(this.selected_CA,Unit,Pool,"").subscribe(data => {
+                this.waterfoodcloudservice.get_prev_WaterFood_record(CA,Unit,Pool,"").subscribe(data => {
                   data.forEach(doc => {
                   console.log(doc.id)
                     console.log("Biweekly Date is "+doc.id)
                     var date=doc.id;
-                    this.waterfoodcloudservice.get_WaterFood_record(this.selected_CA,Unit,Pool,date).
+                    this.waterfoodcloudservice.get_WaterFood_record(CA,Unit,Pool,date).
                     subscribe(data=>{
                       this.newWaterFood.CA=data.get('CA');                                                                          
                       this.newWaterFood.Unit=Unit;
@@ -644,25 +643,25 @@ downloadallprevs(table){
   }
 
   if (table==='WaterManagement'){
-      this.dbservice.getUnits(this.selected_CA).subscribe(data => {
+      this.cloud_db_service.getUnits(CA).subscribe(data => {
         data.forEach(doc => {
           console.log("CA is"+doc.id)
           var Unit=doc.id;
-          this.dbservice.getPools(this.selected_CA,Unit).subscribe(data => {
+          this.cloud_db_service.getPools(CA,Unit).subscribe(data => {
             data.forEach(doc => {
               console.log("CA is"+doc.id)
               var Pool=doc.id;
-              this.dbservice.getWCS(this.selected_CA,Unit,Pool).subscribe(data => {
+              this.cloud_db_service.getWCS(CA,Unit,Pool).subscribe(data => {
                 data.forEach(doc => {
                   console.log("CA is"+doc.id)
                   var wcs=doc.id;
-                  this.watermanagementcloudservice.get_prev_7_WaterManagement_records(this.selected_CA,Unit,Pool,wcs).subscribe(data => {
+                  this.watermanagementcloudservice.get_prev_7_WaterManagement_records(CA,Unit,Pool,wcs).subscribe(data => {
                     data.forEach(doc => {
                     console.log(doc.id)
                       var date=doc.id;
-                      this.watermanagementcloudservice.get_WaterManagement_record(this.selected_CA,Unit,Pool,wcs,date).
+                      this.watermanagementcloudservice.get_WaterManagement_record(CA,Unit,Pool,wcs,date).
                       subscribe(data=>{
-                        this.newWaterManagement.CA=this.selected_CA;
+                        this.newWaterManagement.CA=CA;
                         this.newWaterManagement.Unit=Unit;
                         this.newWaterManagement.Pool=Pool;
                         this.newWaterManagement.WCS=wcs;
@@ -699,363 +698,196 @@ downloadallprevs(table){
         });
       });
 
-      //Promise.all([this.promise1,this.promise2])
     }
 
     if (table==='Gauge Stats'){
-      console.log("in gauge stats")
+      //not sure how if loading spinner is delaying cause database is delaying in writing, or if its actaully delaying to 
+      //early
 
-      //download symbology image 
-      var symbourl='https://firebasestorage.googleapis.com/v0/b/waterfowltool.appspot.com/o/symbology%2FSymbology_Image.JPG?alt=media&token=d746a218-ab78-48dd-8a06-a76b45c41dd0'
-      this.loadImage(symbourl,this.cFunction,this.newImage,this.imagelocalservice,"symbo")
+      //get all gaugestat records to see if they have already been downloaded
+      this.gaugestatslocalservice.getAll(CA)
+      .then(data =>{
+        if (data.length>0){
+          console.log("data full")
+          console.log("resolving prev gauge stats")
+          resolve(data)
+        }
 
-      this.dbservice.getUnits(this.selected_CA).subscribe(data => {
-        data.forEach(doc => {
-          var Unit=doc.id;
-          console.log("...Unit is "+Unit)
-          this.dbservice.getPools(this.selected_CA,Unit).subscribe(data => {
-            data.forEach(doc => {
-              var Pool=doc.id;
-              console.log("...Pool is "+Pool)
-              this.dbservice.getWCS(this.selected_CA,Unit,Pool).subscribe(data => {
+        else {
+          console.log("in gauge stats")
+
+          var num_units=0
+          var unit_count=0
+          var num_pools=0
+          var pool_count=0
+          var num_wcs=0
+          var wcs_count=0
+          var num_gauges=0
+          var gauge_count=0
+    
+          //download symbology image 
+          var symbourl='https://firebasestorage.googleapis.com/v0/b/waterfowltool.appspot.com/o/symbology%2FSymbology_Image.JPG?alt=media&token=d746a218-ab78-48dd-8a06-a76b45c41dd0'
+          this.loadImage(symbourl,this.cFunction,this.newImage,this.imagelocalservice,"symbo")
+    
+          this.cloud_db_service.getUnits(CA).subscribe(data => {
+            num_units+=data.size
+            console.log("num units:"+num_units)
+            data.forEach((doc) => {
+              unit_count++
+              var Unit=doc.id;
+              console.log("...Unit is "+Unit)
+              this.cloud_db_service.getPools(CA,Unit).subscribe(data => {
+                console.log("num pools:"+num_pools)
+                num_pools+=data.size
                 data.forEach(doc => {
-                  var wcs=doc.id;
-                  console.log("...wcs is "+wcs)
-                  this.dbservice.getGauges(this.selected_CA,Unit,Pool,wcs).subscribe(data => {
+                  pool_count++
+                  var Pool=doc.id;
+                  console.log("...Pool is "+Pool)
+                  this.cloud_db_service.getWCS(CA,Unit,Pool).subscribe(data => {
+                    console.log("num wcs:"+num_wcs)
+                    num_wcs+=data.size
                     data.forEach(doc => {
-                      var gauge=doc.id;
-                      console.log("...Gauge is "+gauge)
-                      //get name of image
-                      this.dbservice.getImageName(this.selected_CA,Unit,Pool,wcs,gauge).subscribe(data => {
-                          var image_name=data.get('Image_Name')
-
-                          console.log("...Image name is"+image_name)
-
-                          //make a deep copy of the object otherwise one same record will written for every record
-                          let copystat=Object.assign({},this.newGaugeStat);
-
-                          //get the image from the storage bucket
-                          var imageurl = this.gaugestatscloudservice.getImage(this.selected_CA,Unit,Pool,wcs,gauge,image_name).then(imageurl =>{
-
-                            console.log(imageurl)
-
-                            //get stats for the gauge level
-                            this.gaugestatscloudservice.getHabitat(this.selected_CA,Unit,Pool,wcs,gauge).subscribe(data => {
-
-                              copystat.CA=this.selected_CA;
-                              copystat.Unit=Unit;
-                              copystat.Pool=Pool;
-                              copystat.WCS=wcs;
-                              copystat.Gauge=gauge;
-                              copystat.Image_Name=image_name;
-                              copystat.Total_Acres=data.get('Total_Acres')
-                              copystat.Dry=data.get('Dry_not_flooded')
-                              copystat.Sixinch=data.get('Shallowly_Flooded_0_6in')
-                              copystat.Twelveinch=data.get('Shallowly_Flooded_6_12in')
-                              copystat.Eightteeninch=data.get('Shallowly_Flooded_12_18in')
-                              copystat.Flooded=data.get('Full_Flooded_18in')
-
-                              copystat.Crop_Stats=[];
-
-                              console.log("...Dry is "+copystat.Dry)
-
-                              //put the image into the database as a blob
-                              this.loadImage(imageurl,this.cFunction,this.newImage,this.imagelocalservice,image_name) 
-                              
-                              //get the crop names
-                              this.gaugestatscloudservice.getCrops(this.selected_CA,Unit,Pool,wcs,gauge).subscribe(data => {
-
-                                  console.log("...snapshot is "+data.docs.length)
-                                  var counter=0;
-                                  var length=data.docs.length;
-                                  //get stats for each crop
-
-                                  //if there is crop data (sometimes there wont be)
-                                  if (length>0){
-                                    data.forEach(doc =>{
-
-                                      //make a deep copy of the object otherwise one same record will written for every record
-                                      let cropcopy=Object.assign({},this.newCropStats);
-
-                                      console.log("...Crop Name is" + doc.id)
-                                      var crop_name = doc.id
-
-                                      cropcopy.Name = crop_name
-                                      
-                                      this.gaugestatscloudservice.getCropStats(this.selected_CA,Unit,Pool,wcs,gauge,crop_name).subscribe(data => {
-
-                                        console.log("...total acres is "+data.get('Total Acres'))
-                                      
-                                        counter++;
-
-                                        cropcopy.Total_Acres=data.get('Total Acres')
-                                        cropcopy.Dry=data.get('Dry_not_flooded')
-                                        cropcopy.Sixinch=data.get('Shallowly_Flooded_0_6in')
-                                        cropcopy.Twelveinch=data.get('Shallowly_Flooded_6-12in')
-                                        cropcopy.Eightteeninch=data.get('Shallowly_Flooded_12_18in')
-                                        cropcopy.Flooded=data.get('Full_Flooded_18in')
-
-
-                                        console.log("...crop list is "+cropcopy)
-
-                                        console.log("...counter is "+counter)
-                                        
-                                        copystat.Crop_Stats.push(cropcopy)
-
-                                        if (counter === length){
-                                          this.pushGaugeStatRecord(copystat,this.gaugestatslocalservice)
-                                          resolve(data)
-                                        }
-                                      });
-                                    })
-                                  }
-
-                                  //if there was no crop data finsih pushing the record
-                                  else {
-                                    this.pushGaugeStatRecord(copystat,this.gaugestatslocalservice)
-                                    resolve(data)
-                                  }
+                      wcs_count++
+                      var wcs=doc.id;
+                      console.log("...wcs is "+wcs)
+                      this.cloud_db_service.getGauges(CA,Unit,Pool,wcs).subscribe(data => {
+                        num_gauges+=data.size
+                        console.log("num gauges:"+num_gauges)
+                        data.forEach(doc => {
+                          gauge_count++
+                          var gauge=doc.id;
+                          console.log("...Gauge is "+gauge)
+                          //get name of image
+                          this.gaugestatscloudservice.getImageName(CA,Unit,Pool,wcs,gauge).subscribe(data => {
+    
+                              var image_name=data.get('Image_Name')
+    
+                              console.log("...Image name is"+image_name)
+    
+                              //make a deep copy of the object otherwise one same record will written for every record
+                              let copystat=Object.assign({},this.newGaugeStat);
+    
+                              //get the image from the storage bucket
+                              var imageurl = this.gaugestatscloudservice.getImage(CA,Unit,Pool,wcs,gauge,image_name).then(imageurl =>{
+    
+                                console.log(imageurl)
+    
+                                //get stats for the gauge level
+                                this.gaugestatscloudservice.getHabitat(CA,Unit,Pool,wcs,gauge).subscribe(data => {
+    
+                                  copystat.CA=CA;
+                                  copystat.Unit=Unit;
+                                  copystat.Pool=Pool;
+                                  copystat.WCS=wcs;
+                                  copystat.Gauge=gauge;
+                                  copystat.Image_Name=image_name;
+                                  copystat.Total_Acres=data.get('Total_Acres')
+                                  copystat.Dry=data.get('Dry_not_flooded')
+                                  copystat.Sixinch=data.get('Shallowly_Flooded_0_6in')
+                                  copystat.Twelveinch=data.get('Shallowly_Flooded_6_12in')
+                                  copystat.Eightteeninch=data.get('Shallowly_Flooded_12_18in')
+                                  copystat.Flooded=data.get('Full_Flooded_18in')
+    
+                                  copystat.Crop_Stats=[];
+    
+                                  console.log("...Dry is "+copystat.Dry)
+    
+                                  //put the image into the database as a blob
+                                  this.loadImage(imageurl,this.cFunction,this.newImage,this.imagelocalservice,image_name) 
+                                  
+                                  //get the crop names
+                                  this.gaugestatscloudservice.getCrops(CA,Unit,Pool,wcs,gauge).subscribe(data => {
+    
+                                      console.log("...snapshot is "+data.docs.length)
+                                      var counter=0;
+                                      var length=data.docs.length;
+                                      //get stats for each crop
+    
+                                      //if there is crop data (sometimes there wont be)
+                                      if (length>0){
+                                        data.forEach(doc =>{
+    
+                                          //make a deep copy of the object otherwise one same record will written for every record
+                                          let cropcopy=Object.assign({},this.newCropStats);
+    
+                                          console.log("...Crop Name is" + doc.id)
+                                          var crop_name = doc.id
+    
+                                          cropcopy.Name = crop_name
+                                          
+                                          this.gaugestatscloudservice.getCropStats(CA,Unit,Pool,wcs,gauge,crop_name).subscribe(data => {
+    
+                                            console.log("...total acres is "+data.get('Total Acres'))
+                                          
+                                            counter++;
+    
+                                            cropcopy.Total_Acres=data.get('Total Acres')
+                                            cropcopy.Dry=data.get('Dry_not_flooded')
+                                            cropcopy.Sixinch=data.get('Shallowly_Flooded_0_6in')
+                                            cropcopy.Twelveinch=data.get('Shallowly_Flooded_6-12in')
+                                            cropcopy.Eightteeninch=data.get('Shallowly_Flooded_12_18in')
+                                            cropcopy.Flooded=data.get('Full_Flooded_18in')
+    
+    
+                                            console.log("...crop list is "+cropcopy)
+    
+                                            console.log("...counter is "+counter)
+                                            
+                                            copystat.Crop_Stats.push(cropcopy)
+    
+                                            if (counter === length){
+                                              this.pushGaugeStatRecord(copystat,this.gaugestatslocalservice)
+                                              console.log("resolving 1 ")
+                                              //resolve(data)
+                                            }
+                                          });
+                                        })
+                                      }
+    
+                                      //if there was no crop data finsih pushing the record
+                                      else {
+                                        this.pushGaugeStatRecord(copystat,this.gaugestatslocalservice)
+                                        console.log("resolving 2 ")
+                                        //resolve(data)
+                                      }
+    
+    
+                                      if (unit_count===num_units && pool_count===num_pools && wcs_count===num_wcs && gauge_count===num_gauges){
+                                        console.log("resolving units2:"+unit_count)
+                                        console.log("resolving units4:"+pool_count)
+                                        console.log("resolving units6:"+wcs_count)
+                                        console.log("resolving units8:"+gauge_count)
+                                        resolve(data)
+                                      }
+                                  });
+                                });
                               });
-                            });
+                              
                           });
                       });
+                    });
                   });
                 });
               });
             });
           });
-        });
+          });
+        }
       });
-      });
-    }
-  });
-}
-
-//this function handles pushing data that is stored in local to the cloud
-//once the app gets back online
-pushtocloudfromlocal(){
-
-  console.log("pushing to cloud from local")
-
-  //get all gaugestat records to see if they have already been downloaded
-  this.gaugestatslocalservice.getAll(this.selected_CA)
-    .then(data =>{
-      if (data.length>0){
-        console.log("data full")
-        
-        //get name of CA in a record to verify that CA isn't being changed
-        //and images don't need to be redownloaded
-        var lastCA = data.forEach(record =>{
-          var lastCA=record["CA"]
-          
-          return lastCA
-        })
-
-/*         if (lastCA!==this.selected_CA){
-            //user is switching conservation areas, redownload data
-            this.downloadallprevs('Gauge Stats');
-        } */
-
-      }
-
-      else {
-        //only download Gauge Stats if they aren't already downloaded since these rarely change
-        
-
-        const promise1 = this.downloadallprevs('Gauge Stats')
       }
     })
+}
 
-  //push all locally stored weather to cloud 
-  this.weatherlocalservice.get_all_Weather_records().
-    then(data => {
-        this.weathers = data;
-
-        this.weathers.forEach(record =>{
-          this.newWeather.CA=record["CA"]
-          this.newWeather.date=record["Date"]
-          this.newWeather.area_ice=record["area_ice"]
-          this.newWeather.ice_thick=record["ice_thick"]
-          this.newWeather.low_temp=record["low_temp"]
-          this.newWeather.wind_dir=record["wind_dir"]
-          this.newWeather.wind_speed=record["wind_speed"]
-          this.newWeather.river_stage=record["river_stage"]
-          this.newWeather.other_observations=record["other_observations"]
-          this.newWeather.sort_time=record["sort_time"]
-
-          console.log("adding weather from local to cloud")
-          console.log(record)
-
-          //add the locally stored Weather to Cloud (if the record was already there it is being added
-          //but sense everything is the same it is basically doing nothing)
-           this.weathercloudservice.add_Weather_record(this.newWeather) 
-
-          //delete the record from local
-          console.log('deleting:'+record["id"])
-          this.weatherlocalservice.delete_Weather_record(record["id"]);
-        })
-
-        this.downloadallprevs('Daily Weather Observations');
-    }); 
-
-  //push all locally stored FoodAvails to cloud 
-  this.foodavaillocalservice.get_all_FoodAvail_records().
-    then(data => {
-        this.foodavails = data;
-
-        this.foodavails.forEach(record =>{
-          this.newFoodAvail.CA=record['CA']
-          this.newFoodAvail.Unit=record['Unit']
-          this.newFoodAvail.Pool=record['Pool']
-          this.newFoodAvail.WCS=record['WCS']
-          this.newFoodAvail.Date=record['Date']
-          this.newFoodAvail.Sort_time=record['Sort_time']
-          this.newFoodAvail.corn_unharv=record['corn_unharv']
-          this.newFoodAvail.corn_harv=record['corn_harv']
-          this.newFoodAvail.corn_yield=record['corn_yield']
-          this.newFoodAvail.corn_yield_field=record['corn_yield_field']
-          this.newFoodAvail.beans_unharv=record['beans_unharv']
-          this.newFoodAvail.beans_harv=record['beans_harv']
-          this.newFoodAvail.beans_yield=record['beans_yield']
-          this.newFoodAvail.beans_yield_field=record['beans_yield_field']
-          this.newFoodAvail.milo_unharv=record['milo_unharv']
-          this.newFoodAvail.milo_harv=record['milo_harv']
-          this.newFoodAvail.milo_yield=record['milo_yield']
-          this.newFoodAvail.milo_yield_field=record['milo_yield_field']
-          this.newFoodAvail.wheat_green=record['wheat_green']
-          this.newFoodAvail.wheat_harv=record['wheat_harv']
-          this.newFoodAvail.soil_standing=record['soil_standing']
-          this.newFoodAvail.soil_mowed=record['soil_mowed']
-          this.newFoodAvail.soil_disced=record['soil_disced']
-          this.newFoodAvail.millet_output=record['millet_output']
-          this.newFoodAvail.foxtail_output=record['foxtail_output']
-          this.newFoodAvail.rice_cut_output=record['rice_cut_output']
-          this.newFoodAvail.panic_grass_output=record['panic_grass_output']
-          this.newFoodAvail.crabgrass_output=record['crabgrass_output']
-          this.newFoodAvail.sprangletop_output=record['sprangletop_output']
-          this.newFoodAvail.lapathifolium_output=record['lapathifolium_output']
-          this.newFoodAvail.pennsylvanicum_output=record['pennsylvanicum_output']
-          this.newFoodAvail.coccineum_output=record['coccineum_output']
-          this.newFoodAvail.water_pepper_output=record['water_pepper_output']
-          this.newFoodAvail.pigweed_output=record['pigweed_output']
-          this.newFoodAvail.bidens_output=record['bidens_output']
-          this.newFoodAvail.other_seed_output=record['other_seed_output']
-          this.newFoodAvail.open_water_output=record['open_water_output']
-          this.newFoodAvail.recently_disced_output=record['recently_disced_output']
-          this.newFoodAvail.chufa_output=record['chufa_output']
-          this.newFoodAvail.redroot_output=record['redroot_output']
-          this.newFoodAvail.sedge_output=record['sedge_output']
-          this.newFoodAvail.rush_output=record['rush_output'] 
-
-          console.log("adding foodavail from local to cloud")
-          console.log(record)
-
-          //add the locally stored Weather to Cloud (if the record was already there it is being added
-          //but sense everything is the same it is basically doing nothing)
-          if (this.newFoodAvail.CA){
-           this.foodavailcloudservice.add_FoodAvail_record_from_local(this.newFoodAvail) 
-          }
-
-          //delete the record from local
-          console.log('deleting:'+record["id"])
-          this.foodavaillocalservice.delete_FoodAvail_record(record["id"]);
-        })
-
-        this.downloadallprevs('Fall Food Availability')
-    }); 
-
-  //push all locally stored waterfood to cloud 
-  this.waterfoodlocalservice.get_all_WaterFood_records().
-    then(data => {
-        this.waterfoods = data;
-
-        this.waterfoods.forEach(record =>{
-          this.newWaterFood.CA=record["CA"],
-          this.newWaterFood.Unit=record["Unit"],
-          this.newWaterFood.Pool=record["Pool"],
-          this.newWaterFood.Date=record["Date"],
-          this.newWaterFood.percent_of_full_pool=record["percent_of_full_pool"];
-          this.newWaterFood.less_than_six=record["less_than_six"];
-          this.newWaterFood.seven_to_twelve=record["seven_to_twelve"]
-          this.newWaterFood.thirteen_or_more=record["thirteen_or_more"]
-          this.newWaterFood.habitat_standing=record["habitat_standing"]
-          this.newWaterFood.habitat_disced=record["habitat_disced"]
-          this.newWaterFood.habitat_mowed=record["habitat_mowed"]
-          this.newWaterFood.habitat_harv_corn=record["habitat_harv_corn"]
-          this.newWaterFood.habitat_unharv_corn=record["habitat_unharv_corn"]
-          this.newWaterFood.habitat_harv_beans=record["habitat_harv_beans"]
-          this.newWaterFood.habitat_unharv_beans=record["habitat_unharv_beans"]
-          this.newWaterFood.habitat_harv_milo=record["habitat_harv_milo"]
-          this.newWaterFood.habitat_unharv_milo=record["habitat_unharv_milo"]
-          this.newWaterFood.habitat_browse=record["habitat_browse"]
-          this.newWaterFood.ice_standing=record["ice_standing"]
-          this.newWaterFood.ice_disced=record["ice_disced"]
-          this.newWaterFood.ice_mowed=record["ice_mowed"]
-          this.newWaterFood.ice_harv_corn=record["ice_harv_corn"]
-          this.newWaterFood.ice_unharv_corn=record["ice_unharv_corn"]
-          this.newWaterFood.ice_harv_beans=record["ice_harv_beans"]
-          this.newWaterFood.ice_unharv_beans=record["ice_unharv_beans"]
-          this.newWaterFood.ice_harv_milo=record["ice_harv_milo"]
-          this.newWaterFood.ice_unharv_milo=record["ice_unharv_milo"]
-          this.newWaterFood.ice_browse=record["ice_browse"]
-          this.newWaterFood.notes=record["notes"]
-          this.newWaterFood.response=record["response"]
-          this.newWaterFood.actions=record["actions"]
-          this.newWaterFood.Sort_time=record["Sort_time"]
-          console.log("adding waterfood from local to cloud")
-          console.log(record)
-
-          //add the locally stored Weather to Cloud (if the record was already there it is being added
-          //but sense everything is the same it is basically doing nothing)
-           this.waterfoodcloudservice.add_WaterFood_record(this.newWaterFood) 
-
-          //delete the record from local
-          console.log('deleting:'+record["id"])
-          this.waterfoodlocalservice.delete_WaterFood_record(record["id"]);
-        })
-
-        this.downloadallprevs('Biweekly');
-    }); 
-    this.watermanagementlocalservice.get_all_WaterManagment_records().
-    then(data => {
-        this.watermanagements = data;
-
-        this.watermanagements.forEach(record =>{
-          this.newWaterManagement.CA=record["CA"],
-          this.newWaterManagement.Unit=record["Unit"],
-          this.newWaterManagement.Pool=record["Pool"],
-          this.newWaterManagement.WCS=record["WCS"],
-          this.newWaterManagement.Date=record["Date"],
-          this.newWaterManagement.Elevation=record["Elevation"],
-          this.newWaterManagement.Gate_manipulation=record["Gate_manipulation"],
-          this.newWaterManagement.Gate_level=record["Gate_level"],
-          this.newWaterManagement.Stoplog_change=record["Stoplog_change"],
-          this.newWaterManagement.Stoplog_level=record["Stoplog_level"],
-          this.newWaterManagement.Duck_numbers=record["Duck_numbers"],
-          this.newWaterManagement.Goose_numbers=record["Goose_numbers"],
-          this.newWaterManagement.Year=record["Year"],
-          this.newWaterManagement.Time=record["Time"],
-          this.newWaterManagement.Fiscal_year=record["Fiscal_year"],
-          this.newWaterManagement.Notes=record["Notes"],
-          this.newWaterManagement.Reasons=record["Reasons"],
-          this.newWaterManagement.Sort_time=record["Sort_time"],
-          this.newWaterManagement.Update_time=record["Update_time"],
-          this.newWaterManagement.UID=record["UID"],
-          this.newWaterManagement.Delete=record["Delete"]
-          console.log("adding waterfood from local to cloud")
-          console.log(record)
-
-          //add the locally stored Weather to Cloud (if the record was already there it is being added
-          //but sense everything is the same it is basically doing nothing)
-           this.watermanagementcloudservice.add_WaterManagement_record(this.newWaterManagement) 
-
-          //delete the record from local
-          console.log('deleting:'+record["id"])
-          this.watermanagementlocalservice.delete_WaterManagement_record(record["id"]);
-        })
-
-        this.downloadallprevs('WaterManagement')
-    }); 
+updatecloudanddownloadrecords(){
+  Promise.all([this.pushtocloudfromlocal('Daily Weather Observations'),this.pushtocloudfromlocal('Fall Food Availability'),
+  this.pushtocloudfromlocal('Biweekly'),this.pushtocloudfromlocal('WaterManagement')]).then(result=>{
+    console.log('we waited ' +result)
+    Promise.all([this.downloadallprevs('Daily Weather Observations'),this.downloadallprevs('Fall Food Availability'),
+    this.downloadallprevs('Biweekly'),this.downloadallprevs('WaterManagement'),this.downloadallprevs('WCSs'),
+    this.downloadallprevs('Gauge Stats')]).then(result=>{
+      this.closeLoadingDialog();
+    })
+  }); 
 }
 
 generateUUID() { // Public Domain/MIT
@@ -1084,7 +916,11 @@ loadImage(url,cFunction,newImage,service,image_name){
   xhttp.responseType = 'blob';
   xhttp.onreadystatechange = function() {
     console.log("ready is "+this.readyState)
-    if (this.readyState == 4 && this.status == 200) {
+    console.log("ready staus is "+this.status)
+    //code was previously getting the image url from firebase storage bucket but was storing image
+    //in indexdb as null because CORS was not probably configured in storage bucket. I fixed it using instructions
+    //here https://stackoverflow.com/questions/37760695/firebase-storage-and-access-control-allow-origin
+    if (this.readyState == 4) {
       cFunction(this,newImage,service,image_name);
     }
  };
@@ -1097,7 +933,7 @@ cFunction(xhttp,newImage,service,image_name){
   newImage.Image=blob
   newImage.Image_Name=image_name;
 
-  console.log('new imageis '+typeof(newImage.Image_Name))
+  console.log('ready adding image '+typeof(newImage.Image_Name))
 
   //put gaugestat record into IndexDB
   service.addImage(newImage).
@@ -1107,9 +943,13 @@ cFunction(xhttp,newImage,service,image_name){
   })    
 }
 
+clearNewWCS() {
+  this.newWCS = new WCS();
+}
+
 clearNewWaterManagement() {
   this.newWaterManagement = new Watermanagement();
-  }
+}
 
 clearNewWaterFood() {
   this.newWaterFood = new WaterFood();
@@ -1125,7 +965,7 @@ clearNewFoodAvail() {
 
 logout(){
   console.log('success')
-  this.authservice.setLoggedIn(false);
+  //this.authservice.setLoggedIn(false);
   console.log(localStorage.getItem('logged out'));
   this.openLogoutDialog();
 }
@@ -1139,6 +979,18 @@ openCASelectionDialog(): void {
     console.log('The dialog was closed');
     
     this.initial_onlineCheck();
+  });
+}
+
+openUpdatingDialog(): void {
+  const dialogRef = this.dialog.open(UpdatingDialog, {
+    width: '250px',
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    console.log('The dialog was closed');
+    this.openLoadingDialog();
+    this.updatecloudanddownloadrecords();
   });
 }
 
@@ -1200,6 +1052,31 @@ closeLoadingDialog(): void {
 
 }
 
+@Component({
+  selector: 'connection-status-popup',
+  templateUrl: 'connection-status-popup.html',
+  styleUrls:["dialog-styles.css"]
+})
+export class UpdatingDialog {
+
+  public status;
+
+  offline_message="No internet connection detected! Any data entered will be stored locally in browser.";
+
+  online_message="Connection detected. Your local data is going to be used to update the cloud now.";
+
+  constructor(public dialogRef: MatDialogRef<UpdatingDialog>) {}
+
+  ngOnInit(){
+    this.status=localStorage.getItem('Status')
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+}
+
 
 @Component({
   selector: 'connection-status-popup',
@@ -1235,8 +1112,7 @@ export class DataWrittenDialog {
 
   public status;
 
-  offline_message="No internet connection detected. Entry was saved locally to the browser. App will push this data to the cloud\
-  once it is open and detects an internet connection. DO NOT DELETE HISTORY OR COOKIES BEFORE THIS HAPPENS OR ENTRY WILL BE LOST.";
+  offline_message="No Internet Connection Detected. Remember to open the app with a connection periodically so that your data makes it to the cloud.";
 
   online_message="Internet Connection Detected. Entry was saved to the cloud." ;
 
@@ -1259,13 +1135,13 @@ export class LoginDialog {
   username: string;
   password: string;
 
-  constructor(public dialogRef: MatDialogRef<LoginDialog>,private authservice:AuthService) {}
+  constructor(public dialogRef: MatDialogRef<LoginDialog>) {}
 
   login() : void {
     if(this.username == 'admin' && this.password == 'admin'){
      //this.router.navigate(["user"]);
      console.log('success')
-     this.authservice.setLoggedIn(true);
+     //this.authservice.setLoggedIn(true);
      console.log(localStorage.getItem('logged in'));
      this.dialogRef.close();
     }else {

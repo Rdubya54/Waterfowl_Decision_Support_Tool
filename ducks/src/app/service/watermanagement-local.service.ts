@@ -135,4 +135,8 @@ import { IWatermanagement } from '../model/watermanagement';
       }
     });
   }
+
+  clearTable(){
+    this.connection.clear('WaterManagement')
+  }
 }

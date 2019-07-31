@@ -100,4 +100,8 @@ import { IWaterFood } from '../model/water-food';
       }
     });
   }
+
+  clearTable(){
+    this.connection.clear('Biweekly_Water_Status_and_Food_Availability')
+  }
 }

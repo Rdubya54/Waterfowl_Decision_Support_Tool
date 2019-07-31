@@ -5,8 +5,8 @@ import {
   IWatermanagement
 } from 'src/app/model/watermanagement';
 
-import {GaugedataService} from 'src/app/service/gaugedata.service';
-import {GaugeStatLocalService} from 'src/app/service/gauge-stat-local.service';
+import {GaugedataService} from 'src/app/service/gaugedata-cloud.service';
+import {GaugeStatLocalService} from 'src/app/service/gaugedata-local.service';
 import {ImageLocalService} from 'src/app/service/image-local.service'
 import { GaugeStats } from 'src/app/model/gauge-stats';
 import { CastExpr } from '@angular/compiler';
@@ -96,7 +96,7 @@ export class GaugeStatsComponent implements OnInit {
 
     this.getSymbology();
 
-    this.dropdownservice.getUnits(this.table,this.selected_CA).then(data => {
+    this.dropdownservice.getUnits(this.selected_CA).then(data => {
       var previous='None'
 
       data.forEach(record =>{
@@ -116,7 +116,7 @@ export class GaugeStatsComponent implements OnInit {
     this.wcs_list=[];
     this.gauge_list=[];
 
-    this.dropdownservice.getPools(this.table,CA,unit).then(data => {
+    this.dropdownservice.getPools(CA,unit).then(data => {
       var previous = 'None';
 
       data.forEach(record =>{
@@ -136,7 +136,7 @@ export class GaugeStatsComponent implements OnInit {
     this.gauge_list=[];
 
 
-    this.dropdownservice.getWCS(this.table,CA,unit,pool).then(data => {
+    this.dropdownservice.getWCS(CA,unit,pool).then(data => {
       var previous = 'None';
 
       data.forEach(record =>{

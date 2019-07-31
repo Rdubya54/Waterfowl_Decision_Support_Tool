@@ -66,35 +66,43 @@ export class BiweeklyWaterFoodComponent implements OnInit {
     console.log(localStorage.getItem("CA"))
 
     this.selected_CA=localStorage.getItem("CA")
-
     this.status=localStorage.getItem('Status')
 
-    //this.comp.downloadallprevs('Biweekly')
+    if (this.status==="online"){
+      //update local db for next time app is offline 
+      //(now loading screen is necessary because this can happen in the
+      //background nothing in local while user is connected will be affected)'
+      this.localservice.clearTable();
+      this.comp.downloadallprevs('Biweekly')
+    }
 
-      this.dropdownservice.getUnits(this.table,this.selected_CA).then(data => {
-        this.waterfoods = data;
-  
-        var previous='None';
+    this.dropdownservice.getUnits(this.selected_CA).then(data => {
+      this.waterfoods = data;
 
-        this.waterfoods.forEach(record =>{
-            var Unit=record["Unit"]
-            
-            if (Unit !== previous){
-              this.unit_list.push(Unit)
-              previous=Unit
-            }
-        });
-      });   
-      
-      this.unit_list.push('KINGS LAKE')
+      var previous='None';
+
+      this.waterfoods.forEach(record =>{
+          var Unit=record["Unit"]
+          
+          if (Unit !== previous){
+            this.unit_list.push(Unit)
+            previous=Unit
+          }
+      });
+    });   
+
   }
   
 
 //get pools for drop down
 getPools(CA,unit){
   this.Pool_list=[];
+  this.date_list.length=0;
+  this.date_list=["Create New Record"];
+  this.clearNewWaterFood();
+  this.prev_data.length=0;
 
-    this.dropdownservice.getPools(this.table,CA,unit).then(data => {
+    this.dropdownservice.getPools(CA,unit).then(data => {
       this.waterfoods = data;
 
       var previous='None'
@@ -111,17 +119,13 @@ getPools(CA,unit){
           }
       });
     });   
-
-    this.Pool_list.push('KL_2')
 }
 
 //get dates for drop down
 getDates(CA,unit,pool){
   this.date_list=["Create New Record"];
 
-
-  //clear prev data list since we are not showing prev entry
-  this.clear_prevdata();
+  this.prev_data.length=0;
 
   if (this.status==="online"){
   this.cloudservice.get_available_Dates(CA,unit,pool).subscribe(data => {
@@ -398,39 +402,6 @@ getdatesfordb(){
   var stringg=month+ "-" + day + "-" + year;
 
   this.newWaterFood.Date=stringg;
-}
-
-clear_prevdata(){
-  this.prev_data['Date']='N/A'
-  this.prev_data['Percent_of_Pool_Full']='N/A'
-  this.prev_data['less_than_six']='N/A';
-  this.prev_data['seven_to_twelve']='N/A'
-  this.prev_data['thirteen_or_more']='N/A'
-  this.prev_data['habitat_standing']='N/A'
-  this.prev_data['habitat_disced']='N/A'
-  this.prev_data['habitat_mowed'] ='N/A'
-  this.prev_data['habitat_harv_corn']='N/A'
-  this.prev_data['habitat_unharv_corn']='N/A'
-  this.prev_data['habitat_harv_beans']='N/A'
-  this.prev_data['habitat_unharv_beans']='N/A'
-  this.prev_data['habitat_harv_milo']='N/A'
-  this.prev_data['habitat_unharv_milo']='N/A'
-  this.prev_data['habitat_browse']='N/A'
-
-  this.prev_data['ice_standing']='N/A'
-  this.prev_data['ice_disced'] ='N/A'
-  this.prev_data['ice_mowed']='N/A'
-  this.prev_data['ice_harv_corn']='N/A'
-  this.prev_data['ice_unharv_corn']='N/A'
-  this.prev_data['ice_harv_beans']='N/A'
-  this.prev_data['ice_unharv_beans']='N/A'
-  this.prev_data['ice_harv_milo']='N/A'
-  this.prev_data['ice_unharv_milo']='N/A'
-  this.prev_data['ice_browse']='N/A'
-
-  this.prev_data['notes']='N/A'
-  this.prev_data['response']='N/A'
-  this.prev_data['actions']='N/A'
 }
     
 //used to reformat page when screen is resized

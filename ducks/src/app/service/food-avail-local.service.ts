@@ -74,4 +74,8 @@ import { IMoistSoil } from '../model/moist-soil';
       }
     });
   }
+
+  clearTable(){
+    this.connection.clear('Fall_Food_Availability')
+  }
 }

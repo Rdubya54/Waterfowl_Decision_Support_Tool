@@ -13,9 +13,9 @@ export class DropDownMenuDataService extends BaseService {
     super();
   }
 
-  getUnits(table,CA){
+  getUnits(CA){
     return this.connection.select({
-      from: table,
+      from: "Water Control Structures",
       where:{
         CA: CA,
       },
@@ -27,9 +27,9 @@ export class DropDownMenuDataService extends BaseService {
     });
   }
 
-  getPools(table,CA,Unit){
+  getPools(CA,Unit){
     return this.connection.select({
-      from: table,
+      from: "Water Control Structures",
       where:{
         CA: CA,
         Unit:Unit,
@@ -41,9 +41,9 @@ export class DropDownMenuDataService extends BaseService {
     });
   }
 
-  getWCS(table,CA,Unit,Pool){
+  getWCS(CA,Unit,Pool){
     return this.connection.select({
-      from: table,
+      from: "Water Control Structures",
       where:{
         CA: CA,
         Unit:Unit,

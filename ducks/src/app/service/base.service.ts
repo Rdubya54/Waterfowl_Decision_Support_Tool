@@ -584,12 +584,37 @@ import { IFoodAvail } from '../model/food-avail';
         dataType: DATA_TYPE.Object,
        }
       ],
-    };
+      };
+      const tblWCS: ITable = {
+        name: 'Water Control Structures',
+        columns: [{
+          name: 'id',
+          primaryKey: true,
+          autoIncrement: true
+         },
+         {
+          name: 'CA',
+          dataType: DATA_TYPE.String,
+         },
+         {
+          name: 'Unit',
+          dataType: DATA_TYPE.String
+         },
+         {
+          name: 'Pool',
+          dataType: DATA_TYPE.String,
+         },
+         {
+          name: 'WCS',
+          dataType: DATA_TYPE.String
+         }
+      ]    
+};
 
 
    const dataBase: IDataBase = {
     name: this.dbname,
-    tables: [tblWaterManagement,tblWeather,tblWaterFood,tblFoodAvail,tblGaugeStats,tblImages]
+    tables: [tblWaterManagement,tblWeather,tblWaterFood,tblFoodAvail,tblGaugeStats,tblImages,tblWCS]
    };
    return dataBase;
   }

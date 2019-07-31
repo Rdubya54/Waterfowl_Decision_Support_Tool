@@ -7,7 +7,7 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { FormsModule }   from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent, DataWrittenDialog, LogoutDialog, LoadingDialog } from './app.component';
+import { AppComponent, DataWrittenDialog, LogoutDialog, LoadingDialog,UpdatingDialog } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { MaterialModule } from './material.module';
@@ -56,6 +56,7 @@ var config = {
 
 firebase.initializeApp(config);
 
+// ng build --prod --base-href /applications/wetlandwaterfowlmanagement/
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ firebase.initializeApp(config);
     DataWrittenDialog,
     CASelectionDialog,
     LoadingDialog,
+    UpdatingDialog,
     GaugeStatsComponent,
   ],
   imports: [
@@ -91,7 +93,7 @@ firebase.initializeApp(config);
     ChartsModule,
     MatExpansionModule,
   ],
-  entryComponents: [BiweeklyWaterFoodComponent, PastSevenDays, WatermanagementComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,LogoutDialog,DataWrittenDialog,CASelectionDialog,LoadingDialog],
+  entryComponents: [BiweeklyWaterFoodComponent, PastSevenDays, WatermanagementComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,LogoutDialog,DataWrittenDialog,CASelectionDialog,LoadingDialog,UpdatingDialog],
   providers: [LocalWaterManagementService,WatermanagementComponent,FoodAvailComponent,AppComponent,MoistsoilService,ChartService],
   bootstrap: [AppComponent]
 })

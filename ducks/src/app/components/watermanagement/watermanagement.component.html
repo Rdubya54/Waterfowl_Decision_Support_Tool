@@ -50,7 +50,7 @@
                 </div>
                 <div fxFleX="50%">  
                     <div>
-                        <button mat-raised-button color="primary" (click)="openBottomSheet()">Activity Last 7 Days</button>
+                        <button mat-raised-button color="primary" (click)="openBottomSheet()">WCS Activity past 7 Days</button>
                     </div>
                 </div>
             </div>
@@ -74,7 +74,7 @@
   <div fxLayout="row"  fxLayoutGap="5%">
         <div fxFlex="60%"> 
         </div> 
-        <div class="previous" fxFlex="40%"> 
+        <div class="previous" fxFlex="40%" *ngIf="data_length>0" > 
             Previous Record Date
         </div> 
   </div>
@@ -235,7 +235,7 @@
 <!--               <button *ngIf="this.status === 'online';"  mat-raised-button color="primary" (click)="addWaterManagement(selected_CA,selected_unit,selected_Pool,selected_wcs,selected_date)">Push to Cloud</button> -->
 <!--               <button *ngIf="this.status === 'offline';" mat-raised-button color="primary" (click)="localaddWatermanagement('new')">Push to Local</button> -->
 
-                <button mat-raised-button color="primary" (click)="addData()">Submit</button>
+              <button mat-raised-button color="primary" (click)="addData()">Submit</button>
               <button mat-raised-button color="primary" (click)="clearNewWaterManagement()">Clear Fields</button>
               <button mat-raised-button color="primary" (click)="DeleteRecord(this.newWaterManagement)">Delete Record</button>
         </mat-card>

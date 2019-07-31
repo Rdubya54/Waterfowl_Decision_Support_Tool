@@ -22,7 +22,6 @@ import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/st
 import { forEach } from '@angular/router/src/utils/collection';
 import { MoistsoilService } from 'src/app/service/moistsoil.service';
 
-
 @Component({
   selector: 'app-watermanagement',
   templateUrl: './watermanagement.component.html',
@@ -79,8 +78,9 @@ export class WatermanagementComponent implements OnInit {
   public stored_size;
   public data_length=this.prev_data_master.length;
 
+  public page;
 
-   constructor(private comp:AppComponent, private localservice: LocalWaterManagementService, 
+  constructor(private comp:AppComponent, private localservice: LocalWaterManagementService, 
     private cloudservice: WatermanagementCloudService,private dropdownservice:DropDownMenuDataService, 
     private sidenavService:ChartService,private bottomSheet: MatBottomSheet, 
      private sevendayservice: SevendayService) {
@@ -105,8 +105,17 @@ export class WatermanagementComponent implements OnInit {
   this.selected_CA=localStorage.getItem("CA")
   this.status=localStorage.getItem('Status')
 
+  if (this.status==="online"){
+    //update local db for next time app is offline 
+    //(now loading screen is necessary because this can happen in the
+    //background nothing in local while user is connected will be affected)'
+    this.localservice.clearTable();
+    this.comp.downloadallprevs('WaterManagement')
+  }
+
+
   //get available Units for CA for drop down from IndexDB (local)
-  this.dropdownservice.getUnits(this.table,this.selected_CA).then(data => {
+  this.dropdownservice.getUnits(this.selected_CA).then(data => {
     this.watermanagements = data;
 
     var previous = 'none';
@@ -121,20 +130,23 @@ export class WatermanagementComponent implements OnInit {
           console.log('uNIT LIST IS '+this.unit_list)
         }
     });
-
-    this.unit_list.push('KINGS LAKE')
   });
 }
 
 
 // fetches list of availabe pools in units for dropdown
 getPools(CA,unit){
-  //clear pool list
+  //clear pool and wcs list
   this.Pool_list=[];
+  this.wcs_list=[];
+  this.date_list=["Create New Record"];
+  this.clearNewWaterManagement();
+  this.prev_data_master.length=0;
+  this.data_length=0;
 
   //if app is offline
     //get pools from local and push into dropdown
-    this.dropdownservice.getPools(this.table,CA,unit).then(data => {
+    this.dropdownservice.getPools(CA,unit).then(data => {
       this.watermanagements = data;
 
       var previous='None';
@@ -148,7 +160,6 @@ getPools(CA,unit){
             previous=pool
           }
       });
-      this.Pool_list.push('KL_2')
     });
   
 }
@@ -156,9 +167,13 @@ getPools(CA,unit){
 // fetch list of available strucutres in pool for dropdown
 getWCS(CA,unit,pool){
   this.wcs_list=[];
+  this.date_list=["Create New Record"];
+  this.clearNewWaterManagement();
+  this.prev_data_master.length=0;
+  this.data_length=0;
 
     //fetch data from local and push into dropdown
-    this.dropdownservice.getWCS(this.table,CA,unit,pool).then(data => {
+    this.dropdownservice.getWCS(CA,unit,pool).then(data => {
       this.watermanagements = data;
 
       var previous='None';
@@ -171,7 +186,6 @@ getWCS(CA,unit,pool){
             previous=wcs
           }
       });
-      this.wcs_list.push('POOL_2A_FLAP_GATE')
     });
 
 }
@@ -181,6 +195,9 @@ getDates(CA,unit,pool,wcs){
 
   console.log("getting dates!!!")
   this.date_list=["Create New Record"];
+  this.clearNewWaterManagement();
+  this.prev_data_master.length=0;
+  this.data_length=0;
 
   //uses location instead of this.status for method reuseablity purposes
 
@@ -455,9 +472,9 @@ getprevWaterManagement(CA,unit,pool,wcs){
   //makes delete field as 1 which indicates to the server to 
   //delete the record. this fucntion does not actually delete from 
   //the database, just marks it for deleteion
-  DeleteRecord(input_object){
+  DeleteRecord(watermanagement){
 
-    input_object.Delete=1;
+    watermanagement.Delete=1;
     if (this.status==="online"){
       this.cloudservice.add_WaterManagement_record(this.newWaterManagement);
     }

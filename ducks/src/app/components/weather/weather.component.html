@@ -32,9 +32,13 @@
             </mat-form-field>
           </div>
           <div>
-            <mat-form-field>
-                <input type="text" [(ngModel)]="newWeather.ice_thick" [ngModelOptions]="{standalone:true}" matInput placeholder="Thickness of Ice">
-            </mat-form-field>
+              <mat-form-field>
+                  <mat-select placeholder="Thickness of Ice" [(ngModel)]="newWeather.ice_thick">
+                  <mat-option *ngFor="let x of ice_options" [value]="x">
+                      {{x}}
+                  </mat-option>
+                  </mat-select>
+              </mat-form-field>
           </div>
 
             <div>
@@ -59,9 +63,9 @@
               </mat-form-field>
             </div>
             <div>
-              <mat-form-field>
-                <input type="text" [(ngModel)]="newWeather.other_observations" [ngModelOptions]="{standalone:true}" matInput placeholder="Other Weather Observations">
-              </mat-form-field>
+            <mat-form-field class="notes">
+                <textarea [(ngModel)]="newWeather.other_observations"  [ngModelOptions]="{standalone:true}" matInput placeholder="Other Observations" rows="10" cols="40"></textarea>
+            </mat-form-field>
             </div>
         <button mat-raised-button color="primary" (click)="addData()">Submit</button>
         <button mat-raised-button color="primary" (click)="clearNewWeather()">Clear Fields</button> 
