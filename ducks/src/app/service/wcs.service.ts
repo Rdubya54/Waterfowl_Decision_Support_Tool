@@ -22,6 +22,7 @@ export class WCSService extends BaseService{
 
    add_WCS_record(WCS: IWCS) {
     /* this.standardizeinputs(watermanagement) */
+    console.log("adding wcs local "+WCS.WCS+" with "+WCS.Pool+" with "+ WCS.Unit + " with "+WCS.CA)
     return this.connection.insert({
       into: 'Water Control Structures',
       return: true, // as id is autoincrement, so we would like to    get the inserted value

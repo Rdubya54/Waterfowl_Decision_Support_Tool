@@ -463,16 +463,17 @@ downloadallprevs(table){
                     data.forEach(doc =>{ 
                       var wcs=doc.id
                       console.log("addin wcs "+wcs)
-                      this.newWCS.CA=CA;
-                      this.newWCS.Unit=unit;
-                      this.newWCS.Pool=pool;
-                      this.newWCS.WCS=wcs
-                      this.WCSlocalservice.add_WCS_record(this.newWCS).
+                      console.log("adding wcs "+this.newWCS)
+
+                      let copyWCS=Object.assign({},this.newWCS);
+                      copyWCS.CA=CA;
+                      copyWCS.Unit=unit;
+                      copyWCS.Pool=pool;
+                      copyWCS.WCS=wcs
+                      this.WCSlocalservice.add_WCS_record(copyWCS).
                       then((addedWCS: IWCS[]) => {
-                      if (addedWCS.length > 0) {
                         this.clearNewWCS();
                         resolve(data)
-                      }
                       })
                     })
                 })
