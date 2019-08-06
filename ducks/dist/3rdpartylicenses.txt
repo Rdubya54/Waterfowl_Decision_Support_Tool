@@ -871,6 +871,9 @@ MIT
 @angular/fire
 MIT
 
+@angular/http
+MIT
+
 @angular/fire/database
 MIT
 

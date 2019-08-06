@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild,VERSION, Input, AfterViewInit,ElementRef }
 import { LocalWaterManagementService } from 'src/app/service/watermanagement-local.service';
 import { AngularFireDatabase } from 'angularfire2/database';
 import {WatermanagementCloudService} from 'src/app/service/watermanagement-cloud.service';
+import {WatermanagementSqlserverService} from 'src/app/service/watermanagement-sqlserver.service';
 import {SevendayService} from 'src/app/service/sevenday.service';
 import {MediaMatcher} from '@angular/cdk/layout';
 import {ChangeDetectorRef, OnDestroy} from '@angular/core';
@@ -83,7 +84,7 @@ export class WatermanagementComponent implements OnInit {
   constructor(private comp:AppComponent, private localservice: LocalWaterManagementService, 
     private cloudservice: WatermanagementCloudService,private dropdownservice:DropDownMenuDataService, 
     private sidenavService:ChartService,private bottomSheet: MatBottomSheet, 
-     private sevendayservice: SevendayService) {
+     private sevendayservice: SevendayService,private sqlserver_service:WatermanagementSqlserverService) {
        
   }
 
@@ -104,6 +105,9 @@ export class WatermanagementComponent implements OnInit {
   //get the CA and online status saved in local storage
   this.selected_CA=localStorage.getItem("CA")
   this.status=localStorage.getItem('Status')
+
+  //test sql server command
+  this.sqlserver_service.getWaterManagement()
 
   if (this.status==="online"){
     //update local db for next time app is offline 

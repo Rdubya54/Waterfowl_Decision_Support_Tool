@@ -43,6 +43,7 @@ import { GaugeStatsComponent } from './components/gauge-stats/gauge-stats.compon
 import {MoistsoilService} from "./service/moistsoil.service"
 import { ChartService } from './service/chart.service';
 import { LoadedRouterConfig } from '@angular/router/src/config';
+import { Http, HttpModule } from '@angular/http';
 
 var config = {
   apiKey: "AIzaSyChqXN2Wz2FRywEUwfEkfoxJJtc3hvr0CY",
@@ -92,6 +93,7 @@ firebase.initializeApp(config);
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: true }),
     ChartsModule,
     MatExpansionModule,
+    HttpModule
   ],
   entryComponents: [BiweeklyWaterFoodComponent, PastSevenDays, WatermanagementComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,LogoutDialog,DataWrittenDialog,CASelectionDialog,LoadingDialog,UpdatingDialog],
   providers: [LocalWaterManagementService,WatermanagementComponent,FoodAvailComponent,AppComponent,MoistsoilService,ChartService],
