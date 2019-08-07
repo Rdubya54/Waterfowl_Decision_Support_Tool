@@ -12,10 +12,13 @@ export class WatermanagementSqlserverService {
 
   getWaterManagement(){
     
-    this.http.get('https://testintra45ssl/ws/wwdmp/api/downloadwater/1001').subscribe(data=>
-    console.log("sql server data is"+data.json()))
-    var data = data.json();
+    this.http.get('https://testintra45ssl/ws/wwdmp/api/downloadwater/1001').subscribe(data=>{
+    console.log("sql server data is"+data.json())
+    var res_json = data.json();
 
-    console.log("Elevation is "+data.Elevation)
+    console.log("sql 1  Elevation is "+res_json.Elevation)
+    console.log("sql 2 Elevation is "+res_json.wwdmWater_Recs.Elevation)
+    console.log("sql 3 Elevation is "+res_json.wwdmWater_Recs[0].Elevation)
+   });
   }
 }
