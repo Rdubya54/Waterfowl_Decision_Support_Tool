@@ -57,7 +57,7 @@ var config = {
 
 firebase.initializeApp(config);
 
-// ng build --prod --base-href /applications/wetlandwaterfowlmanagement/
+// ng build --prod --base-href //applications/wetlandwaterfowlmanagement/
 
 @NgModule({
   declarations: [
