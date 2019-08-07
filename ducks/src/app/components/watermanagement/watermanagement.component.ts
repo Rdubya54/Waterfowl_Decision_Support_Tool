@@ -107,7 +107,7 @@ export class WatermanagementComponent implements OnInit {
   this.status=localStorage.getItem('Status')
 
   //test sql server command
-  this.sqlserver_service.getWaterManagement()
+  //this.sqlserver_service.get_WaterManagement_record()
 
   if (this.status==="online"){
     //update local db for next time app is offline 
@@ -248,7 +248,7 @@ populate_page_with_data(CA,unit,pool,wcs,date){
 
     this.data_length=0
 
-    if (this.status==="online"){
+/*     if (this.status==="online"){
       this.cloudservice.get_WaterManagement_record(CA,unit,pool,wcs,date).
       subscribe(data=>{
         this.newWaterManagement.Date=data.get('Date');
@@ -268,6 +268,30 @@ populate_page_with_data(CA,unit,pool,wcs,date){
         this.newWaterManagement.Update_time=data.get('Update_time')
       });
   }
+ */
+  if (this.status==="online"){
+    this.sqlserver_service.get_WaterManagement_record().
+    subscribe(data=>{
+      console.log("sql server data is"+data.json())
+      var res_json = data.json();
+      console.log("sql Elevation is "+res_json.wwdmWater_Recs[0].Elevation)
+
+      this.newWaterManagement.Date=res_json.wwdmWater_Recs[0].Date
+      this.newWaterManagement.Elevation=res_json.wwdmWater_Recs[0].Elevation
+      this.newWaterManagement.Gate_manipulation=res_json.wwdmWater_Recs[0].Gate_manipulation
+      this.newWaterManagement.Gate_level=res_json.wwdmWater_Recs[0].Gate_level
+      this.newWaterManagement.Stoplog_change=res_json.wwdmWater_Recs[0].Stoplog_change
+      this.newWaterManagement.Stoplog_level=res_json.wwdmWater_Recs[0].Stoplog_level
+      this.newWaterManagement.Duck_numbers=res_json.wwdmWater_Recs[0].Duck_numbers
+      this.newWaterManagement.Goose_numbers=res_json.wwdmWater_Recs[0].Goose_numbers
+      this.newWaterManagement.Fiscal_year=res_json.wwdmWater_Recs[0].Fiscal_year
+      this.newWaterManagement.Reasons=res_json.wwdmWater_Recs[0].Reasons
+      this.newWaterManagement.Sort_time=res_json.wwdmWater_Recs[0].Sort_time
+      this.newWaterManagement.UID=res_json.wwdmWater_Recs[0].UID
+      this.newWaterManagement.Delete=res_json.wwdmWater_Recs[0].Delete
+      this.newWaterManagement.Update_time=res_json.wwdmWater_Recs[0].Update_time
+    });
+}
 
   else if (this.status==="offline"){
     this.localservice.get_WaterManagement_record(CA,unit,pool,wcs,date).then(data=> {
@@ -442,7 +466,7 @@ getprevWaterManagement(CA,unit,pool,wcs){
 
     //push entry to cloud
     if (this.status==="online"){
-      this.cloudservice.add_WaterManagement_record(this.newWaterManagement);
+      this.sqlserver_service.add_WaterManagement_record(this.newWaterManagement);
     }
 
     //push entry to IndexDB

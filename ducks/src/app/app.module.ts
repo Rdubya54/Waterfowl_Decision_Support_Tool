@@ -93,7 +93,8 @@ firebase.initializeApp(config);
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: true }),
     ChartsModule,
     MatExpansionModule,
-    HttpModule
+    HttpModule,
+    HttpClientModule
   ],
   entryComponents: [BiweeklyWaterFoodComponent, PastSevenDays, WatermanagementComponent, BottomSheetOverviewExampleSheet,ConnectionStatusDialog,LoginDialog,LogoutDialog,DataWrittenDialog,CASelectionDialog,LoadingDialog,UpdatingDialog],
   providers: [LocalWaterManagementService,WatermanagementComponent,FoodAvailComponent,AppComponent,MoistsoilService,ChartService],
