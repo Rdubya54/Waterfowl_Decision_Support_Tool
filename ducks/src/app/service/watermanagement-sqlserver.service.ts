@@ -11,7 +11,8 @@ export class WatermanagementSqlserverService {
   }
 
   getWaterManagement(){
-    this.http.get('https://wsdev12/webservices/wwmd/api/downloadwater/1001').subscribe(data=>
+    
+    this.http.get('https://testintra45ssl/ws/wwdmp/api/downloadwater/1001').subscribe(data=>
     console.log("sql server data is"+data))  
   }
 }
