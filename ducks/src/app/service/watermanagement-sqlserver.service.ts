@@ -25,7 +25,7 @@ export class WatermanagementSqlserverService {
           })
         }
 
-        return this.httpclient.post<IWatermanagement>('https://testintra45ssl/ws/wwdmp/api/downloadwater/1001', watermanagement, httpOptions)
+        return this.httpclient.post<IWatermanagement>('https://testintra45ssl/ws/wwdmp/api/uploadwater/getwaterdata', watermanagement, httpOptions)
     }
   
     //get the two latest records for the WCS
